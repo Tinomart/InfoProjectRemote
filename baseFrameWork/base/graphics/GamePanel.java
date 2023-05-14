@@ -1,6 +1,7 @@
 package base.graphics;
 
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayDeque;
@@ -9,6 +10,7 @@ import javax.swing.JPanel;
 
 import base.gameObjects.GameObject;
 import base.input.InputManager;
+import game.Main;
 
 //Panels are like the images you draw on the game window. 
 //If the Window is the sheet for a printer then the Panels 
@@ -20,7 +22,10 @@ public class GamePanel extends JPanel {
 	// assigned when trying to use CreatePanels() an exception will be thrown
 	// these will be used as keys for the panels HashMap in the GameWindow Class
 	public static enum PanelType {
-		MainPanel
+		MainPanel,
+		MainMenu,
+		PauseMenu,
+		InGameGUI
 	}
 	
 	public ArrayDeque<GameObject> addedObjects;
@@ -28,20 +33,22 @@ public class GamePanel extends JPanel {
 
 	private int panelWidth;
 	private int panelHeight;
+	
+	public int drawLayer;
 
 	// suggested by eclipse to do to avoid warning
 	private static final long serialVersionUID = 1L;
 
-	public GamePanel(int width, int height) {
+	public GamePanel(int width, int height, int drawLayer) {
 		panelWidth = width * TileGrid.TILE_SIZE;
 		panelHeight = height * TileGrid.TILE_SIZE;
+		this.drawLayer = drawLayer;
 		InitializePanel();
 		inputManager.AddInputForPanel();
 	}
 
 	private void InitializePanel() {
 		this.setPreferredSize(new Dimension(panelWidth, panelHeight));
-		
 		//this lets the Panel register key inputs
 		//Important to make sure that the panel can react
 		//when you press any key
@@ -69,17 +76,42 @@ public class GamePanel extends JPanel {
 
 		// assignment of panelTypes to panels
 		for (int i = 0; i < panelTypes.length; i++) {
+			
+			//AddCorrectGUI For Panels that require GUI.
+			switch (panelTypes[i]) {
+				case MainMenu: {
+					GUI.AddMainMenuGUI(panelsToAssign[i]);
+					break;
+				}
+				case PauseMenu: {
+					GUI.AddPauseMenuGUI(panelsToAssign[i]);
+					break;
+				}
+				case InGameGUI: {
+					GUI.AddInGameGUI(panelsToAssign[i]);
+					break;
+				}
+				default:
+					break;
+			}
+			
 			panels.put(panelTypes[i], panelsToAssign[i]);
+			
+			
 		}
+		
+		
 		return panels;
 	}
 	
 	public void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
-		
-		Graphics2D graphics2D = (Graphics2D)graphics;
-		
-		graphics2D.dispose();
+	    
+	    Graphics2D graphics2D = (Graphics2D) graphics.create();
+	    
+	    // to avoid paint trails of object that is being painted every frame
+	    
+	    graphics2D.dispose();
 	}
 
 }

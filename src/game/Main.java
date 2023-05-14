@@ -1,9 +1,9 @@
 package game;
 
 import base.GameLoop;
-import base.graphics.GamePanel;
-import base.graphics.GameWindow;
+import base.graphics.*;
 import base.GameRunningManager;
+
 
 public class Main {
 	//these are in tile size, not in pixels
@@ -14,15 +14,22 @@ public class Main {
 	
 	public final static int FPS = 60;
 
-	private static GamePanel mainPanel = new GamePanel(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-	private static GameWindow gameWindow = new GameWindow(GAME_TITLE, GamePanel.AssignAllPanels(mainPanel));
+	private static GamePanel mainPanel = new GamePanel(SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+	
+	//TODO Adjust Panel sizes if these should be differently sized
+	private static GamePanel mainMenu = new GamePanel(SCREEN_WIDTH, SCREEN_HEIGHT, 3);
+	private static GamePanel pauseMenu = new GamePanel(SCREEN_WIDTH, SCREEN_HEIGHT, 2);
+	private static GamePanel inGameGUI = new GamePanel(SCREEN_WIDTH, SCREEN_HEIGHT, 1);
+	
+	//we need to set panels is some contexts, so this has to be public;
+	public static GameWindow gameWindow = new GameWindow(GAME_TITLE, GamePanel.AssignAllPanels(mainPanel, mainMenu, pauseMenu, inGameGUI));
 	
 	private static GameLoop gameLoop = new GameLoop(gameWindow);
 	
 	private static GameRunningManager gameRunningManager = new GameRunningManager(gameLoop);
 	
 	public static void main(String[] args) {
+		
 		gameRunningManager.StartGame();
 	}
 }

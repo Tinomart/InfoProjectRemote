@@ -1,8 +1,15 @@
 package base;
 
+
+import java.awt.Component;
+import base.graphics.GamePanel;
+import java.awt.Container;
 import java.util.ArrayDeque;
 
+import javax.swing.JPanel;
+
 import base.gameObjects.GameObject;
+
 import base.graphics.GamePanel.PanelType;
 import base.graphics.GameWindow;
 import game.Main;
@@ -46,10 +53,29 @@ public class GameLoop implements Runnable {
 			//implemented
 			// DrawGameObjects();
 
-			// every active panel has their inputs read;
-			for (PanelType panel : window.activePanels) {
-				window.getPanels().get(panel).inputManager.ReadInputs();
-			}
+			//The Main Menu has its inputs read;
+			//request Focus is so that the JFrame and JPanel doesnt all of the
+			//sudden shift focus and stops listening to our MainPanel 
+			//is is possible that this is inefficient and has to be reallocated
+			//later
+			window.getPanels().get(PanelType.MainPanel).requestFocus();
+			window.getPanels().get(PanelType.MainPanel).inputManager.ReadInputs();
+			
+			//debug code that displays the layer of every Panel that is currently a component of the Window
+//			Container container = window.getContentPane();
+//			
+//			for (Component component : container.getComponents()) {
+//				if(component instanceof JPanel) {
+//					GamePanel panel = (GamePanel)component;
+//					System.out.println(panel.drawLayer);
+//				}
+//			}
+			
+			
+			
+			
+			
+			
 		}
 
 	}

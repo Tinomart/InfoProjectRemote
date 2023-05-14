@@ -2,7 +2,6 @@ package base.gameObjects;
 
 import base.GameLoop;
 import base.physics.Positional;
-import game.Main;
 
 //This is just so that we have an abstract class that defines all the basic properties of anything that can be in our game
 

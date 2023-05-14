@@ -6,7 +6,9 @@ import java.util.ArrayDeque;
 import javax.swing.JPanel;
 
 import base.gameObjects.Tile;
+import base.graphics.GamePanel.PanelType;
 import base.input.Input.InputType;
+import game.Main;
 
 //This class actually works with the read inputs and executes in game actions when it recognized that a key is pressed.
 //There will be a lot of change for this class, as I assume every feature will need their own input code.
@@ -51,6 +53,12 @@ public class InputManager{
 			AddHoveredTiles();
 			
 		}
+		
+		if(input.releasedKey != 0) {
+			ExecuteKeyClick(input.releasedKey);
+		}
+		
+		input.releasedKey = 0;
 
 	}
 	
@@ -60,14 +68,35 @@ public class InputManager{
 		//TODO: Tell the game what to do once a certain key is pressed
 		
 		switch (key) {
-		// What comes after KeyEvent.VK_ is the actual key
-		case KeyEvent.VK_0: 
-			break;
+			// What comes after KeyEvent.VK_ is the actual key
+			case KeyEvent.VK_W: 
+				System.out.println("0");
+				break;
+			
+			default:
+				break;
+			}
 		
-		default:
-			break;
+	}
+	
+	private void ExecuteKeyClick(int key) {
+		//TODO: Tell the game what to do once a certain key is clicked
+		
+		switch (key) {
+		
+			case KeyEvent.VK_ESCAPE:
+				if(!Main.gameWindow.activePanels.contains(PanelType.MainMenu)){
+					if(!Main.gameWindow.activePanels.contains(PanelType.PauseMenu)) {
+						Main.gameWindow.SetPanel(PanelType.PauseMenu);
+					} else {
+						Main.gameWindow.SetPanel(PanelType.PauseMenu, false);
+					}
+				}
+				break;
+			default:
+				break;
+				
 		}
-		
 	}
 
 	private void ExecuteRightPress() {
