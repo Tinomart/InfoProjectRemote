@@ -1,6 +1,7 @@
 package base;
 
 import base.graphics.*;
+import base.graphics.GamePanel.PanelType;
 
 public class GameRunningManager {
 	
@@ -16,7 +17,8 @@ public class GameRunningManager {
 	
 
 	public void StartGame() {
-		gameWindow.SetPanel(GamePanel.PanelType.MainPanel);
+		gameWindow.SetPanel(PanelType.MainMenu);
+		
 		gameWindow.OpenWindow();
 		gameLoop.Start();
 	}
