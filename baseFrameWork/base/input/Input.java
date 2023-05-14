@@ -32,6 +32,7 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener, M
 	//stores all pressedKeys to later be used in 
 	//input manager
 	public ArrayDeque<Integer> pressedKeys = new ArrayDeque<Integer>();
+	public int releasedKey;
 
 	public Input(JPanel panel) {
 		this.panel = panel;
@@ -53,6 +54,7 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener, M
 		int key = e.getKeyCode();
 		currentInput.remove(InputType.keypress);
 		pressedKeys.remove(key);
+		releasedKey = key;
 		
 	}
 
