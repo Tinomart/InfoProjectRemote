@@ -13,7 +13,8 @@ public class Tile extends GameObject implements TileBased {
 	public HashMap<Point, Tile> tileMap;
 	
 	//There still needs to be a sprite field and have the sprite field be initialized in the constructor with an argument
-	//right now redsquare is placeholder for a sprite that we would implement later
+	//The redSquare is the very, very basic implementation of the hovering feature and could be replaced later
+	//if we find it unfitting
 	
 	public RedSquareComponent redsquare;
 	
@@ -26,7 +27,6 @@ public class Tile extends GameObject implements TileBased {
 	
 
 	public void OnHover() {
-		System.out.println("Hovering Tile: " + tilePosition);
 		Main.gameWindow.getPanels().get(PanelType.MainPanel).add(redsquare);
 		
 	}
