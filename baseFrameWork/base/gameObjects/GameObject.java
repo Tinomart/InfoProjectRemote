@@ -9,9 +9,10 @@ public class GameObject extends GameEntity implements Drawable {
 	
 	private GamePanel.PanelType panelToDrawOn;
 
-	public GameObject() {
+	public GameObject(Point position) {
 		// We want GameObjects to be drawn on the main panel only since they are not 
 		//part of a menu or some special pop up
+		super(position);
 		panelToDrawOn = GamePanel.PanelType.MainPanel;
 	}
 

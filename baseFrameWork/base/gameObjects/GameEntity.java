@@ -1,17 +1,26 @@
 package base.gameObjects;
 
+import java.awt.Point;
+
 import base.GameLoop;
 import base.physics.Positional;
 
 //This is just so that we have an abstract class that defines all the basic properties of anything that can be in our game
 
-public abstract class GameEntity implements Runnable, Positional {
+public class GameEntity implements Runnable, Positional {
+	
+	private Point position;
+	
 	private Thread objectThread;
 
 	// by default the start method always executes when the entity gets set to active
 	private boolean executeStart = true;
 	
 	private boolean active = true;
+	
+	public GameEntity(Point position) {
+		this.position = position;
+	}
 
 	
 
@@ -57,8 +66,16 @@ public abstract class GameEntity implements Runnable, Positional {
 	}
 	
 	//happens every frame is entity is active
-	public abstract void Update();
+	public void Update() {};
 
 	//happens once if the entity is activated
-	public abstract void Start();
+	public void Start() {};
+
+	@Override
+	public Point GetPosition(Corner corner) {
+		// TODO Auto-generated method stub
+		return position;
+	}
+
+	
 }
