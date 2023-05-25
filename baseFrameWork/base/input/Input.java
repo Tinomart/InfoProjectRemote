@@ -27,12 +27,16 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener, M
 
 	//to add additional behaviour based on the position
 	//of the mouse in Inputmanager
-	public Point mousePositionOnPanel;
+	public Point mousePositionOnPanel = new Point(0, 0);
+	
+	//this saves current clicked Input in int form because I doubt anyone
+	//would execute more than 60 clicks a second, which is the
+	//way that this would cause issues
+	public int releasedInput;
 
 	//stores all pressedKeys to later be used in 
 	//input manager
 	public ArrayDeque<Integer> pressedKeys = new ArrayDeque<Integer>();
-	public int releasedKey;
 
 	public Input(JPanel panel) {
 		this.panel = panel;
@@ -54,7 +58,7 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener, M
 		int key = e.getKeyCode();
 		currentInput.remove(InputType.keypress);
 		pressedKeys.remove(key);
-		releasedKey = key;
+		releasedInput = key;
 		
 	}
 
@@ -93,6 +97,12 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener, M
 			currentInput.remove(InputType.rightpress);
 		}
 	}
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		int button = e.getButton();
+		releasedInput = button;
+	}
 
 	//unused input methods I need to implement to use the interfaces
 	@Override
@@ -102,8 +112,6 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener, M
 	public void mouseEntered(MouseEvent e) {}
 	@Override
 	public void mouseExited(MouseEvent e) {}
-	@Override
-	public void mouseClicked(MouseEvent e) {}
 	@Override
 	public void keyTyped(KeyEvent e) {}
 

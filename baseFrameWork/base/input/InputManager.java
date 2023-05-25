@@ -1,12 +1,15 @@
 package base.input;
 
 import java.awt.event.KeyEvent;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.util.ArrayDeque;
 
 import javax.swing.JPanel;
 
 import base.gameObjects.Tile;
 import base.graphics.GamePanel.PanelType;
+import base.graphics.TileGrid;
 import base.input.Input.InputType;
 import game.Main;
 
@@ -21,7 +24,6 @@ public class InputManager{
 	//To track all tiles that are currently being hovered
 	public ArrayDeque<Tile> currentHoveredTiles = new ArrayDeque<Tile>();
 	
-	
 	public InputManager(JPanel panel) {
 		this.panel = panel;
 		input = new Input(panel);
@@ -29,7 +31,8 @@ public class InputManager{
 	
 	public void ReadInputs() {
 		
-		//this  if is just to avoid reading input every frame, even when there is not input
+		//This is the code for continuous Key Holds. E.g Camera movement if user holds wasd
+		//or when user tries to drag an object or something
 		if(!input.currentInput.isEmpty()) {
 			
 			//I added a debug statement here once and the Sysout itself broke the code.
@@ -38,7 +41,7 @@ public class InputManager{
 			//currentInput and you get an error, your code is still working fine, there is
 			//just some weird interaction going on
 			
-			//check for all different InputTypes and execute the correspoding action
+			//check for all different InputTypes and execute the corresponding action
 			//depending on what the current input is
 			if(input.currentInput.contains(InputType.leftpress)) {
 				ExecuteLeftPress();
@@ -51,17 +54,23 @@ public class InputManager{
 			}
 			
 			AddHoveredTiles();
+			HoverTiles();
 			
 		}
 		
-		if(input.releasedKey != 0) {
-			ExecuteKeyClick(input.releasedKey);
+		//This is for Mouse and Key clicks.
+		if(input.releasedInput != 0) {
+			ExecuteClicks(input.releasedInput);
+			input.releasedInput = 0;
 		}
 		
-		input.releasedKey = 0;
+		
+		AddHoveredTiles();
+		
 
 	}
 	
+
 	
 
 	private void ExecuteKeyPress(int key) {
@@ -70,7 +79,6 @@ public class InputManager{
 		switch (key) {
 			// What comes after KeyEvent.VK_ is the actual key
 			case KeyEvent.VK_W: 
-				System.out.println("0");
 				break;
 			
 			default:
@@ -79,12 +87,24 @@ public class InputManager{
 		
 	}
 	
-	private void ExecuteKeyClick(int key) {
+	private void ExecuteClicks(int releasedInput) {
 		//TODO: Tell the game what to do once a certain key is clicked
 		
-		switch (key) {
+		switch (releasedInput) {
+		
+			//if left click
+			case MouseEvent.BUTTON1:
+				ExecuteLeftClick();
+				break;
+			//if right click
+			case MouseEvent.BUTTON3:
+				ExecuteRightClick();
+				break;
 		
 			case KeyEvent.VK_ESCAPE:
+				//Open Pause Menu if the User is not currently in the Main Menu
+				//Close Pause Menu if Pause Menu is open
+				
 				if(!Main.gameWindow.activePanels.contains(PanelType.MainMenu)){
 					if(!Main.gameWindow.activePanels.contains(PanelType.PauseMenu)) {
 						Main.gameWindow.SetPanel(PanelType.PauseMenu);
@@ -97,13 +117,23 @@ public class InputManager{
 				break;
 				
 		}
-	}
-
-	private void ExecuteRightPress() {
-		// TODO: Tell the game what to do if the right mouse button is pressed
 		
 	}
 
+	private void ExecuteRightClick() {
+		// TODO: Tell the game what to do if the right mouse button is cicked		
+		
+	}
+
+	private void ExecuteLeftClick() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void ExecuteRightPress() {
+		// TODO: Tell the game what to do if the left mouse button is pressed
+		
+	}
 	private void ExecuteLeftPress() {
 		// TODO: Tell the game what to do if the left mouse button is pressed
 		
@@ -115,6 +145,24 @@ public class InputManager{
 		//change the cursor size depending on what we have equipped and then take that to read
 		//what tiles are being hovered
 		
+		
+		Point mouseTilePosition = new Point(input.mousePositionOnPanel.x/Main.TILE_SIZE, input.mousePositionOnPanel.y/Main.TILE_SIZE);
+		if(!currentHoveredTiles.contains(Main.tileGrid.tileMap.get(mouseTilePosition))) {
+			for (Tile tile : currentHoveredTiles) {
+				tile.redsquare.removeComponent();
+			}
+			currentHoveredTiles.clear();
+			currentHoveredTiles.add(Main.tileGrid.tileMap.get(mouseTilePosition));
+			HoverTiles();
+		}
+	}
+	
+	private void HoverTiles() {
+		//Place holder To show that the TileSystem is semi functional
+		
+		for (Tile tile : currentHoveredTiles) {
+			tile.OnHover();
+		}
 	}
 
 	public void AddInputForPanel() {
