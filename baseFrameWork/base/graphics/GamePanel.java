@@ -40,8 +40,8 @@ public class GamePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	public GamePanel(int width, int height, int drawLayer) {
-		panelWidth = width * TileGrid.TILE_SIZE;
-		panelHeight = height * TileGrid.TILE_SIZE;
+		panelWidth = width * Main.TILE_SIZE;
+		panelHeight = height * Main.TILE_SIZE;
 		this.drawLayer = drawLayer;
 		InitializePanel();
 		inputManager.AddInputForPanel();
@@ -49,6 +49,7 @@ public class GamePanel extends JPanel {
 
 	private void InitializePanel() {
 		this.setPreferredSize(new Dimension(panelWidth, panelHeight));
+		//this.setLayout();
 		//this lets the Panel register key inputs
 		//Important to make sure that the panel can react
 		//when you press any key
@@ -89,6 +90,10 @@ public class GamePanel extends JPanel {
 				}
 				case InGameGUI: {
 					GUI.AddInGameGUI(panelsToAssign[i]);
+					break;
+				}
+				case MainPanel: {
+					panelsToAssign[i].setLayout(null);
 					break;
 				}
 				default:

@@ -44,9 +44,5 @@ public class GUI {
 			Main.gameWindow.SetPanel(panelType, false);
 		}
 		Main.gameWindow.SetPanel(PanelType.MainMenu);
-	}
-	
-	
-	
-	
+	}	
 }

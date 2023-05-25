@@ -22,6 +22,7 @@ public class GameLoop implements Runnable {
 
 	private Thread gameThread;
 	public GameWindow window;
+	
 	public ArrayDeque<GameObject> gameObjects;
 	
 	// if we need to ever add anything based on a specific frame
@@ -54,7 +55,7 @@ public class GameLoop implements Runnable {
 			// DrawGameObjects();
 
 			//The Main Menu has its inputs read;
-			//request Focus is so that the JFrame and JPanel doesnt all of the
+			//requestFocus is so that the JFrame and JPanel doesnt all of the
 			//sudden shift focus and stops listening to our MainPanel 
 			//is is possible that this is inefficient and has to be reallocated
 			//later
