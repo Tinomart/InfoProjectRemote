@@ -53,9 +53,6 @@ public class InputManager{
 				}
 			}
 			
-			AddHoveredTiles();
-			HoverTiles();
-			
 		}
 		
 		//This is for Mouse and Key clicks.

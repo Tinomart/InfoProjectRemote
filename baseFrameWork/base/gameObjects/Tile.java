@@ -9,7 +9,12 @@ import java.awt.Point;
 import java.util.HashMap;
 
 public class Tile extends GameObject implements TileBased {
-	public Point tilePosition;
+	private Point tilePosition;
+	
+	public Point GetTilePosition() {
+		return tilePosition;
+	}
+
 	public HashMap<Point, Tile> tileMap;
 	
 	//There still needs to be a sprite field and have the sprite field be initialized in the constructor with an argument
@@ -19,6 +24,7 @@ public class Tile extends GameObject implements TileBased {
 	public RedSquareComponent redsquare;
 	
 	public Tile(Point tilePosition) {
+		super(new Point(tilePosition.x * Main.TILE_SIZE, tilePosition.y * Main.TILE_SIZE));
 		this.tilePosition = tilePosition;
 		Main.tileGrid.ReplaceTile(tilePosition, this);
 		redsquare = new RedSquareComponent(tilePosition.x, tilePosition.y, Main.TILE_SIZE);

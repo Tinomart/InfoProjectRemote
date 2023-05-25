@@ -2,13 +2,15 @@ package base.gameObjects;
 
 import base.graphics.TileBased;
 import base.graphics.TileGrid;
+import game.Main;
 
-public class Structure extends GameObject implements TileBased {
+public abstract class Structure extends GameObject implements TileBased {
 
 	public Tile mainTile;
 	public Tile[] tiles;
 	
-	public Structure(TileGrid tileMap, Tile[] tiles, Tile mainTile) {
+	public Structure(Tile[] tiles, Tile mainTile) {
+		super(mainTile.GetPosition());
 		this.mainTile = mainTile;
 		this.tiles = tiles;
 	}
