@@ -45,11 +45,12 @@ public class GamePanel extends JPanel {
 		this.drawLayer = drawLayer;
 		InitializePanel();
 		inputManager.AddInputForPanel();
+		System.out.println(this.getBounds());
 	}
 
 	private void InitializePanel() {
 		this.setPreferredSize(new Dimension(panelWidth, panelHeight));
-		//this.setLayout();
+		this.revalidate();
 		//this lets the Panel register key inputs
 		//Important to make sure that the panel can react
 		//when you press any key
@@ -99,10 +100,10 @@ public class GamePanel extends JPanel {
 				default:
 					break;
 			}
+			panelsToAssign[i].revalidate();
+			
 			
 			panels.put(panelTypes[i], panelsToAssign[i]);
-			
-			
 		}
 		
 		

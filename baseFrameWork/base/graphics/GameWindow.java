@@ -1,10 +1,16 @@
 package base.graphics;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.*;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 
 import base.graphics.GamePanel.PanelType;
+import game.Main;
 
 public class GameWindow extends JFrame {
 
@@ -26,7 +32,29 @@ public class GameWindow extends JFrame {
 		// this is to get the Panels it has to print as some would be active and others
 		// would not
 		activePanels = new ArrayDeque<>();
-		InitializeScreen();
+		SetMenuResizability();
+	}
+
+	
+	
+
+	// This had to be its own thing, because for some reason the basic resize
+	// implementation was failing me, so I had to write my own. 
+	private void SetMenuResizability() {
+		GameWindow window = this;
+
+		window.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				for (GamePanel menu : window.getPanels().values()) {
+					if (menu instanceof Menu) {
+						menu.setSize(new Dimension(window.getSize()));
+						menu.repaint();
+						menu.revalidate();
+					}
+				}
+			}
+		});
 	}
 
 	public void InitializeScreen() {
@@ -35,7 +63,7 @@ public class GameWindow extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// pretty self explanatory
-		this.setResizable(false);
+		// this.setResizable(true);
 		this.setTitle(title);
 	}
 
@@ -44,10 +72,17 @@ public class GameWindow extends JFrame {
 		if (!activePanels.contains(panelToSet)) {
 			activePanels.add(panelToSet);
 			GamePanel panel = getPanels().get(panelToSet);
-			this.add(panel);
+			if(getPanels().get(panelToSet) instanceof Menu) {
+				this.add(panel);
+			} else {
+				JScrollPane scrollPane = new JScrollPane(panel);
+				scrollPane.setPreferredSize(new Dimension(Main.SCREEN_WIDTH, Main.SCREEN_HEIGHT));
+				this.add(scrollPane);
+			}
+				
 			SetCorrectDrawingOrder();
 		}
-		
+
 	}
 
 	public void SetPanel(GamePanel.PanelType panelType, boolean isBeingSetToActive) {
@@ -59,7 +94,7 @@ public class GameWindow extends JFrame {
 			SetCorrectDrawingOrder();
 		}
 	}
-	
+
 	private void SetCorrectDrawingOrder() {
 
 		// Get all of our gamePanels with their corresponding layer ordered in a HashMap
@@ -92,19 +127,18 @@ public class GameWindow extends JFrame {
 				while (gamePanelsWithLayers.containsKey(currentLayer)) {
 					this.add(gamePanelsWithLayers.get(currentLayer));
 					gamePanelsWithLayers.remove(currentLayer);
-					
-					//this is the most important part of the entire method, without
-					//this statement literally none of the changes are reflected.
-					//you cannot reposition it either, keep it here or none of our
-					//entire panel drawing will work
+
+					// this is the most important part of the entire method, without
+					// this statement literally none of the changes are reflected.
+					// you cannot reposition it either, keep it here or none of our
+					// entire panel drawing will work
 					this.revalidate();
 				}
 			}
 		}
-		
-		//repaint to reflect changes
+
+		// repaint to reflect changes
 		this.repaint();
-		
 
 	}
 
