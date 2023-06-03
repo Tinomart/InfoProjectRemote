@@ -1,9 +1,12 @@
 package base.input;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.*;
 import java.util.ArrayDeque;
 import javax.swing.JPanel;
+
+import game.Main;
 
 //this class is the class that gets all the inputs and transforms them into more digestible Formats. 
 //It gives all InputTypes to currentInput, so that we know what types of inputs are currently happening
@@ -47,7 +50,10 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener, M
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
-		pressedKeys.add(key);
+		if(!pressedKeys.contains(key)) {
+			pressedKeys.add(key);
+			}
+		
 		if(!currentInput.contains(InputType.keypress)) {
 		 currentInput.add(InputType.keypress);
 		}
@@ -67,6 +73,12 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener, M
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		mousePositionOnPanel = e.getPoint();
+		Point panelLocationOnScreen = panel.getLocationOnScreen();
+		System.out.println(panelLocationOnScreen);
+	    Point mousePositionOnScreen = e.getLocationOnScreen();
+	    int relativeX = mousePositionOnScreen.x - panelLocationOnScreen.x;
+	    int relativeY = mousePositionOnScreen.y - panelLocationOnScreen.y;
+	    mousePositionOnPanel = new Point(relativeX, relativeY);
 		
 		//this is here so that if we make hovering over something
 		//change the color of a tile, the change happens, without
@@ -109,9 +121,11 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener, M
 	public void mouseDragged(MouseEvent e) {
 	}
 	@Override
-	public void mouseEntered(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) {
+	}
 	@Override
-	public void mouseExited(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {
+	}
 	@Override
 	public void keyTyped(KeyEvent e) {}
 

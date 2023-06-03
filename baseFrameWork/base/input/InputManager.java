@@ -7,6 +7,7 @@ import java.util.ArrayDeque;
 
 import javax.swing.JPanel;
 
+import base.GameLoop.Direction;
 import base.gameObjects.Tile;
 import base.graphics.GamePanel.PanelType;
 import base.graphics.TileGrid;
@@ -47,7 +48,7 @@ public class InputManager{
 				ExecuteLeftPress();
 			} else if(input.currentInput.contains(InputType.rightpress)) {
 				ExecuteRightPress();
-			} else if(input.currentInput.contains(InputType.keypress)) {
+			} else if(input.currentInput.contains(InputType.keypress) && input.pressedKeys != null) {
 				for (int key : input.pressedKeys) {
 					ExecuteKeyPress(key);
 				}
@@ -76,6 +77,20 @@ public class InputManager{
 		switch (key) {
 			// What comes after KeyEvent.VK_ is the actual key
 			case KeyEvent.VK_W: 
+//				System.out.println("W");
+				Main.gameLoop.MoveCamera(Direction.up);
+				break;
+			case KeyEvent.VK_A: 
+//				System.out.println("A");
+				Main.gameLoop.MoveCamera(Direction.left);
+				break;
+			case KeyEvent.VK_S:
+//				System.out.println("S");
+				Main.gameLoop.MoveCamera(Direction.down);
+				break;
+			case KeyEvent.VK_D: 
+				//System.out.println("D");
+				Main.gameLoop.MoveCamera(Direction.right);
 				break;
 			
 			default:
@@ -148,6 +163,7 @@ public class InputManager{
 			for (Tile tile : currentHoveredTiles) {
 				tile.redsquare.removeComponent();
 			}
+			
 			currentHoveredTiles.clear();
 			currentHoveredTiles.add(Main.tileGrid.tileMap.get(mouseTilePosition));
 			HoverTiles();

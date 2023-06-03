@@ -1,12 +1,13 @@
 package base;
 
 
-import java.awt.Component;
-import base.graphics.GamePanel;
-import java.awt.Container;
-import java.util.ArrayDeque;
+import java.awt.*;
 
-import javax.swing.JPanel;
+
+import base.graphics.GamePanel;
+import java.util.ArrayDeque;
+import java.util.HashMap;
+
 
 import base.gameObjects.GameObject;
 
@@ -19,17 +20,28 @@ import game.Main;
 //I want all our basic methods to edit the game world be stored here
 //so that we can access them later in the Main Class of the game package
 public class GameLoop implements Runnable {
-
+	
 	private Thread gameThread;
 	public GameWindow window;
+	
+	public HashMap<PanelType, GamePanel> panels;
 	
 	public ArrayDeque<GameObject> gameObjects;
 	
 	// if we need to ever add anything based on a specific frame
 	public int fpsCount;
+	
+	public int cameraSpeed = 5;
+	public Point spawnPoint = new Point(400, 400);
+	
+	public enum Direction{
+		up, left, down, right
+	}
 
 	public GameLoop(GameWindow window) {
 		this.window = window;
+		panels = window.getPanels();
+		panels.get(PanelType.MainPanel).setLocation(spawnPoint);
 	}
 
 	public void Start() {
@@ -59,8 +71,9 @@ public class GameLoop implements Runnable {
 			//sudden shift focus and stops listening to our MainPanel 
 			//is is possible that this is inefficient and has to be reallocated
 			//later
-			window.getPanels().get(PanelType.MainPanel).requestFocus();
-			window.getPanels().get(PanelType.MainPanel).inputManager.ReadInputs();
+			
+			panels.get(PanelType.InGameGUI).requestFocus();
+			panels.get(PanelType.InGameGUI).inputManager.ReadInputs();
 			
 			//debug code that displays the layer of every Panel that is currently a component of the Window
 //			Container container = window.getContentPane();
@@ -118,6 +131,29 @@ public class GameLoop implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	
+	
+	public void MoveCamera(Direction direction) {
+		GamePanel mainPanel = panels.get(PanelType.MainPanel);
+		int x = mainPanel.getLocation().x;
+		int y = mainPanel.getLocation().y;
+		switch (direction) {
+			case up: 
+				mainPanel.setLocation(x, y + cameraSpeed);
+				break;
+			case left: 
+				mainPanel.setLocation(x + cameraSpeed, y);
+				break;
+			case down: 
+				mainPanel.setLocation(x, y - cameraSpeed);
+				break;
+			case right: 
+				mainPanel.setLocation(x - cameraSpeed, y);
+				break;
+		}
+		
 	}
 
 	// TODO: Add methods that change the game world on a basic level

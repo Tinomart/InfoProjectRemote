@@ -1,5 +1,6 @@
 package base.graphics;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
 
@@ -36,6 +37,7 @@ public class GUI {
 	
 	private static void startButtonPress(ActionEvent e) {
 		Main.gameWindow.SetPanel(PanelType.MainPanel);
+		Main.gameWindow.SetPanel(PanelType.InGameGUI);
 		Main.gameWindow.SetPanel(PanelType.MainMenu, false);
 	}
 	
