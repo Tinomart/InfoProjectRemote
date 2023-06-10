@@ -18,7 +18,7 @@ public class Main {
 	
 	public final static int FPS = 60;
 
-	private static GamePanel mainPanel = new GamePanel(MAP_WIDTH, MAP_HEIGHT, 0);
+	private static GamePanel mainPanel = new Map(MAP_WIDTH, MAP_HEIGHT, 0);
 	
 	//TODO Adjust Panel sizes if these should be differently sized
 	private static Menu mainMenu = new Menu(SCREEN_WIDTH, SCREEN_HEIGHT, 3);
@@ -35,7 +35,6 @@ public class Main {
 	private static GameRunningManager gameRunningManager = new GameRunningManager(gameLoop);
 	
 	public static void main(String[] args) {
-		tileGrid.FillAllTilesWithDefault(MAP_WIDTH, MAP_HEIGHT);
 		gameRunningManager.StartGame();
 	}
 }

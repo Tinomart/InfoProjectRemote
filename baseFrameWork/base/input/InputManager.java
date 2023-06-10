@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 import base.GameLoop.Direction;
 import base.gameObjects.Tile;
 import base.graphics.GamePanel.PanelType;
-import base.graphics.TileGrid;
 import base.input.Input.InputType;
 import game.Main;
 
@@ -32,7 +31,7 @@ public class InputManager{
 	
 	public void ReadInputs() {
 		
-		//This is the code for continuous Key Holds. E.g Camera movement if user holds wasd
+		//This is the code for continuous Key Holds. E.g. Camera movement if user holds wasd
 		//or when user tries to drag an object or something
 		if(!input.currentInput.isEmpty()) {
 			
@@ -77,19 +76,15 @@ public class InputManager{
 		switch (key) {
 			// What comes after KeyEvent.VK_ is the actual key
 			case KeyEvent.VK_W: 
-//				System.out.println("W");
 				Main.gameLoop.MoveCamera(Direction.up);
 				break;
 			case KeyEvent.VK_A: 
-//				System.out.println("A");
 				Main.gameLoop.MoveCamera(Direction.left);
 				break;
 			case KeyEvent.VK_S:
-//				System.out.println("S");
 				Main.gameLoop.MoveCamera(Direction.down);
 				break;
 			case KeyEvent.VK_D: 
-				//System.out.println("D");
 				Main.gameLoop.MoveCamera(Direction.right);
 				break;
 			
@@ -157,15 +152,24 @@ public class InputManager{
 		//change the cursor size depending on what we have equipped and then take that to read
 		//what tiles are being hovered
 		
+		//calculate MousePosition on our Map, as we only track the mouse position in the window right now
+		int xPositionOnPanel = input.mousePositionInWindow.x + Main.gameLoop.cameraPosition.x;
+		int yPositionOnPanel = input.mousePositionInWindow.y + Main.gameLoop.cameraPosition.y;
+		Point mouseTilePosition = new Point(xPositionOnPanel/Main.TILE_SIZE, yPositionOnPanel/Main.TILE_SIZE);
 		
-		Point mouseTilePosition = new Point(input.mousePositionOnPanel.x/Main.TILE_SIZE, input.mousePositionOnPanel.y/Main.TILE_SIZE);
+		
 		if(!currentHoveredTiles.contains(Main.tileGrid.tileMap.get(mouseTilePosition))) {
+			//remove highlighting redsquare
 			for (Tile tile : currentHoveredTiles) {
 				tile.redsquare.removeComponent();
 			}
 			
+			//remove all previously hovered tiles
 			currentHoveredTiles.clear();
-			currentHoveredTiles.add(Main.tileGrid.tileMap.get(mouseTilePosition));
+			//add the tiles that the mouse is over
+			for (Tile tile : Main.tileGrid.tileMap.get(mouseTilePosition).GetTiles()) {
+				currentHoveredTiles.add(tile);
+			}
 			HoverTiles();
 		}
 	}

@@ -1,13 +1,11 @@
 package base.graphics;
 
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import javax.swing.JPanel;
-
 import base.gameObjects.GameObject;
 import base.input.InputManager;
 import game.Main;
@@ -45,11 +43,14 @@ public class GamePanel extends JPanel {
 		this.drawLayer = drawLayer;
 		InitializePanel();
 		inputManager.AddInputForPanel();
-		System.out.println(this.getBounds());
 	}
 
 	private void InitializePanel() {
 		this.setPreferredSize(new Dimension(panelWidth, panelHeight));
+		
+		//"revalidate" is just something generic that checks all components and updates them
+		//Doesn't hurt after setting the size or ever. It is never wrong and sometimes it
+		//needs to be there to work, so never remove these
 		this.revalidate();
 		//this lets the Panel register key inputs
 		//Important to make sure that the panel can react
@@ -78,23 +79,20 @@ public class GamePanel extends JPanel {
 
 		// assignment of panelTypes to panels
 		for (int i = 0; i < panelTypes.length; i++) {
+			GamePanel panel = panelsToAssign[i];
 			
 			//AddCorrectGUI For Panels that require GUI.
 			switch (panelTypes[i]) {
 				case MainMenu: {
-					GUI.AddMainMenuGUI(panelsToAssign[i]);
+					GUI.AddMainMenuGUI(panel);
 					break;
 				}
 				case PauseMenu: {
-					GUI.AddPauseMenuGUI(panelsToAssign[i]);
+					GUI.AddPauseMenuGUI(panel);
 					break;
 				}
 				case InGameGUI: {
-					GUI.AddInGameGUI(panelsToAssign[i]);
-					break;
-				}
-				case MainPanel: {
-					panelsToAssign[i].setLayout(null);
+					GUI.AddInGameGUI(panel);
 					break;
 				}
 				default:

@@ -3,6 +3,7 @@ package base.gameObjects;
 import base.graphics.GamePanel.PanelType;
 import base.graphics.RedSquareComponent;
 import base.graphics.TileBased;
+import base.graphics.TileGrid;
 import game.Main;
 
 import java.awt.Point;
@@ -10,6 +11,8 @@ import java.util.HashMap;
 
 public class Tile extends GameObject implements TileBased {
 	private Point tilePosition;
+	
+	public TileGrid tileGrid;
 	
 	public Point GetTilePosition() {
 		return tilePosition;
@@ -23,15 +26,16 @@ public class Tile extends GameObject implements TileBased {
 	
 	public RedSquareComponent redsquare;
 	
-	public Tile(Point tilePosition) {
+	public Tile(Point tilePosition, TileGrid tileGrid) {
 		super(new Point(tilePosition.x * Main.TILE_SIZE, tilePosition.y * Main.TILE_SIZE));
 		this.tilePosition = tilePosition;
-		Main.tileGrid.ReplaceTile(tilePosition, this);
+		this.tileGrid = tileGrid;
+		tileGrid.ReplaceTile(tilePosition, this);
 		redsquare = new RedSquareComponent(tilePosition.x, tilePosition.y, Main.TILE_SIZE);
 	}
 	
 	
-
+	//when hovered display the redsquare on the main panel
 	public void OnHover() {
 		Main.gameWindow.getPanels().get(PanelType.MainPanel).add(redsquare);
 		

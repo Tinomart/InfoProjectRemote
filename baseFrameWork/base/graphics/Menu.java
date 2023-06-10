@@ -1,6 +1,11 @@
 package base.graphics;
 
 public class Menu extends GamePanel {
+	//this class is purely here to differentiate
+	//no special implementation is needed but
+	//some different conditions apply for maps, 
+	//which is why we need the differentiation
+	
 
 	/**
 	 * 

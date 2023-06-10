@@ -14,8 +14,6 @@ public class GameRunningManager {
 		gameWindow = gameLoop.window;
 	}
 
-	
-
 	public void StartGame() {
 		gameWindow.SetPanel(PanelType.MainMenu);
 		gameWindow.OpenWindow();

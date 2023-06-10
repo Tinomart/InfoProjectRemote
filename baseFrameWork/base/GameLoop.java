@@ -13,6 +13,7 @@ import base.gameObjects.GameObject;
 
 import base.graphics.GamePanel.PanelType;
 import base.graphics.GameWindow;
+import base.graphics.Map;
 import game.Main;
 
 //What this class does on a basic level is pretty obvious
@@ -25,14 +26,17 @@ public class GameLoop implements Runnable {
 	public GameWindow window;
 	
 	public HashMap<PanelType, GamePanel> panels;
+	private GamePanel mainPanel;
 	
 	public ArrayDeque<GameObject> gameObjects;
 	
 	// if we need to ever add anything based on a specific frame
 	public int fpsCount;
 	
-	public int cameraSpeed = 5;
+	public int cameraSpeed = 4;
+	
 	public Point spawnPoint = new Point(400, 400);
+	public Point cameraPosition = new Point(0, 0);
 	
 	public enum Direction{
 		up, left, down, right
@@ -41,12 +45,26 @@ public class GameLoop implements Runnable {
 	public GameLoop(GameWindow window) {
 		this.window = window;
 		panels = window.getPanels();
-		panels.get(PanelType.MainPanel).setLocation(spawnPoint);
+		mainPanel = panels.get(PanelType.MainPanel);
+		
+		//Move our Camera to the Spawnpoint
+		for (int i = 0; i < spawnPoint.x/cameraSpeed; i++) {
+			MoveCamera(Direction.right);
+		}
+		for (int j = 0; j < spawnPoint.y/cameraSpeed; j++) {
+			MoveCamera(Direction.down);
+		}
 	}
 
 	public void Start() {
+		//start the thread, then start the main loop
 		gameThread = new Thread(this);
 		run();
+	}
+	
+	public void Stop() {
+		//stop the thread, thus stopping the main loop
+		gameThread = null;
 	}
 
 	@Override
@@ -136,25 +154,42 @@ public class GameLoop implements Runnable {
 	
 	
 	public void MoveCamera(Direction direction) {
-		GamePanel mainPanel = panels.get(PanelType.MainPanel);
-		int x = mainPanel.getLocation().x;
-		int y = mainPanel.getLocation().y;
+		mainPanel = panels.get(PanelType.MainPanel);
+		
+		//if the camera is inside the Maps bounds move it in a direction with the cameraSpeed
 		switch (direction) {
 			case up: 
-				mainPanel.setLocation(x, y + cameraSpeed);
+				if(cameraPosition.y - cameraSpeed > 0) {
+					cameraPosition.y -= cameraSpeed;
+				}
 				break;
 			case left: 
-				mainPanel.setLocation(x + cameraSpeed, y);
+				if(cameraPosition.x - cameraSpeed > 0) {
+					cameraPosition.x -= cameraSpeed;
+				}
 				break;
 			case down: 
-				mainPanel.setLocation(x, y - cameraSpeed);
+				
+				if(cameraPosition.y + cameraSpeed + Main.SCREEN_HEIGHT*Main.TILE_SIZE < Main.MAP_HEIGHT*Main.TILE_SIZE) {
+					cameraPosition.y += cameraSpeed;
+				}
 				break;
 			case right: 
-				mainPanel.setLocation(x - cameraSpeed, y);
+				if(cameraPosition.x + cameraSpeed + Main.SCREEN_WIDTH*Main.TILE_SIZE < Main.MAP_WIDTH*Main.TILE_SIZE) {
+					cameraPosition.x += cameraSpeed;
+				}
+				
 				break;
 		}
+		//set the negative location because we are moving the panel beneath the camera, not the actual camera itself, which
+		//means we need to reverse the cameraPosition for the panels position
+		
+		mainPanel.setLocation(-cameraPosition.x, -cameraPosition.y);
+		mainPanel.revalidate();
 		
 	}
+
+	
 
 	// TODO: Add methods that change the game world on a basic level
 	// e.g Create Map, ChangeTile, AddEnemy, AddBuilding, etc.

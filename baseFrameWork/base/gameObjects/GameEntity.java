@@ -13,7 +13,7 @@ public class GameEntity implements Runnable, Positional {
 	
 	private Thread objectThread;
 
-	// by default the start method always executes when the entity gets set to active
+	// by default the start method always executes when the entity get created
 	private boolean executeStart = true;
 	
 	private boolean active = true;
@@ -29,7 +29,7 @@ public class GameEntity implements Runnable, Positional {
 	@Override
 	public void run() {
 		// Sometimes we dont want an object that gets reactivated to do its start method
-		// again
+		// again so thats why the if condition
 		if (executeStart) {
 			Start();
 		}
@@ -65,7 +65,7 @@ public class GameEntity implements Runnable, Positional {
 		executeStart = doRestart;
 	}
 	
-	//happens every frame is entity is active
+	//happens every frame if entity is active
 	public void Update() {};
 
 	//happens once if the entity is activated
@@ -73,8 +73,26 @@ public class GameEntity implements Runnable, Positional {
 
 	@Override
 	public Point GetPosition(Corner corner) {
-		// TODO Auto-generated method stub
-		return position;
+		
+		//TODO: The return in the statement will be based off the sprite's
+		//width and height, so until the proper sprite system is implemented
+		//this will stay this way
+		switch (corner) {
+			case topleft: {
+				return position;
+			}
+			case topright: {
+				return position;
+			}
+			case bottomleft: {
+				return position;
+			}
+			case bottomright: {
+				return position;
+			}
+			default:
+				return position;
+		}
 	}
 
 	

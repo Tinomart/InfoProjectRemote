@@ -1,6 +1,5 @@
 package base.graphics;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
 

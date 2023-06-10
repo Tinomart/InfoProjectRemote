@@ -2,8 +2,11 @@ package base.gameObjects;
 
 import base.graphics.TileBased;
 
-public abstract class Spell extends GameObject implements TileBased{
-	
+public abstract class Spell extends GameObject implements TileBased {
+	// TODO this Class will be used for our Spells (surpise surprise)
+	// It is abstract because there is no need for any generic spell if we want one
+	// it should be a specific child of this class
+
 	public Tile mainTile;
 	public Tile[] tiles;
 

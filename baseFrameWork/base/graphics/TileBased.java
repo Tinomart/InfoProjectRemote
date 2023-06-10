@@ -1,8 +1,5 @@
 package base.graphics;
 
-import java.awt.Point;
-import java.util.HashMap;
-
 import base.gameObjects.Tile;
 
 public interface TileBased {
