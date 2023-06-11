@@ -94,6 +94,13 @@ public class GameEntity implements Runnable, Positional {
 				return position;
 		}
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder stringBuilder = new StringBuilder("");
+		stringBuilder.append("base.gameObjects.").append(getClass().getSimpleName()).append(",").append(GetPosition().x).append( ";").append(GetPosition().y).append(" ");
+		return stringBuilder.toString();
+	}
 
 	
 }

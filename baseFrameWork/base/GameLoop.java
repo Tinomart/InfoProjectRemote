@@ -7,15 +7,19 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import base.graphics.GamePanel;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 
 import base.gameObjects.GameObject;
-
 import base.graphics.GamePanel.PanelType;
 import base.graphics.GameWindow;
 import base.graphics.Menu;
+import base.graphics.TileGrid;
 import game.Main;
 
 //What this class does on a basic level is pretty obvious
@@ -30,10 +34,14 @@ public class GameLoop implements Runnable {
 	public HashMap<PanelType, GamePanel> panels;
 	private GamePanel mainPanel;
 	
-	public ArrayDeque<GameObject> gameObjects;
+	public ArrayDeque<GameObject> gameObjects = new ArrayDeque<GameObject>();
 	
 	// if we need to ever add anything based on a specific frame
 	public int fpsCount;
+	// the game will save every time this many seconds have passed
+	// file reading and writing operations are quite resource intensive, so
+	//I would suggest keeping this at the very lowest at 60 seconds;
+	private int autoSaveIntervallInSeconds = 300;
 	
 	public int cameraSpeed = 4;
 	
@@ -48,6 +56,8 @@ public class GameLoop implements Runnable {
 		this.window = window;
 		panels = window.getPanels();
 		mainPanel = panels.get(PanelType.MainPanel);
+		
+		gameObjects.add(new GameObject(new Point(5,5)));
 		
 		SetClosingFunctionality(window);
 		SetMenuResizability(window);
@@ -118,13 +128,14 @@ public class GameLoop implements Runnable {
 
 	@Override
 	public void run() {
+		Load();
 		// main thread(happens very frame)
 		while (gameThread != null) {
 			ExecuteEveryFrame(gameThread);
 			
 			
 			//this is part of the fps count, that I am still unsure we need
-//			fpsCount += 1;
+			fpsCount += 1;
 //			if(fpsCount >= 60) {
 //				fpsCount = 1;
 //			}
@@ -142,6 +153,7 @@ public class GameLoop implements Runnable {
 			panels.get(PanelType.InGameGUI).requestFocus();
 			panels.get(PanelType.InGameGUI).inputManager.ReadInputs();
 			
+			
 			//debug code that displays the layer of every Panel that is currently a component of the Window
 //			Container container = window.getContentPane();
 //			
@@ -152,7 +164,10 @@ public class GameLoop implements Runnable {
 //				}
 //			}
 			
-			
+			if(fpsCount >= autoSaveIntervallInSeconds*60) {
+				Save();
+				fpsCount = 0;
+			}
 			
 			
 			
@@ -235,6 +250,113 @@ public class GameLoop implements Runnable {
 		mainPanel.setLocation(-cameraPosition.x, -cameraPosition.y);
 		mainPanel.revalidate();
 		
+	}
+	
+	public void Save() {
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter("SaveData"));
+			BufferedReader reader = new BufferedReader(new FileReader("SaveData"));
+			String fileString = "";
+			String readLine = reader.readLine();
+			if(readLine != null) {
+				fileString = readLine;
+			}
+			for (GameObject gameObject : gameObjects) {
+				String objectString = gameObject.toString();
+				if(!fileString.contains(objectString)) {
+					writer.write(objectString);
+				}
+			}
+			writer.close();
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void Load() {
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("SaveData"));
+			String fileString = "";
+			String readLine = reader.readLine();
+			if(readLine != null) {
+				fileString = readLine;				
+			}
+			String[] gameObjectsStrings = fileString.split(" ");
+			for (String gameObjectString : gameObjectsStrings) {
+				GameObject createdObject = CreateGameObject(gameObjectString);
+				if(createdObject != null) {
+					gameObjects.add(createdObject);
+				}
+				
+			}
+			reader.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+
+	}
+	public GameObject CreateGameObject(String gameObjectString) {
+		try {
+			String[] argumentsString = gameObjectString.split(",");
+//			for (String string : argumentsString) {
+//				System.out.println(string);
+//			}
+			Class<?> gameObjectClass = Class.forName(argumentsString[0]);
+			Constructor<?>[] gameObjectConstructors = gameObjectClass.getConstructors();
+			Class<?>[] parameterTypes;
+			Object[] arguments;
+			for (Constructor<?> constructor : gameObjectConstructors) {
+				int parameterCount = constructor.getParameterCount();
+				parameterTypes = constructor.getParameterTypes();
+				if(parameterCount + 1 == argumentsString.length) {
+					parameterTypes = constructor.getParameterTypes();
+					arguments = new Object[parameterTypes.length];
+					for (int i = 1; i < argumentsString.length; i++) {
+						arguments[i-1] = convertStringToType(argumentsString[i], parameterTypes[i-1]);
+					}
+					return (GameObject) constructor.newInstance(arguments);
+				}
+			}
+		} catch (ClassNotFoundException | InstantiationException |
+	            IllegalAccessException  e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+		
+	}
+	public Object convertStringToType(String string, Class<?> type) {
+		if(type == int.class) {
+			return Integer.parseInt(string);
+		} else if (type == double.class) {
+			return Double.parseDouble(string);
+		} else if (type == String.class) {
+			return string;
+		} else if (type == Point.class) {
+			String[] coords = string.split(";");
+			return new Point(Integer.parseInt(coords[0]), Integer.parseInt(coords[1]));
+		}else if (type == TileGrid.class) {
+			if(Main.tileGrid != null) {
+				return Main.tileGrid;
+			} else {
+				Main.tileGrid = new TileGrid(Main.MAP_WIDTH, Main.MAP_HEIGHT, Main.TILE_SIZE, this);
+				return Main.tileGrid;
+			} 
+		} else if (type == GameWindow.class) {
+			return window;
+		} else {
+			return CreateGameObject(string);
+		}
 	}
 
 	
