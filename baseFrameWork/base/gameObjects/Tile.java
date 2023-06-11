@@ -56,6 +56,8 @@ public class Tile extends GameObject implements TileBased {
 	public Tile[] GetTiles() {
 		return new Tile[]{this};
 	}
+	
+	//Tile has one more argument than GameEntity, so it needs to have a new toString that also returns the value of its bonus argument, which is tileGrid
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder("");
 		stringBuilder.append("base.gameObjects.").append(getClass().getSimpleName()).append(",").append(GetPosition().x/tileGrid.tileSize).append( ";").append(GetPosition().y/tileGrid.tileSize).append(",").append("TileGrid").append(" ");

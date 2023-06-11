@@ -94,7 +94,7 @@ public class GameEntity implements Runnable, Positional {
 				return position;
 		}
 	}
-	
+	//the toString will return all information that is needed to reproduce the Gameentity, so that it can be saved later. that is its type and all its arguments
 	@Override
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder("");
