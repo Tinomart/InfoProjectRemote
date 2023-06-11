@@ -28,9 +28,9 @@ public class Main {
 	//we need to set panels in some contexts, so this has to be public;
 	public static GameWindow gameWindow = new GameWindow(GAME_TITLE, GamePanel.AssignAllPanels(mainPanel, mainMenu, pauseMenu, inGameGUI));
 	
-	public static TileGrid tileGrid = new TileGrid(TILE_SIZE, MAP_WIDTH, MAP_HEIGHT);
-	
 	public static GameLoop gameLoop = new GameLoop(gameWindow);
+	
+	public static TileGrid tileGrid = new TileGrid(TILE_SIZE, MAP_WIDTH, MAP_HEIGHT, gameLoop);
 	
 	private static GameRunningManager gameRunningManager = new GameRunningManager(gameLoop);
 	

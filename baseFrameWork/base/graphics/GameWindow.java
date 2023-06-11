@@ -1,17 +1,11 @@
 package base.graphics;
 
-import java.awt.Dimension;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.*;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
 import base.graphics.GamePanel.PanelType;
-import game.Main;
 
 public class GameWindow extends JFrame {
 
@@ -32,39 +26,6 @@ public class GameWindow extends JFrame {
 		// this is to get the Panels it has to print as some would be active and others
 		// would not
 		activePanels = new ArrayDeque<>();
-		SetMenuResizability();
-		SetClosingFunctionality();
-	}
-
-	// stops the gameloop and closes the program if the user exist the window
-	private void SetClosingFunctionality() {
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				Main.gameLoop.Stop();
-				System.exit(0);
-			}
-		});
-
-	}
-
-	// This had to be its own thing, because for some reason the basic resize
-	// implementation was failing me, so I had to write my own.
-	private void SetMenuResizability() {
-		GameWindow window = this;
-
-		window.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				for (GamePanel menu : window.getPanels().values()) {
-					if (menu instanceof Menu) {
-						menu.setSize(new Dimension(window.getSize()));
-						menu.repaint();
-						menu.revalidate();
-					}
-				}
-			}
-		});
 	}
 
 	public void InitializeScreen() {

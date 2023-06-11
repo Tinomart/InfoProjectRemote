@@ -167,8 +167,10 @@ public class InputManager{
 			//remove all previously hovered tiles
 			currentHoveredTiles.clear();
 			//add the tiles that the mouse is over
-			for (Tile tile : Main.tileGrid.tileMap.get(mouseTilePosition).GetTiles()) {
-				currentHoveredTiles.add(tile);
+			if(Main.tileGrid.tileMap.get(mouseTilePosition)!= null) {
+				for (Tile tile : Main.tileGrid.tileMap.get(mouseTilePosition).GetTiles()) {
+					currentHoveredTiles.add(tile);
+				}
 			}
 			HoverTiles();
 		}

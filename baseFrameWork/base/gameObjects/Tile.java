@@ -37,7 +37,7 @@ public class Tile extends GameObject implements TileBased {
 	
 	//when hovered display the redsquare on the main panel
 	public void OnHover() {
-		Main.gameWindow.getPanels().get(PanelType.MainPanel).add(redsquare);
+		tileGrid.gamelLoop.window.getPanels().get(PanelType.MainPanel).add(redsquare);
 		
 	}
 	

@@ -2,18 +2,20 @@ package base;
 
 
 import java.awt.*;
-
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import base.graphics.GamePanel;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 
-
 import base.gameObjects.GameObject;
 
 import base.graphics.GamePanel.PanelType;
 import base.graphics.GameWindow;
-import base.graphics.Map;
+import base.graphics.Menu;
 import game.Main;
 
 //What this class does on a basic level is pretty obvious
@@ -47,6 +49,9 @@ public class GameLoop implements Runnable {
 		panels = window.getPanels();
 		mainPanel = panels.get(PanelType.MainPanel);
 		
+		SetClosingFunctionality(window);
+		SetMenuResizability(window);
+		
 		//Move our Camera to the Spawnpoint
 		for (int i = 0; i < spawnPoint.x/cameraSpeed; i++) {
 			MoveCamera(Direction.right);
@@ -55,7 +60,51 @@ public class GameLoop implements Runnable {
 			MoveCamera(Direction.down);
 		}
 	}
+	// This had to be its own thing, because for some reason the basic resize
+	// implementation was failing me, so I had to write my own.
+	
+	private void SetMenuResizability(GameWindow window) {
+		GameLoop gameLoop = this;
 
+		window.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				for (GamePanel menu : window.getPanels().values()) {
+					if (menu instanceof Menu) {
+						menu.setSize(new Dimension(window.getSize()));
+						menu.repaint();
+						menu.revalidate();
+						
+						//this fixes a bug where the player was able to have a small window, move to the edge of the screen and resize the window to the 
+						int outOfBoundsWidth = gameLoop.cameraPosition.x + window.getBounds().width - Main.MAP_WIDTH * Main.TILE_SIZE;
+						int outOfBoundsHeight = gameLoop.cameraPosition.y + window.getBounds().height - Main.MAP_HEIGHT * Main.TILE_SIZE;
+						if(outOfBoundsWidth > 0 || outOfBoundsHeight > 0) {
+							for (int i = 0; i < (outOfBoundsWidth/Main.gameLoop.cameraSpeed) + 1; i++) {
+								gameLoop.MoveCamera(Direction.left);
+							}
+							for (int i = 0; i < (outOfBoundsHeight/Main.gameLoop.cameraSpeed) + 1; i++) {
+								gameLoop.MoveCamera(Direction.up);
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+	
+	// stops the gameloop and closes the program if the user exits the window
+
+	private void SetClosingFunctionality(Window window) {
+		GameLoop gameLoop = this;
+		window.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				gameLoop.Stop();
+				System.exit(0);
+			}
+		});
+
+	}
 	public void Start() {
 		//start the thread, then start the main loop
 		gameThread = new Thread(this);
@@ -169,13 +218,12 @@ public class GameLoop implements Runnable {
 				}
 				break;
 			case down: 
-				
-				if(cameraPosition.y + cameraSpeed + Main.SCREEN_HEIGHT*Main.TILE_SIZE < Main.MAP_HEIGHT*Main.TILE_SIZE) {
+				if(cameraPosition.y + cameraSpeed + Main.gameWindow.getBounds().height < Main.MAP_HEIGHT*Main.TILE_SIZE) {
 					cameraPosition.y += cameraSpeed;
 				}
 				break;
 			case right: 
-				if(cameraPosition.x + cameraSpeed + Main.SCREEN_WIDTH*Main.TILE_SIZE < Main.MAP_WIDTH*Main.TILE_SIZE) {
+				if(cameraPosition.x + cameraSpeed + Main.gameWindow.getBounds().width < Main.MAP_WIDTH*Main.TILE_SIZE) {
 					cameraPosition.x += cameraSpeed;
 				}
 				

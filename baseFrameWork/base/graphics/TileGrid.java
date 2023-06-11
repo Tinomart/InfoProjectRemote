@@ -3,6 +3,7 @@ package base.graphics;
 import java.awt.Point;
 import java.util.HashMap;
 
+import base.GameLoop;
 import base.gameObjects.Tile;
 
 	//TODO here we should add all the basic tile logic
@@ -11,9 +12,11 @@ import base.gameObjects.Tile;
 
 public class TileGrid {
 	
-	public HashMap<Point, Tile> tileMap = new HashMap<Point, Tile>();;
+	public HashMap<Point, Tile> tileMap = new HashMap<Point, Tile>();
+	public GameLoop gamelLoop;
 	
-	public TileGrid(int tileSize, int tileMapWidth, int tileMapHeight) {
+	public TileGrid(int tileSize, int tileMapWidth, int tileMapHeight, GameLoop gameLoop) {
+		this.gamelLoop = gameLoop;
 		FillAllTilesWithDefault(tileMapWidth, tileMapHeight);
 	}
 
