@@ -18,6 +18,7 @@ import base.gameObjects.GameObject;
 import base.graphics.GamePanel.PanelType;
 import base.graphics.GameWindow;
 import base.graphics.Menu;
+import base.graphics.Sprite;
 import base.graphics.TileGrid;
 import game.Main;
 
@@ -56,7 +57,7 @@ public class GameLoop implements Runnable {
 		panels = window.getPanels();
 		mainPanel = panels.get(PanelType.MainPanel);
 
-		gameObjects.add(new GameObject(new Point(5, 5)));
+		gameObjects.add(new GameObject(new Point(5, 5), new Sprite(new Point(0,0))));
 
 		SetClosingFunctionality(window);
 		SetMenuResizability(window);
@@ -414,7 +415,15 @@ public class GameLoop implements Runnable {
 			// GameLoop has access to Main.gamewindow with the window field, because that is
 			// the parameter is was given, so we just return the Main window with this
 			return window;
-		} else {
+		} else if (type == Sprite.class) {
+			
+			// points are represented by 2 values seperated with a ";" So we split them to
+						// get a String array of the two seperate values
+						String[] coords = string.split(";");
+						// we return a point with the values of the first and second coordinate as the
+						// first and second argument of our returned point
+						return new Sprite( new Point(Integer.parseInt(coords[0]), Integer.parseInt(coords[1])));
+		}else {
 			// if the parameter is a gameObject we just create that gameObject. this will be
 			// like a bottom up solution, where only the lower Objects will be saved, but
 			// they contain all the information about their arguments, making them create

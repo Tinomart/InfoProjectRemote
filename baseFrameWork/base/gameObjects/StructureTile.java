@@ -2,6 +2,7 @@ package base.gameObjects;
 
 import java.awt.Point;
 
+import base.graphics.Sprite;
 import base.graphics.TileGrid;
 
 public class StructureTile extends Tile {
@@ -22,8 +23,8 @@ public class StructureTile extends Tile {
 
 	private Structure structure;
 
-	public StructureTile(Point tilePosition, Structure structure, TileGrid tileGrid) {
-		super(tilePosition, tileGrid);
+	public StructureTile(Point tilePosition, Structure structure, TileGrid tileGrid, Sprite sprite) {
+		super(tilePosition, tileGrid, sprite);
 		this.structure = structure;
 	}
 

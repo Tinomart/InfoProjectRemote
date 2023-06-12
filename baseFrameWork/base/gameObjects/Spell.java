@@ -1,5 +1,6 @@
 package base.gameObjects;
 
+import base.graphics.Sprite;
 import base.graphics.TileBased;
 
 public abstract class Spell extends GameObject implements TileBased {
@@ -10,8 +11,8 @@ public abstract class Spell extends GameObject implements TileBased {
 	public Tile mainTile;
 	public Tile[] tiles;
 
-	public Spell(Tile[] tiles, Tile mainTile) {
-		super(mainTile.GetPosition());
+	public Spell(Tile[] tiles, Tile mainTile,Sprite sprite) {
+		super(mainTile.GetPosition(), sprite);
 		this.mainTile = mainTile;
 		this.tiles = tiles;
 	}

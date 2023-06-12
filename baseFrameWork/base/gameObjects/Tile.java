@@ -4,6 +4,7 @@ import base.graphics.GamePanel;
 import base.graphics.GamePanel.PanelType;
 
 import base.graphics.RedSquareComponent;
+import base.graphics.Sprite;
 import base.graphics.TileBased;
 import base.graphics.TileGrid;
 import game.Main;
@@ -26,8 +27,8 @@ public class Tile extends GameObject implements TileBased {
 	
 	public RedSquareComponent redsquare;
 	
-	public Tile(Point tilePosition, TileGrid tileGrid) {
-		super(new Point(tilePosition.x * Main.TILE_SIZE, tilePosition.y * Main.TILE_SIZE));
+	public Tile(Point tilePosition, TileGrid tileGrid, Sprite sprite) {
+		super(new Point(tilePosition.x * Main.TILE_SIZE, tilePosition.y * Main.TILE_SIZE), sprite);
 		this.tileGrid = tileGrid;
 		this.tilePosition = tilePosition;
 		tileGrid.ReplaceTile(tilePosition, this);

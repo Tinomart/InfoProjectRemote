@@ -1,5 +1,6 @@
 package base.gameObjects;
 
+import base.graphics.Sprite;
 import base.graphics.TileBased;
 
 public abstract class Structure extends GameObject implements TileBased {
@@ -13,8 +14,8 @@ public abstract class Structure extends GameObject implements TileBased {
 
 	// The main tile is what determines the Position so it is determined as the
 	// positional argument of the superclass of GameObject
-	public Structure(Tile[] tiles, Tile mainTile) {
-		super(mainTile.GetPosition());
+	public Structure(Tile[] tiles, Tile mainTile, Sprite sprite) {
+		super(mainTile.GetPosition(), sprite);
 		this.mainTile = mainTile;
 		this.tiles = tiles;
 	}
