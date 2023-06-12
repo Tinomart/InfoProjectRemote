@@ -19,7 +19,7 @@ public class GameObject extends GameEntity implements Drawable {
 		this.sprite = sprite;
 		panelToDrawOn = GamePanel.PanelType.MainPanel;
 		
-		// wird in new Sprite executed: new GameObject(new Point(3,5),new Sprite(1,2));
+
 	}
 
 	@Override
