@@ -41,7 +41,7 @@ public class GameLoop implements Runnable {
 	// the game will save every time this many seconds have passed
 	// file reading and writing operations are quite resource intensive, so
 	// I would suggest keeping this at the very lowest at 60 seconds;
-	private int autoSaveIntervallInSeconds = 300;
+	private int autoSaveIntervallInSeconds = 4;
 
 	public int cameraSpeed = 4;
 
@@ -172,9 +172,9 @@ public class GameLoop implements Runnable {
 				Save();
 				fpsCount = 0;
 			}
-
+			DrawGameObjects();
 		}
-
+		
 	}
 
 	private void DrawGameObjects() {
@@ -264,28 +264,17 @@ public class GameLoop implements Runnable {
 			// readers and writers to change our file and retrieve information for it, we
 			// need to know what is already in the file so that we dont accidentily
 			// duplicate suff
-			BufferedWriter writer = new BufferedWriter(new FileWriter("SaveData"));
-			BufferedReader reader = new BufferedReader(new FileReader("SaveData"));
-			String fileString = "";
-			String readLine = reader.readLine();
-
-			// so that we can save, even if the file is empty
-			if (readLine != null) {
-				fileString = readLine;
-			}
+			BufferedWriter writer = new BufferedWriter(new FileWriter("SaveData"));		
 
 			// if the file does not yet contain the gameObject we are trying to save, write
 			// the gameObjects toString into the file
 			for (GameObject gameObject : gameObjects) {
 				String objectString = gameObject.toString();
-				if (!fileString.contains(objectString)) {
-					writer.write(objectString);
-				}
+				writer.write(objectString);	
 			}
 			// this needs to be here because java is angry if it isn't. No clue why we need
 			// it
 			writer.close();
-			reader.close();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -315,9 +304,9 @@ public class GameLoop implements Runnable {
 			// successfully be created = is not null
 			for (String gameObjectString : gameObjectsStrings) {
 				GameObject createdObject = CreateGameObject(gameObjectString);
-				if (createdObject != null) {
-					gameObjects.add(createdObject);
-				}
+//				if(!gameObjects.contains(createdObject)) {
+//					gameObjects.add(createdObject);
+//				}
 
 			}
 			reader.close();
@@ -417,6 +406,7 @@ public class GameLoop implements Runnable {
 			return window;
 		} else if (type == Sprite.class) {
 			
+			
 			// points are represented by 2 values seperated with a ";" So we split them to
 						// get a String array of the two seperate values
 						String[] coords = string.split(";");
@@ -424,11 +414,13 @@ public class GameLoop implements Runnable {
 						// first and second argument of our returned point
 						return new Sprite( new Point(Integer.parseInt(coords[0]), Integer.parseInt(coords[1])));
 		}else {
-			// if the parameter is a gameObject we just create that gameObject. this will be
-			// like a bottom up solution, where only the lower Objects will be saved, but
-			// they contain all the information about their arguments, making them create
-			// their "parent" basically not in the context of inheritance but access
-			return CreateGameObject(string);
+			GameObject createdGameObject = CreateGameObject(string);
+            for (GameObject gameObject : gameObjects) {
+                if(gameObject == createdGameObject || (gameObject.GetPosition().x == createdGameObject.GetPosition().x && gameObject.GetPosition().y == createdGameObject.GetPosition().y && gameObject.getClass() == createdGameObject.getClass())) {
+                    return gameObject;
+                }
+            }
+            return createdGameObject;
 		}
 	}
 

@@ -30,7 +30,7 @@ public class TileGrid {
 //	public void FillAllTilesWithDefault(int tileMapWidth, int tileMapHeight) {
 //		for (int i = 0; i < tileMapWidth; i++) {
 //			for (int k = 0; k < tileMapHeight; k++) {
-//				new Tile(new Point(i, k), this);
+//				new Tile(new Point(i, k), this,new Sprite(new Point(0,0)));
 //			}
 //		}
 //	}

@@ -44,6 +44,7 @@ public class GameObject extends GameEntity implements Drawable {
 		if(isActive()) {
 			//TODO Add code that draws the sprite for the GameObject to the Correct GamePanel
 			//obviously only possible after a sprite system is implemented
+			System.out.println("Moin");
 		}
 	}
 	@Override
