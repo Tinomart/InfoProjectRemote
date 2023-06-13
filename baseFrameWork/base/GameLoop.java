@@ -30,6 +30,8 @@ public class GameLoop implements Runnable {
 
 	private Thread gameThread;
 	public GameWindow window;
+	
+	public TileGrid tileGrid;
 
 	public HashMap<PanelType, GamePanel> panels;
 	private GamePanel mainPanel;
@@ -392,13 +394,13 @@ public class GameLoop implements Runnable {
 			// this is pretty awkward but I couldnt find a better solution with how the
 			// tiles should communicate with the rest of the code and how much access they
 			// have to have
-			if (Main.tileGrid != null) {
+			if (tileGrid != null) {
 				// if we defined a Main.tileGrid, the tilegrid will be the one in the main class
-				return Main.tileGrid;
+				return tileGrid;
 			} else {
 				// if not then we create a new one with the basic finals
-				Main.tileGrid = new TileGrid(Main.MAP_WIDTH, Main.MAP_HEIGHT, Main.TILE_SIZE, this);
-				return Main.tileGrid;
+				tileGrid = new TileGrid(Main.MAP_WIDTH, Main.MAP_HEIGHT, Main.TILE_SIZE, this);
+				return tileGrid;
 			}
 		} else if (type == GameWindow.class) {
 			// GameLoop has access to Main.gamewindow with the window field, because that is

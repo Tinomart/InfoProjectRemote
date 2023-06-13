@@ -20,6 +20,7 @@ public class TileGrid {
 	
 	public TileGrid(int tileSize, int tileMapWidth, int tileMapHeight, GameLoop gameLoop) {
 		this.gameLoop = gameLoop;
+		gameLoop.tileGrid = this;
 		this.tileSize = tileSize;
 		this.tileMapWidth = tileMapWidth;
 		this.tileMapHeight = tileMapHeight;
