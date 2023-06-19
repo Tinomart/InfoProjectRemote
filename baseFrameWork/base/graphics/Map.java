@@ -41,6 +41,8 @@ public class Map extends GamePanel {
 		// though we don't have any sprites or anything working, remove once the sprites
 		// are working
 		add(new RedSquareComponent(15, 15, Main.TILE_SIZE * 3));
+		
+		
 	}
 
 }

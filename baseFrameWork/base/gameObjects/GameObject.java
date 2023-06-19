@@ -1,10 +1,24 @@
 package base.gameObjects;
 
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import java.io.IOException;
 
 import base.graphics.Drawable;
 import base.graphics.GamePanel;
 import base.graphics.Sprite;
+import base.graphics.TileGrid;
+
+import java.io.File;
+import java.io.FileInputStream;
+
+import game.Main;
 
 public class GameObject extends GameEntity implements Drawable {
 	
@@ -12,16 +26,39 @@ public class GameObject extends GameEntity implements Drawable {
 
 	public Sprite sprite;
 	
+	GamePanel gp;
+	
+	//we need this array for loading and implementing the map tiles later on (ca. min 15)
+//	Tile[] tile;
+	
+	public String imagePath;
+	
 	public GameObject(Point position, Sprite sprite) {
 		// We want GameObjects to be drawn on the main panel only since they are not 
 		//part of a menu or some special pop up
 		super(position);
 		this.sprite = sprite;
 		panelToDrawOn = GamePanel.PanelType.MainPanel;
+		sprite.imagePath = "res/Test.png";
+//		sprite.loadImage(sprite.imagePath);
 		
-
+//		GameObject gameObj = new GameObject(position, sprite);
+//		Sprite sprite1 = new Sprite(position);
+		
+//		this.gp = gp;
+//		tile = new Tile[10];	//the 10 can be changed, depends how many different tile arts we have
+	
 	}
 
+
+
+
+
+
+
+	
+	
+	
 	@Override
 	public void Update() {
 		// TODO Auto-generated method stub
@@ -38,19 +75,67 @@ public class GameObject extends GameEntity implements Drawable {
 	public GamePanel.PanelType getPanelToDrawOn() {
 		return panelToDrawOn;
 	}
-
-	@Override
-	public void Draw() {
+	
+//	@Override
+//	public void Draw(GamePanel gamePanel) {
+//		if(isActive()) {
+//			Graphics2D g2d = (Graphics2D) sprite.getImage().getGraphics();
+//			g2d.drawImage(sprite.getImage(), position.x, position.y, sprite.size.x, sprite.size.y, gamePanel);
+//	            
+//			
+//			//TODO Add code that draws the sprite for the GameObject to the Correct GamePanel
+//			//obviously only possible after a sprite system is implemented
+//				
+//			g2d.dispose();
+//	        
+//		}
+//	}
+	
+	public void draw(Graphics graphics) {
 		if(isActive()) {
-			//TODO Add code that draws the sprite for the GameObject to the Correct GamePanel
-			//obviously only possible after a sprite system is implemented
+
+				graphics.drawImage(sprite.getImage(),position.x, position.y, sprite.size.x, sprite.size.y, null);			
+				
+			}
 			
-		}
 	}
+	
+//	public void draw(Graphics graphics) {
+//		if(isActive()) {
+//			
+//			
+//			int col = 0;
+//			int row = 0;
+//			int x = 0;
+//			int y = 0;
+//			
+//			
+//			while(col < Main.MAP_HEIGHT && row < Main.MAP_WIDTH) {
+//				
+//				graphics.drawImage(tile[0].sprite.getImage(), x, y, Main.TILE_SIZE, Main.TILE_SIZE, null);
+//				
+//				col ++;
+//				x += sprite.size.x;
+//				
+//				if(col == Main.MAP_HEIGHT) {
+//					col = 0;
+//					x = 0;
+//					row++;
+//					y += sprite.size.x;
+//				}
+//			}
+//			
+//		}
+		
+	
+
+
 	@Override
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder("");
 		stringBuilder.append("base.gameObjects.").append(getClass().getSimpleName()).append(",").append(GetPosition().x).append( ";").append(GetPosition().y).append(",").append(sprite.size.x).append(";").append(sprite.size.y).append(" ");
 		return stringBuilder.toString();
 	}
+
+	
 }

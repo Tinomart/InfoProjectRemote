@@ -1,10 +1,17 @@
 package base.graphics;
 
 import java.awt.Dimension;
+import base.gameObjects.Tile;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.HashMap;
+
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import base.gameObjects.GameObject;
 import base.input.InputManager;
@@ -26,13 +33,20 @@ public class GamePanel extends JPanel {
 		InGameGUI
 	}
 	
-	public ArrayDeque<GameObject> addedObjects;
+	
+	public ArrayDeque<GameObject> addedObjects= new ArrayDeque<GameObject>();
 	public InputManager inputManager = new InputManager(this);
 
 	private int panelWidth;
 	private int panelHeight;
 	
 	public int drawLayer;
+	
+//	private BufferedImage image;
+	
+//	GameObject gameObj = new GameObject(new Point(0, 0), new Sprite(new Point ( 0, 0)));
+//	Tile tile = new Tile(new Point(0, 0), Main.tileGrid, new Sprite(new Point ( 0, 0)));
+	
 
 	// suggested by eclipse to do to avoid warning
 	private static final long serialVersionUID = 1L;
@@ -43,6 +57,12 @@ public class GamePanel extends JPanel {
 		this.drawLayer = drawLayer;
 		InitializePanel();
 		inputManager.AddInputForPanel();
+		
+//		try {
+//            image = ImageIO.read(new File("C:\\Users\\Daniel\\Desktop\\Kraken\\InfoProjectRemote\\PNG\\Test.png"));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 	}
 
 	private void InitializePanel() {
@@ -108,14 +128,25 @@ public class GamePanel extends JPanel {
 		return panels;
 	}
 	
+	private void DrawGameObjects(ArrayDeque<GameObject> gameObjects, Graphics graphics) {
+
+		for (GameObject gameObject : gameObjects) {
+			gameObject.draw(graphics);
+		}
+	}
 	public void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 	    
 	    Graphics2D graphics2D = (Graphics2D) graphics.create();
 	    
+//	    Graphics2D graphics2D = (Graphics2D) graphics;
+	    
+//	    tile.draw(graphics);
+	    
+	    DrawGameObjects(addedObjects, graphics2D);
 	    // to avoid paint trails of object that is being painted every frame
 	    
 	    graphics2D.dispose();
 	}
-
+	
 }

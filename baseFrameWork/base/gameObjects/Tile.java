@@ -9,11 +9,16 @@ import base.graphics.TileBased;
 import base.graphics.TileGrid;
 import game.Main;
 
+import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.HashMap;
 
+import javax.imageio.ImageIO;
+
 public class Tile extends GameObject implements TileBased {
-	private Point tilePosition;
+	public Point tilePosition;
 	
 	public TileGrid tileGrid;
 	
@@ -21,24 +26,66 @@ public class Tile extends GameObject implements TileBased {
 	
 	public HashMap<Point, Tile> tileMap;
 	
+	
+	public Sprite sprite;
 	//There still needs to be a sprite field and have the sprite field be initialized in the constructor with an argument
 	//The redSquare is the very, very basic implementation of the hovering feature and could be replaced later
 	//if we find it unfitting
 	
 	public RedSquareComponent redsquare;
+
+	
 	
 	public Tile(Point tilePosition, TileGrid tileGrid, Sprite sprite) {
 		super(new Point(tilePosition.x * Main.TILE_SIZE, tilePosition.y * Main.TILE_SIZE), sprite);
 		this.tileGrid = tileGrid;
 		this.tilePosition = tilePosition;
-		tileGrid.ReplaceTile(tilePosition, this);
+		tileGrid.replaceTile(tilePosition, this);
 		mainPanel = tileGrid.gameLoop.window.getPanels().get(PanelType.MainPanel);
 		redsquare = new RedSquareComponent(tilePosition.x, tilePosition.y, Main.TILE_SIZE);
+		
+		this.sprite = sprite;
 	}
 	
 	
+//public void getTileImage() {
+//		
+//		try {
+//			
+//			//depends on how many blockarten we have, just copy and paste the follow lines and change the file
+//			
+//			sprite.setImage(ImageIO.read(getClass().getResourceAsStream("res/player/Test.png")));
+////			tile[0] = new Tile(position, Main.tileGrid, sprite);
+////			tile[0].sprite.setImage(ImageIO.read(getClass().getResourceAsStream("res/player/Test.png")));
+//			
+////			File file = new File("res/player/Test.png");
+////            FileInputStream fis = new FileInputStream(file);
+////            tile[0] = new Tile(position, null, sprite);
+////            tile[0].image = ImageIO.read(fis);
+//			
+//			
+//		} catch(IOException e){
+//			
+//			e.printStackTrace();
+//			
+//		}
+//	}
+
+
+	public void draw(Graphics graphics) {
+		if(isActive()) {
+			
+			
+			
+				
+				graphics.drawImage(sprite.getImage(),position.x, position.y, sprite.size.x, sprite.size.y, null);			
+				
+			}
+			
+	}
+		
 	//when hovered display the redsquare on the main panel
-	public void OnHover() {
+	public void onHover() {
 		mainPanel.add(redsquare);
 	}
 	

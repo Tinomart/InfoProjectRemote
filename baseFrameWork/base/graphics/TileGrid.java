@@ -24,21 +24,35 @@ public class TileGrid {
 		this.tileSize = tileSize;
 		this.tileMapWidth = tileMapWidth;
 		this.tileMapHeight = tileMapHeight;
-//		FillAllTilesWithDefault(tileMapWidth, tileMapHeight);
+		fillAllTilesWithDefault(tileMapWidth, tileMapHeight);
 	}
 
+	
 	//creates a new tile at each position of the Map, so that we don't get into errors when trying to interacting somewhere that does not actually has a tile
-//	public void FillAllTilesWithDefault(int tileMapWidth, int tileMapHeight) {
-//		for (int i = 0; i < tileMapWidth; i++) {
-//			for (int k = 0; k < tileMapHeight; k++) {
-//				new Tile(new Point(i, k), this,new Sprite(new Point(0,0)));
+	public void fillAllTilesWithDefault(int tileMapWidth, int tileMapHeight) {
+		
+		Sprite testSprite = new Sprite(new Point(tileSize,tileSize));
+		testSprite.imagePath = "res/Test.png";
+		testSprite.loadImage(testSprite.imagePath);
+		for (int i = 0; i < tileMapWidth/4; i++) {
+			for (int k = 0; k < tileMapHeight/2; k++) {
+				new Tile(new Point(i, k), this,testSprite);
+			}
+		}
+	}	
+//		Sprite testSprite2 = new Sprite(new Point(tileSize,tileSize));
+//		testSprite2.imagePath = "res/Kreis.png";
+//		testSprite2.loadImage(testSprite.imagePath);
+//		for (int i = 0; i <  tileMapWidth; i++) {
+//			for (int k = 0; k <  tileMapHeight; k++) {
+//				new Tile(new Point(i, k), this,testSprite);
 //			}
 //		}
 //	}
 	
 	//Hashmaps can carry multiple object with the same key, which we dont want to allow
 	//so you can only replace tiles not set tiles.
-	public void ReplaceTile(Point tilePosition, Tile tile) {
+	public void replaceTile(Point tilePosition, Tile tile) {
 		tileMap.remove(tilePosition);
 		tileMap.put(tilePosition, tile);
 		gameLoop.gameObjects.add(tile);

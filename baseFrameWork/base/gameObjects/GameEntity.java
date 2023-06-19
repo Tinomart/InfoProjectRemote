@@ -9,7 +9,7 @@ import base.physics.Positional;
 
 public class GameEntity implements Runnable, Positional {
 	
-	private Point position;
+	protected Point position;
 	
 	private Thread objectThread;
 

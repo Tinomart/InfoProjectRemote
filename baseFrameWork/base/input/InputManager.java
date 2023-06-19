@@ -180,7 +180,7 @@ public class InputManager{
 		//Place holder To show that the TileSystem is semi functional
 		
 		for (Tile tile : currentHoveredTiles) {
-			tile.OnHover();
+			tile.onHover();
 		}
 	}
 

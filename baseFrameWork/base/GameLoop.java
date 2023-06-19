@@ -35,6 +35,8 @@ public class GameLoop implements Runnable {
 
 	public HashMap<PanelType, GamePanel> panels;
 	private GamePanel mainPanel;
+	
+	private Graphics graphics;
 
 	public ArrayDeque<GameObject> gameObjects = new ArrayDeque<GameObject>();
 
@@ -47,7 +49,7 @@ public class GameLoop implements Runnable {
 
 	public int cameraSpeed = 4;
 
-	public Point spawnPoint = new Point(400, 400);
+	public Point spawnPoint = new Point( 0, 0);
 	public Point cameraPosition = new Point(0, 0);
 
 	public enum Direction {
@@ -58,8 +60,12 @@ public class GameLoop implements Runnable {
 		this.window = window;
 		panels = window.getPanels();
 		mainPanel = panels.get(PanelType.MainPanel);
+		
+		Sprite testSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		testSprite.imagePath = "res/Test.png";
+		testSprite.loadImage(testSprite.imagePath);
 
-		gameObjects.add(new GameObject(new Point(5, 5), new Sprite(new Point(0,0))));
+		gameObjects.add(new GameObject(new Point(5, 5), testSprite));
 
 		SetClosingFunctionality(window);
 		SetMenuResizability(window);
@@ -134,7 +140,7 @@ public class GameLoop implements Runnable {
 
 	@Override
 	public void run() {
-		Load();
+//		Load();
 		// main thread(happens very frame)
 		while (gameThread != null) {
 			ExecuteEveryFrame(gameThread);
@@ -174,17 +180,28 @@ public class GameLoop implements Runnable {
 				Save();
 				fpsCount = 0;
 			}
-			DrawGameObjects();
+			for (PanelType panelType : window.activePanels) {
+				
+				GamePanel panel = panels.get(panelType);
+				if(!(panel instanceof Menu)) {
+					
+					for (GameObject gameObject : gameObjects) {
+						
+						if(gameObject.getPanelToDrawOn() == panelType && !(panel.addedObjects.contains(gameObject))) {
+							
+							panel.addedObjects.add(gameObject);
+						}
+					}
+					
+				}
+								
+			}
+			
 		}
 		
 	}
 
-	private void DrawGameObjects() {
-
-		for (GameObject gameObject : gameObjects) {
-			gameObject.Draw();
-		}
-	}
+	
 
 	public static void ExecuteEveryFrame(Thread thread) {
 
