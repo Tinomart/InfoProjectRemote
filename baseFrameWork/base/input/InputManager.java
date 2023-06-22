@@ -126,7 +126,7 @@ public class InputManager{
 				break;
 			case KeyEvent.VK_T: 
 				if(selectedTile != CircleTile.class) {
-				selectedTile = CircleTile.class;
+					selectedTile = CircleTile.class;
 				} else {
 					selectedTile = null;
 				}

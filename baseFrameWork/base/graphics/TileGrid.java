@@ -54,6 +54,9 @@ public class TileGrid {
 	//Hashmaps can carry multiple object with the same key, which we dont want to allow
 	//so you can only replace tiles not set tiles.
 	public void replaceTile(Point tilePosition, Tile tile) {
+		
+		System.out.println(gameLoop.gameObjects.contains(tileMap.get(tilePosition)));
+		gameLoop.gameObjects.remove(tileMap.get(tilePosition));
 		tileMap.remove(tilePosition);
 		tileMap.put(tilePosition, tile);
 		

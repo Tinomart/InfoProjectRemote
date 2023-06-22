@@ -324,7 +324,7 @@ public class GameLoop implements Runnable {
 			// successfully be created = is not null
 			for (String gameObjectString : gameObjectsStrings) {
 				GameObject createdObject = createGameObject(gameObjectString);
-				if(!gameObjects.contains(createdObject)) {
+				if (!gameObjects.contains(createdObject)) {
 					gameObjects.add(createdObject);
 				}
 
@@ -347,10 +347,8 @@ public class GameLoop implements Runnable {
 			// from the string that contains the type, since we do not know what type it
 			// will be we use reflection with Class<?> to determine its type at runtime
 			Class<?> gameObjectClass = Class.forName(argumentsString[0]);
-			System.out.println(gameObjectClass);
 			// we get an array of all constructors that are associated with the Type the
 			// object is supposed to be
-			System.out.println(gameObjectClass.getConstructors());
 			Constructor<?>[] gameObjectConstructors = gameObjectClass.getConstructors();
 			// arrays that we will use in the future. paramterTypes will use reflections
 			// again, as the contained items in the array will be of different types and
@@ -364,10 +362,7 @@ public class GameLoop implements Runnable {
 			for (Constructor<?> constructor : gameObjectConstructors) {
 				int parameterCount = constructor.getParameterCount();
 				// +1 because the first item in argumentsString is not an argument but the type
-				System.out.println(parameterCount);
-				System.out.println(argumentsString.length);
 				if (parameterCount + 1 == argumentsString.length) {
-					System.out.println("constructor found");
 					// we assign parameter types of the correct constructor and now know how many
 					// arguments we have, so we assign the lenght of it
 					parameterTypes = constructor.getParameterTypes();
@@ -389,7 +384,6 @@ public class GameLoop implements Runnable {
 			e.printStackTrace();
 		}
 		// if reading the file was unsuccessful the method return null
-		System.out.println("unsuccessful");
 		return null;
 
 	}
@@ -401,7 +395,7 @@ public class GameLoop implements Runnable {
 			argumentTypes[i] = arguments[i].getClass();
 		}
 		try {
-			constructor = type.getConstructor(argumentTypes);		
+			constructor = type.getConstructor(argumentTypes);
 			GameObject gameObject = (GameObject) constructor.newInstance(arguments);
 			initializeSprite(gameObject);
 

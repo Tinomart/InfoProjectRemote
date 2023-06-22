@@ -9,10 +9,10 @@ public class Main {
 	//these are in tile size, not in pixels
 	public final static int SCREEN_WIDTH = 48;
 	public final static int SCREEN_HEIGHT = 32;
-	public final static int MAP_WIDTH = 50;
-	public final static int MAP_HEIGHT = 50;
+	public final static int MAP_WIDTH = 300;
+	public final static int MAP_HEIGHT = 300;
 	
-	public final static int TILE_SIZE = 16;
+	public final static int TILE_SIZE = 32;
 	
 	public final static String GAME_TITLE = "101100";
 	
