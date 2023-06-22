@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.HashMap;
 
 import base.GameLoop;
+import base.gameObjects.GameObject;
 import base.gameObjects.Tile;
 
 	//TODO here we should add all the basic tile logic
@@ -24,19 +25,19 @@ public class TileGrid {
 		this.tileSize = tileSize;
 		this.tileMapWidth = tileMapWidth;
 		this.tileMapHeight = tileMapHeight;
-		fillAllTilesWithDefault(tileMapWidth, tileMapHeight);
+//		fillAllTilesWithDefault(tileMapWidth, tileMapHeight);
 	}
 
 	
 	//creates a new tile at each position of the Map, so that we don't get into errors when trying to interacting somewhere that does not actually has a tile
 	public void fillAllTilesWithDefault(int tileMapWidth, int tileMapHeight) {
 		
-		Sprite testSprite = new Sprite(new Point(tileSize,tileSize));
-		testSprite.imagePath = "res/Test.png";
-		testSprite.loadImage(testSprite.imagePath);
-		for (int i = 0; i < tileMapWidth/4; i++) {
-			for (int k = 0; k < tileMapHeight/2; k++) {
-				new Tile(new Point(i, k), this,testSprite);
+//		Sprite testSprite = new Sprite(new Point(tileSize,tileSize));
+//		testSprite.imagePath = "res/Test.png";
+//		testSprite.loadImage(testSprite.imagePath);
+		for (int i = 0; i < tileMapWidth; i++) {
+			for (int k = 0; k < tileMapHeight; k++) {
+				gameLoop.gameObjects.add(gameLoop.createGameObject(Tile.class, new Object[] {new Point(i, k), this, new Sprite(new Point(tileSize,tileSize))}));
 			}
 		}
 	}	
@@ -55,7 +56,6 @@ public class TileGrid {
 	public void replaceTile(Point tilePosition, Tile tile) {
 		tileMap.remove(tilePosition);
 		tileMap.put(tilePosition, tile);
-		gameLoop.gameObjects.add(tile);
 		
 	}
 }

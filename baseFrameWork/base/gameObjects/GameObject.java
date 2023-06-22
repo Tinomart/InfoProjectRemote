@@ -13,6 +13,7 @@ import java.io.IOException;
 import base.graphics.Drawable;
 import base.graphics.GamePanel;
 import base.graphics.Sprite;
+import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
 import java.io.File;
@@ -25,13 +26,12 @@ public class GameObject extends GameEntity implements Drawable {
 	private GamePanel.PanelType panelToDrawOn;
 
 	public Sprite sprite;
+	public SpriteType spriteType;
 	
 	GamePanel gp;
 	
 	//we need this array for loading and implementing the map tiles later on (ca. min 15)
 //	Tile[] tile;
-	
-	public String imagePath;
 	
 	public GameObject(Point position, Sprite sprite) {
 		// We want GameObjects to be drawn on the main panel only since they are not 
@@ -39,14 +39,7 @@ public class GameObject extends GameEntity implements Drawable {
 		super(position);
 		this.sprite = sprite;
 		panelToDrawOn = GamePanel.PanelType.MainPanel;
-		sprite.imagePath = "res/Test.png";
-//		sprite.loadImage(sprite.imagePath);
-		
-//		GameObject gameObj = new GameObject(position, sprite);
-//		Sprite sprite1 = new Sprite(position);
-		
-//		this.gp = gp;
-//		tile = new Tile[10];	//the 10 can be changed, depends how many different tile arts we have
+		spriteType = SpriteType.CircleSprite;
 	
 	}
 
@@ -93,10 +86,8 @@ public class GameObject extends GameEntity implements Drawable {
 	
 	public void draw(Graphics graphics) {
 		if(isActive()) {
-
-				graphics.drawImage(sprite.getImage(),position.x, position.y, sprite.size.x, sprite.size.y, null);			
-				
-			}
+			graphics.drawImage(sprite.getImage(),position.x, position.y, sprite.size.x, sprite.size.y, null);			
+		}
 			
 	}
 	

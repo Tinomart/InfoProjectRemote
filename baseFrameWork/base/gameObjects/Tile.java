@@ -5,6 +5,7 @@ import base.graphics.GamePanel.PanelType;
 
 import base.graphics.RedSquareComponent;
 import base.graphics.Sprite;
+import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileBased;
 import base.graphics.TileGrid;
 import game.Main;
@@ -43,7 +44,7 @@ public class Tile extends GameObject implements TileBased {
 		tileGrid.replaceTile(tilePosition, this);
 		mainPanel = tileGrid.gameLoop.window.getPanels().get(PanelType.MainPanel);
 		redsquare = new RedSquareComponent(tilePosition.x, tilePosition.y, Main.TILE_SIZE);
-		
+		spriteType = SpriteType.TestSprite;
 		this.sprite = sprite;
 	}
 	
@@ -71,18 +72,6 @@ public class Tile extends GameObject implements TileBased {
 //		}
 //	}
 
-
-	public void draw(Graphics graphics) {
-		if(isActive()) {
-			
-			
-			
-				
-				graphics.drawImage(sprite.getImage(),position.x, position.y, sprite.size.x, sprite.size.y, null);			
-				
-			}
-			
-	}
 		
 	//when hovered display the redsquare on the main panel
 	public void onHover() {
@@ -111,4 +100,5 @@ public class Tile extends GameObject implements TileBased {
 		stringBuilder.append("base.gameObjects.").append(getClass().getSimpleName()).append(",").append(GetPosition().x/tileGrid.tileSize).append( ";").append(GetPosition().y/tileGrid.tileSize).append(",").append("TileGrid").append(",").append(sprite.size.x).append(";").append(sprite.size.y).append(" ");
 		return stringBuilder.toString();
 	}
+	
 }

@@ -10,9 +10,9 @@ public class Main {
 	public final static int SCREEN_WIDTH = 48;
 	public final static int SCREEN_HEIGHT = 32;
 	public final static int MAP_WIDTH = 50;
-	public final static int MAP_HEIGHT = 32;
+	public final static int MAP_HEIGHT = 50;
 	
-	public final static int TILE_SIZE = 10;
+	public final static int TILE_SIZE = 16;
 	
 	public final static String GAME_TITLE = "101100";
 	

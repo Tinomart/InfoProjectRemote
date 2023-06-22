@@ -9,6 +9,9 @@ import javax.swing.JPanel;
 
 import base.GameLoop.Direction;
 import base.gameObjects.Tile;
+import base.gameObjects.*;
+
+import base.graphics.Sprite;
 import base.graphics.GamePanel.PanelType;
 import base.input.Input.InputType;
 import game.Main;
@@ -23,6 +26,7 @@ public class InputManager{
 	
 	//To track all tiles that are currently being hovered
 	public ArrayDeque<Tile> currentHoveredTiles = new ArrayDeque<Tile>();
+	public Class<? extends Tile> selectedTile;
 	
 	public InputManager(JPanel panel) {
 		this.panel = panel;
@@ -120,6 +124,13 @@ public class InputManager{
 					}
 				}
 				break;
+			case KeyEvent.VK_T: 
+				if(selectedTile != CircleTile.class) {
+				selectedTile = CircleTile.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
 			default:
 				break;
 				
@@ -134,6 +145,9 @@ public class InputManager{
 
 	private void ExecuteLeftClick() {
 		// TODO Auto-generated method stub
+		if(selectedTile != null) {
+			Main.gameLoop.gameObjects.add(Main.gameLoop.createGameObject(selectedTile, new Object[] {currentHoveredTiles.getFirst().GetTilePosition(), Main.tileGrid}));
+		}
 		
 	}
 

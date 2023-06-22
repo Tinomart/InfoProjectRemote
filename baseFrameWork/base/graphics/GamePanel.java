@@ -129,7 +129,7 @@ public class GamePanel extends JPanel {
 	}
 	
 	private void DrawGameObjects(ArrayDeque<GameObject> gameObjects, Graphics graphics) {
-
+		
 		for (GameObject gameObject : gameObjects) {
 			gameObject.draw(graphics);
 		}

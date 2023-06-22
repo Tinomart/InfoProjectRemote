@@ -15,10 +15,13 @@ import java.util.ArrayDeque;
 import java.util.HashMap;
 
 import base.gameObjects.GameObject;
+import base.gameObjects.Tile;
 import base.graphics.GamePanel.PanelType;
 import base.graphics.GameWindow;
 import base.graphics.Menu;
 import base.graphics.Sprite;
+import base.graphics.SpriteLoader;
+import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 import game.Main;
 
@@ -30,15 +33,14 @@ public class GameLoop implements Runnable {
 
 	private Thread gameThread;
 	public GameWindow window;
-	
+
 	public TileGrid tileGrid;
 
 	public HashMap<PanelType, GamePanel> panels;
 	private GamePanel mainPanel;
-	
-	private Graphics graphics;
 
 	public ArrayDeque<GameObject> gameObjects = new ArrayDeque<GameObject>();
+	private SpriteLoader spriteLoader = new SpriteLoader();
 
 	// if we need to ever add anything based on a specific frame
 	public int fpsCount;
@@ -49,7 +51,7 @@ public class GameLoop implements Runnable {
 
 	public int cameraSpeed = 4;
 
-	public Point spawnPoint = new Point( 0, 0);
+	public Point spawnPoint = new Point(0, 0);
 	public Point cameraPosition = new Point(0, 0);
 
 	public enum Direction {
@@ -60,12 +62,13 @@ public class GameLoop implements Runnable {
 		this.window = window;
 		panels = window.getPanels();
 		mainPanel = panels.get(PanelType.MainPanel);
-		
-		Sprite testSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
-		testSprite.imagePath = "res/Test.png";
-		testSprite.loadImage(testSprite.imagePath);
 
-		gameObjects.add(new GameObject(new Point(5, 5), testSprite));
+//		Sprite testSprite = new Sprite(new Point(50, 50));
+//		testSprite.imagePath = "res/Kreis.png";
+//		testSprite.loadImage(testSprite.imagePath);
+
+//		gameObjects.add(new GameObject(new Point(12, 17), testSprite));
+//		gameObjects.add(createGameObject(GameObject.class, (new Object[]{new Point(12, 17), new Sprite(new Point(50, 50))})));
 
 		SetClosingFunctionality(window);
 		SetMenuResizability(window);
@@ -140,7 +143,7 @@ public class GameLoop implements Runnable {
 
 	@Override
 	public void run() {
-//		Load();
+		Load();
 		// main thread(happens very frame)
 		while (gameThread != null) {
 			ExecuteEveryFrame(gameThread);
@@ -181,27 +184,25 @@ public class GameLoop implements Runnable {
 				fpsCount = 0;
 			}
 			for (PanelType panelType : window.activePanels) {
-				
+
 				GamePanel panel = panels.get(panelType);
-				if(!(panel instanceof Menu)) {
-					
+				if (!(panel instanceof Menu)) {
+
 					for (GameObject gameObject : gameObjects) {
-						
-						if(gameObject.getPanelToDrawOn() == panelType && !(panel.addedObjects.contains(gameObject))) {
-							
+
+						if (gameObject.getPanelToDrawOn() == panelType && !(panel.addedObjects.contains(gameObject))) {
+
 							panel.addedObjects.add(gameObject);
 						}
 					}
-					
-				}
-								
-			}
-			
-		}
-		
-	}
 
-	
+				}
+
+			}
+
+		}
+
+	}
 
 	public static void ExecuteEveryFrame(Thread thread) {
 
@@ -283,13 +284,13 @@ public class GameLoop implements Runnable {
 			// readers and writers to change our file and retrieve information for it, we
 			// need to know what is already in the file so that we dont accidentily
 			// duplicate suff
-			BufferedWriter writer = new BufferedWriter(new FileWriter("SaveData"));		
+			BufferedWriter writer = new BufferedWriter(new FileWriter("SaveData"));
 
 			// if the file does not yet contain the gameObject we are trying to save, write
 			// the gameObjects toString into the file
 			for (GameObject gameObject : gameObjects) {
 				String objectString = gameObject.toString();
-				writer.write(objectString);	
+				writer.write(objectString);
 			}
 			// this needs to be here because java is angry if it isn't. No clue why we need
 			// it
@@ -322,10 +323,10 @@ public class GameLoop implements Runnable {
 			// create the GameObject and add it to our gameObjects, if the gameObject could
 			// successfully be created = is not null
 			for (String gameObjectString : gameObjectsStrings) {
-				GameObject createdObject = CreateGameObject(gameObjectString);
-//				if(!gameObjects.contains(createdObject)) {
-//					gameObjects.add(createdObject);
-//				}
+				GameObject createdObject = createGameObject(gameObjectString);
+				if(!gameObjects.contains(createdObject)) {
+					gameObjects.add(createdObject);
+				}
 
 			}
 			reader.close();
@@ -336,7 +337,7 @@ public class GameLoop implements Runnable {
 
 	}
 
-	public GameObject CreateGameObject(String gameObjectString) {
+	public GameObject createGameObject(String gameObjectString) {
 		try {
 			// the type of the object and all arguments of each gameobjectstring are
 			// seperated with "," so we split the string to get an array of all arguments
@@ -346,8 +347,10 @@ public class GameLoop implements Runnable {
 			// from the string that contains the type, since we do not know what type it
 			// will be we use reflection with Class<?> to determine its type at runtime
 			Class<?> gameObjectClass = Class.forName(argumentsString[0]);
+			System.out.println(gameObjectClass);
 			// we get an array of all constructors that are associated with the Type the
 			// object is supposed to be
+			System.out.println(gameObjectClass.getConstructors());
 			Constructor<?>[] gameObjectConstructors = gameObjectClass.getConstructors();
 			// arrays that we will use in the future. paramterTypes will use reflections
 			// again, as the contained items in the array will be of different types and
@@ -361,7 +364,10 @@ public class GameLoop implements Runnable {
 			for (Constructor<?> constructor : gameObjectConstructors) {
 				int parameterCount = constructor.getParameterCount();
 				// +1 because the first item in argumentsString is not an argument but the type
+				System.out.println(parameterCount);
+				System.out.println(argumentsString.length);
 				if (parameterCount + 1 == argumentsString.length) {
+					System.out.println("constructor found");
 					// we assign parameter types of the correct constructor and now know how many
 					// arguments we have, so we assign the lenght of it
 					parameterTypes = constructor.getParameterTypes();
@@ -373,22 +379,44 @@ public class GameLoop implements Runnable {
 						arguments[i - 1] = convertStringToArgument(argumentsString[i], parameterTypes[i - 1]);
 					}
 					// return a GameObject with the correct constructor and arguments
-					return (GameObject) constructor.newInstance(arguments);
+					GameObject gameObject = (GameObject) constructor.newInstance(arguments);
+					initializeSprite(gameObject);
+					return gameObject;
 				}
 			}
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
+		} catch (InvocationTargetException | IllegalArgumentException | ClassNotFoundException | InstantiationException
+				| IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		// if reading the file was unsuccessful the method return null
+		System.out.println("unsuccessful");
 		return null;
 
+	}
+
+	public GameObject createGameObject(Class<? extends GameObject> type, Object[] arguments) {
+		Constructor<?> constructor;
+		Class<?>[] argumentTypes = new Class<?>[arguments.length];
+		for (int i = 0; i < argumentTypes.length; i++) {
+			argumentTypes[i] = arguments[i].getClass();
+		}
+		try {
+			constructor = type.getConstructor(argumentTypes);		
+			GameObject gameObject = (GameObject) constructor.newInstance(arguments);
+			initializeSprite(gameObject);
+
+			return gameObject;
+		} catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException | InstantiationException
+				| NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private void initializeSprite(GameObject gameObject) {
+		if (gameObject.sprite.getImage() == null) {
+			gameObject.sprite = spriteLoader.sprites.get(gameObject.spriteType);
+		}
 	}
 
 	// here are all the conversions for the String representations of the types into
@@ -424,22 +452,23 @@ public class GameLoop implements Runnable {
 			// the parameter is was given, so we just return the Main window with this
 			return window;
 		} else if (type == Sprite.class) {
-			
-			
+
 			// points are represented by 2 values seperated with a ";" So we split them to
-						// get a String array of the two seperate values
-						String[] coords = string.split(";");
-						// we return a point with the values of the first and second coordinate as the
-						// first and second argument of our returned point
-						return new Sprite( new Point(Integer.parseInt(coords[0]), Integer.parseInt(coords[1])));
-		}else {
-			GameObject createdGameObject = CreateGameObject(string);
-            for (GameObject gameObject : gameObjects) {
-                if(gameObject == createdGameObject || (gameObject.GetPosition().x == createdGameObject.GetPosition().x && gameObject.GetPosition().y == createdGameObject.GetPosition().y && gameObject.getClass() == createdGameObject.getClass())) {
-                    return gameObject;
-                }
-            }
-            return createdGameObject;
+			// get a String array of the two seperate values
+			String[] coords = string.split(";");
+			// we return a point with the values of the first and second coordinate as the
+			// first and second argument of our returned point
+			return new Sprite(new Point(Integer.parseInt(coords[0]), Integer.parseInt(coords[1])));
+		} else {
+			GameObject createdGameObject = createGameObject(string);
+			for (GameObject gameObject : gameObjects) {
+				if (gameObject == createdGameObject || (gameObject.GetPosition().x == createdGameObject.GetPosition().x
+						&& gameObject.GetPosition().y == createdGameObject.GetPosition().y
+						&& gameObject.getClass() == createdGameObject.getClass())) {
+					return gameObject;
+				}
+			}
+			return createdGameObject;
 		}
 	}
 

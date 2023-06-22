@@ -21,8 +21,6 @@ public class Sprite {
 		this.image = image;
 	}
 
-	public String imagePath;
-
     //constructor initiates x and y coordinates and visible variable
     public Sprite(Point size) {
 
