@@ -1,5 +1,5 @@
 package base.graphics;
-
+import base.gameObjects.PureGrassTile;
 import java.awt.Point;
 import java.util.HashMap;
 
@@ -37,7 +37,7 @@ public class TileGrid {
 //		testSprite.loadImage(testSprite.imagePath);
 		for (int i = 0; i < tileMapWidth; i++) {
 			for (int k = 0; k < tileMapHeight; k++) {
-				gameLoop.gameObjects.add(gameLoop.createGameObject(Tile.class, new Object[] {new Point(i, k), this, new Sprite(new Point(tileSize,tileSize))}));
+				gameLoop.gameObjects.add(gameLoop.createGameObject(PureGrassTile.class, new Object[] {new Point(i, k), this }));
 			}
 		}
 	}	

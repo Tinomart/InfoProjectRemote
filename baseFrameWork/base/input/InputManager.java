@@ -131,11 +131,125 @@ public class InputManager{
 					selectedTile = null;
 				}
 				break;
+			
+			case KeyEvent.VK_1: 
+				if(selectedTile != GrassTile.class) {
+					selectedTile = GrassTile.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
+			case KeyEvent.VK_2: 
+				if(selectedTile != GrassFlower_1Tile.class) {
+					selectedTile = GrassFlower_1Tile.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
+			case KeyEvent.VK_3: 
+				if(selectedTile != GrassFlower_2Tile.class) {
+					selectedTile = GrassFlower_2Tile.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
+			case KeyEvent.VK_4: 
+				if(selectedTile != GrassTreeTrunkTile.class) {
+					selectedTile = GrassTreeTrunkTile.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
+			case KeyEvent.VK_5: 
+				if(selectedTile != PureGrassTile.class) {
+					selectedTile = PureGrassTile.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
+			case KeyEvent.VK_6: 
+				if(selectedTile != WaterTile_Fish.class) {
+					selectedTile = WaterTile_Fish.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
+			case KeyEvent.VK_7: 
+				if(selectedTile != BeachTile_LeftBottom.class) {
+					selectedTile = BeachTile_LeftBottom.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
+			case KeyEvent.VK_8: 
+				if(selectedTile != BeachTile_Bottom.class) {
+					selectedTile = BeachTile_Bottom.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
+			case KeyEvent.VK_9: 
+				if(selectedTile != BeachTile_RightBottom.class) {
+					selectedTile = BeachTile_RightBottom.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
+			case KeyEvent.VK_Q: 
+				if(selectedTile != BeachTile_Top.class) {
+					selectedTile = BeachTile_Top.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
+			case KeyEvent.VK_W: 
+				if(selectedTile != BeachTile_LeftTop.class) {
+					selectedTile = BeachTile_LeftTop.class;
+				} else {
+					selectedTile = null;
+				}
+				break;	
+			case KeyEvent.VK_E: 
+				if(selectedTile != BeachTile_RightTop.class) {
+					selectedTile = BeachTile_RightTop.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
+			case KeyEvent.VK_R: 
+				if(selectedTile != BeachTile_Right.class) {
+					selectedTile = BeachTile_Right.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
+			case KeyEvent.VK_I: 
+				if(selectedTile != BeachTile_Left.class) {
+					selectedTile = BeachTile_Left.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
+			case KeyEvent.VK_Z: 
+				if(selectedTile != WaterTile.class) {
+					selectedTile = WaterTile.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
+			case KeyEvent.VK_U: 
+				if(selectedTile != WaterTile_Ducks.class) {
+					selectedTile = WaterTile_Ducks.class;
+				} else {
+					selectedTile = null;
+				}
+				break;
 			default:
 				break;
 				
+				
 		}
-		
+	
 	}
 
 	private void ExecuteRightClick() {
