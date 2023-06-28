@@ -40,7 +40,7 @@ public class Map extends GamePanel {
 		// TODO this is just a placeholder to show how all of tile system works, even
 		// though we don't have any sprites or anything working, remove once the sprites
 		// are working
-		add(new RedSquareComponent(15, 15, Main.TILE_SIZE * 3));
+//		add(new RedSquareComponent(15, 15, Main.TILE_SIZE * 3));
 		
 		
 	}
