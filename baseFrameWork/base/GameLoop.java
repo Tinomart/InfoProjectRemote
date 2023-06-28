@@ -70,21 +70,21 @@ public class GameLoop implements Runnable {
 //		gameObjects.add(new GameObject(new Point(12, 17), testSprite));
 //		gameObjects.add(createGameObject(GameObject.class, (new Object[]{new Point(12, 17), new Sprite(new Point(50, 50))})));
 
-		SetClosingFunctionality(window);
-		SetMenuResizability(window);
+		setClosingFunctionality(window);
+		setMenuResizability(window);
 
 		// Move our Camera to the Spawnpoint
 		for (int i = 0; i < spawnPoint.x / cameraSpeed; i++) {
-			MoveCamera(Direction.right);
+			moveCamera(Direction.right);
 		}
 		for (int j = 0; j < spawnPoint.y / cameraSpeed; j++) {
-			MoveCamera(Direction.down);
+			moveCamera(Direction.down);
 		}
 	}
 	// This had to be its own thing, because for some reason the basic resize
 	// implementation was failing me, so I had to write my own.
 
-	private void SetMenuResizability(GameWindow window) {
+	private void setMenuResizability(GameWindow window) {
 		GameLoop gameLoop = this;
 
 		window.addComponentListener(new ComponentAdapter() {
@@ -99,15 +99,15 @@ public class GameLoop implements Runnable {
 						// this fixes a bug where the player was able to have a small window, move to
 						// the edge of the screen and resize the window to the
 						int outOfBoundsWidth = gameLoop.cameraPosition.x + window.getBounds().width
-								- Main.MAP_WIDTH * Main.TILE_SIZE;
+								- Main.MAP_WIDTH * tileGrid.tileSize;
 						int outOfBoundsHeight = gameLoop.cameraPosition.y + window.getBounds().height
-								- Main.MAP_HEIGHT * Main.TILE_SIZE;
+								- Main.MAP_HEIGHT * tileGrid.tileSize;
 						if (outOfBoundsWidth > 0 || outOfBoundsHeight > 0) {
 							for (int i = 0; i < (outOfBoundsWidth / Main.gameLoop.cameraSpeed) + 1; i++) {
-								gameLoop.MoveCamera(Direction.left);
+								gameLoop.moveCamera(Direction.left);
 							}
 							for (int i = 0; i < (outOfBoundsHeight / Main.gameLoop.cameraSpeed) + 1; i++) {
-								gameLoop.MoveCamera(Direction.up);
+								gameLoop.moveCamera(Direction.up);
 							}
 						}
 					}
@@ -118,35 +118,35 @@ public class GameLoop implements Runnable {
 
 	// stops the gameloop and closes the program if the user exits the window
 
-	private void SetClosingFunctionality(Window window) {
+	private void setClosingFunctionality(Window window) {
 		GameLoop gameLoop = this;
 		window.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				gameLoop.Stop();
+				gameLoop.stop();
 				System.exit(0);
 			}
 		});
 
 	}
 
-	public void Start() {
+	public void start() {
 		// start the thread, then start the main loop
 		gameThread = new Thread(this);
 		run();
 	}
 
-	public void Stop() {
+	public void stop() {
 		// stop the thread, thus stopping the main loop
 		gameThread = null;
 	}
 
 	@Override
 	public void run() {
-		Load();
+		load();
 		// main thread(happens very frame)
 		while (gameThread != null) {
-			ExecuteEveryFrame(gameThread);
+			executeEveryFrame(gameThread);
 
 			// this is part of the fps count, that I am still unsure we need
 			fpsCount += 1;
@@ -166,7 +166,7 @@ public class GameLoop implements Runnable {
 			// later
 
 			panels.get(PanelType.InGameGUI).requestFocus();
-			panels.get(PanelType.InGameGUI).inputManager.ReadInputs();
+			panels.get(PanelType.InGameGUI).inputManager.readInputs();
 
 			// debug code that displays the layer of every Panel that is currently a
 			// component of the Window
@@ -180,7 +180,7 @@ public class GameLoop implements Runnable {
 //			}
 
 			if (fpsCount >= autoSaveIntervallInSeconds * 60) {
-				Save();
+//				Save();
 				fpsCount = 0;
 			}
 			for (PanelType panelType : window.activePanels) {
@@ -199,12 +199,22 @@ public class GameLoop implements Runnable {
 				}
 
 			}
+			
+			updateGameObjects();
+//			window.revalidate();
+//			window.repaint();
 
 		}
 
 	}
 
-	public static void ExecuteEveryFrame(Thread thread) {
+	private void updateGameObjects() {
+		for (GameObject gameObject : gameObjects) {
+			gameObject.update();
+		}
+		
+	}
+	public static void executeEveryFrame(Thread thread) {
 
 		// The time frame of one frame in nanoseconds
 		// that has to pass until the loop can run again
@@ -236,7 +246,7 @@ public class GameLoop implements Runnable {
 		}
 	}
 
-	public void MoveCamera(Direction direction) {
+	public void moveCamera(Direction direction) {
 		mainPanel = panels.get(PanelType.MainPanel);
 
 		// if the camera is inside the Maps bounds move it in a direction with the
@@ -264,6 +274,7 @@ public class GameLoop implements Runnable {
 			}
 
 			break;
+		
 		}
 		// set the negative location because we are moving the panel beneath the camera,
 		// not the actual camera itself, which
@@ -271,10 +282,11 @@ public class GameLoop implements Runnable {
 
 		mainPanel.setLocation(-cameraPosition.x, -cameraPosition.y);
 		mainPanel.revalidate();
-
+		window.revalidate();
+		window.repaint();
 	}
 
-	public void Save() {
+	public void save() {
 		// TODO if we update a GameObjects position and such, we need to have something
 		// that saves the previous position that needs to be removed from the file, to
 		// not have duplicates
@@ -301,7 +313,7 @@ public class GameLoop implements Runnable {
 		}
 	}
 
-	public void Load() {
+	public void load() {
 		// try catch, because it is possible the file does not exist
 		try {
 			// reader, because we need the information from the file

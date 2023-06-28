@@ -8,10 +8,10 @@ import java.util.ArrayDeque;
 import javax.swing.JPanel;
 
 import base.GameLoop.Direction;
-import base.gameObjects.Tile;
 import base.gameObjects.*;
 
 import base.graphics.Sprite;
+import base.graphics.GamePanel;
 import base.graphics.GamePanel.PanelType;
 import base.input.Input.InputType;
 import game.Main;
@@ -28,12 +28,17 @@ public class InputManager{
 	public ArrayDeque<Tile> currentHoveredTiles = new ArrayDeque<Tile>();
 	public Class<? extends Tile> selectedTile;
 	
+	public double zoomSpeed = 0.025;
+	private double zoomFactor;
+	public int maxTileSize = 33;
+	
 	public InputManager(JPanel panel) {
 		this.panel = panel;
 		input = new Input(panel);
+		input.inputManager = this;
 	}
 	
-	public void ReadInputs() {
+	public void readInputs() {
 		
 		//This is the code for continuous Key Holds. E.g. Camera movement if user holds wasd
 		//or when user tries to drag an object or something
@@ -48,12 +53,12 @@ public class InputManager{
 			//check for all different InputTypes and execute the corresponding action
 			//depending on what the current input is
 			if(input.currentInput.contains(InputType.leftpress)) {
-				ExecuteLeftPress();
+				executeLeftPress();
 			} else if(input.currentInput.contains(InputType.rightpress)) {
-				ExecuteRightPress();
+				executeRightPress();
 			} else if(input.currentInput.contains(InputType.keypress) && input.pressedKeys != null) {
 				for (int key : input.pressedKeys) {
-					ExecuteKeyPress(key);
+					executeKeyPress(key);
 				}
 			}
 			
@@ -61,12 +66,17 @@ public class InputManager{
 		
 		//This is for Mouse and Key clicks.
 		if(input.releasedInput != 0) {
-			ExecuteClicks(input.releasedInput);
+			executeClicks(input.releasedInput);
 			input.releasedInput = 0;
 		}
 		
+		addHoveredTiles();
+		if(input.scrollAmount != 0) {
+			zoom(zoomSpeed);
+		}
 		
-		AddHoveredTiles();
+		
+		
 		
 
 	}
@@ -74,22 +84,95 @@ public class InputManager{
 
 	
 
-	private void ExecuteKeyPress(int key) {
+	private void zoom(double zoomSpeed2) {
+		boolean zoomAmountIsLargeEnough = true;
+		boolean zoomMaxReached = false;
+		int positionDeltaX = 0;
+		int positionDeltaY = 0;
+		int sizeDeltaX = 0;
+		int sizeDeltaY = 0;
+		int tileSizeDelta = 0;
+		
+		for (GameObject gameObject : Main.gameLoop.gameObjects) {
+			positionDeltaX = (int)(zoomFactor*gameObject.GetPosition().x);
+			positionDeltaY = (int)(zoomFactor*gameObject.GetPosition().y);
+			sizeDeltaX = (int)(zoomFactor*gameObject.sprite.size.x);
+			sizeDeltaY = (int)(zoomFactor*gameObject.sprite.size.y);
+			tileSizeDelta = (int)(zoomFactor*Main.tileGrid.tileSize);
+			if(!(sizeDeltaX > 0 && sizeDeltaY > 0 && tileSizeDelta > 0)) {
+				zoomAmountIsLargeEnough = false;
+				zoomFactor += zoomSpeed2;
+			} else {
+				
+			}
+		}
+		if(Main.tileGrid.tileSize + tileSizeDelta >= maxTileSize) {
+			zoomMaxReached = true;
+		} else {
+			zoomMaxReached = false;
+		}
+		
+		if(zoomAmountIsLargeEnough) {
+			System.out.println("working");
+			for (GameObject gameObject : Main.gameLoop.gameObjects) {
+				positionDeltaX = (int)(zoomFactor*gameObject.GetPosition().x);
+				positionDeltaY = (int)(zoomFactor*gameObject.GetPosition().y);
+				sizeDeltaX = (int)(zoomFactor*gameObject.sprite.size.x);
+				sizeDeltaY = (int)(zoomFactor*gameObject.sprite.size.y);
+				tileSizeDelta = (int)(zoomFactor*Main.tileGrid.tileSize);
+				if(input.scrollAmount < 0) {
+					if(!zoomMaxReached) {
+					 Main.tileGrid.tileSize += tileSizeDelta;
+					}
+				} else {
+					Main.tileGrid.tileSize-= tileSizeDelta;
+				}
+				if(input.scrollAmount < 0) {
+					if(!zoomMaxReached) {
+						gameObject.GetPosition().x += positionDeltaX;
+						gameObject.GetPosition().y += positionDeltaY;
+						gameObject.sprite.size.x += sizeDeltaX;
+						gameObject.sprite.size.y += sizeDeltaY;
+					}
+					
+				} else {
+					gameObject.GetPosition().x -= positionDeltaX;
+					gameObject.GetPosition().y -= positionDeltaY;
+					gameObject.sprite.size.x -= sizeDeltaX;
+					gameObject.sprite.size.y-= sizeDeltaY;
+				}
+				if(gameObject instanceof Tile) {
+					((Tile) gameObject).redsquare.setBounds(gameObject.GetPosition().x, gameObject.GetPosition().y, Main.tileGrid.tileSize, Main.tileGrid.tileSize);
+				}
+				zoomFactor = zoomSpeed2;
+			}
+			panel.revalidate();
+			Main.gameWindow.revalidate();
+			Main.gameWindow.repaint();
+		}
+		
+		zoomAmountIsLargeEnough = true;
+		input.scrollAmount = 0;
+//		System.out.println(zoomFactor);
+		
+	}
+
+	private void executeKeyPress(int key) {
 		//TODO: Tell the game what to do once a certain key is pressed
 		
 		switch (key) {
 			// What comes after KeyEvent.VK_ is the actual key
 			case KeyEvent.VK_W: 
-				Main.gameLoop.MoveCamera(Direction.up);
+				Main.gameLoop.moveCamera(Direction.up);
 				break;
 			case KeyEvent.VK_A: 
-				Main.gameLoop.MoveCamera(Direction.left);
+				Main.gameLoop.moveCamera(Direction.left);
 				break;
 			case KeyEvent.VK_S:
-				Main.gameLoop.MoveCamera(Direction.down);
+				Main.gameLoop.moveCamera(Direction.down);
 				break;
 			case KeyEvent.VK_D: 
-				Main.gameLoop.MoveCamera(Direction.right);
+				Main.gameLoop.moveCamera(Direction.right);
 				break;
 			
 			default:
@@ -98,18 +181,18 @@ public class InputManager{
 		
 	}
 	
-	private void ExecuteClicks(int releasedInput) {
+	private void executeClicks(int releasedInput) {
 		//TODO: Tell the game what to do once a certain key is clicked
 		
 		switch (releasedInput) {
 		
 			//if left click
 			case MouseEvent.BUTTON1:
-				ExecuteLeftClick();
+				executeLeftClick();
 				break;
 			//if right click
 			case MouseEvent.BUTTON3:
-				ExecuteRightClick();
+				executeRightClick();
 				break;
 		
 			case KeyEvent.VK_ESCAPE:
@@ -118,9 +201,9 @@ public class InputManager{
 				
 				if(!Main.gameWindow.activePanels.contains(PanelType.MainMenu)){
 					if(!Main.gameWindow.activePanels.contains(PanelType.PauseMenu)) {
-						Main.gameWindow.SetPanel(PanelType.PauseMenu);
+						Main.gameWindow.setPanel(PanelType.PauseMenu);
 					} else {
-						Main.gameWindow.SetPanel(PanelType.PauseMenu, false);
+						Main.gameWindow.setPanel(PanelType.PauseMenu, false);
 					}
 				}
 				break;
@@ -252,29 +335,29 @@ public class InputManager{
 	
 	}
 
-	private void ExecuteRightClick() {
+	private void executeRightClick() {
 		// TODO: Tell the game what to do if the right mouse button is cicked		
 		
 	}
 
-	private void ExecuteLeftClick() {
+	private void executeLeftClick() {
 		// TODO Auto-generated method stub
 		if(selectedTile != null) {
-			Main.gameLoop.gameObjects.add(Main.gameLoop.createGameObject(selectedTile, new Object[] {currentHoveredTiles.getFirst().GetTilePosition(), Main.tileGrid}));
+			Main.gameLoop.gameObjects.add(Main.gameLoop.createGameObject(selectedTile, new Object[] {currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid}));
 		}
 		
 	}
 
-	private void ExecuteRightPress() {
+	private void executeRightPress() {
 		// TODO: Tell the game what to do if the left mouse button is pressed
 		
 	}
-	private void ExecuteLeftPress() {
+	private void executeLeftPress() {
 		// TODO: Tell the game what to do if the left mouse button is pressed
 		
 	}
 
-	private void AddHoveredTiles() {
+	private void addHoveredTiles() {
 		// TODO This is mostly if we have cursor that is meant to hover more than one tile
 		//say we want to add a big building more tiles should be hovered. I would dynamically
 		//change the cursor size depending on what we have equipped and then take that to read
@@ -282,8 +365,11 @@ public class InputManager{
 		
 		//calculate MousePosition on our Map, as we only track the mouse position in the window right now
 		int xPositionOnPanel = input.mousePositionInWindow.x + Main.gameLoop.cameraPosition.x;
+		System.out.println(xPositionOnPanel);
 		int yPositionOnPanel = input.mousePositionInWindow.y + Main.gameLoop.cameraPosition.y;
-		Point mouseTilePosition = new Point(xPositionOnPanel/Main.TILE_SIZE, yPositionOnPanel/Main.TILE_SIZE);
+		System.out.println(Main.tileGrid.tileSize);
+		Point mouseTilePosition = new Point(xPositionOnPanel/Main.tileGrid.tileSize, yPositionOnPanel/Main.tileGrid.tileSize);
+		
 		
 		
 		if(!currentHoveredTiles.contains(Main.tileGrid.tileMap.get(mouseTilePosition))) {
@@ -296,15 +382,15 @@ public class InputManager{
 			currentHoveredTiles.clear();
 			//add the tiles that the mouse is over
 			if(Main.tileGrid.tileMap.get(mouseTilePosition)!= null) {
-				for (Tile tile : Main.tileGrid.tileMap.get(mouseTilePosition).GetTiles()) {
+				for (Tile tile : Main.tileGrid.tileMap.get(mouseTilePosition).getTiles()) {
 					currentHoveredTiles.add(tile);
 				}
 			}
-			HoverTiles();
+			hoverTiles();
 		}
 	}
 	
-	private void HoverTiles() {
+	private void hoverTiles() {
 		//Place holder To show that the TileSystem is semi functional
 		
 		for (Tile tile : currentHoveredTiles) {
@@ -312,10 +398,11 @@ public class InputManager{
 		}
 	}
 
-	public void AddInputForPanel() {
+	public void addInputForPanel() {
 		panel.addMouseListener(input);
 		panel.addMouseMotionListener(input);
 		panel.addKeyListener(input);
+		panel.addMouseWheelListener(input);
 	}
 
 	

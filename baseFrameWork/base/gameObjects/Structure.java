@@ -21,12 +21,12 @@ public abstract class Structure extends GameObject implements TileBased {
 	}
 
 	@Override
-	public Tile GetMainTile() {
+	public Tile getMainTile() {
 		return mainTile;
 	}
 
 	@Override
-	public Tile[] GetTiles() {
+	public Tile[] getTiles() {
 		return tiles;
 	}
 

@@ -15,35 +15,35 @@ import game.Main;
 public class GUI {
 	
 	//title screen, Quit, Play buttons etc.
-	public static void AddMainMenuGUI(JPanel panel) {
+	public static void addMainMenuGUI(JPanel panel) {
 		JButton startButton = new JButton("Start");
 		startButton.addActionListener(e -> startButtonPress(e));
 		panel.add(startButton);
 	}
 
 	//in game Menu with Quit, etc.
-	public static void AddPauseMenuGUI(JPanel panel) {
+	public static void addPauseMenuGUI(JPanel panel) {
 		panel.setOpaque(false);
 		JButton mainMenuButton = new JButton("MainMenu");
-		mainMenuButton.addActionListener(e -> MainMenuButtonPress(e));
+		mainMenuButton.addActionListener(e -> mainMenuButtonPress(e));
 		panel.add(mainMenuButton);
 	}
 
 	//in game icons n shit -"Matteo Holzer"
-	public static void AddInGameGUI(JPanel panel) {
+	public static void addInGameGUI(JPanel panel) {
 		panel.setOpaque(false);
 	}
 	
 	private static void startButtonPress(ActionEvent e) {
-		Main.gameWindow.SetPanel(PanelType.MainPanel);
-		Main.gameWindow.SetPanel(PanelType.InGameGUI);
-		Main.gameWindow.SetPanel(PanelType.MainMenu, false);
+		Main.gameWindow.setPanel(PanelType.MainPanel);
+		Main.gameWindow.setPanel(PanelType.InGameGUI);
+		Main.gameWindow.setPanel(PanelType.MainMenu, false);
 	}
 	
-	private static void MainMenuButtonPress(ActionEvent e) {
+	private static void mainMenuButtonPress(ActionEvent e) {
 		for (PanelType panelType : PanelType.values()) {
-			Main.gameWindow.SetPanel(panelType, false);
+			Main.gameWindow.setPanel(panelType, false);
 		}
-		Main.gameWindow.SetPanel(PanelType.MainMenu);
+		Main.gameWindow.setPanel(PanelType.MainMenu);
 	}	
 }

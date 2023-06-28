@@ -13,11 +13,11 @@ public interface Positional {
 
 	// get the position of one of the characters corners depending on the size of
 	// the positional object
-	public Point GetPosition(Corner corner);
+	public Point getPosition(Corner corner);
 
 	// by default you get the position of the top left corner
 	public default Point GetPosition() {
-		return GetPosition(Corner.topleft);
+		return getPosition(Corner.topleft);
 	}
 
 }

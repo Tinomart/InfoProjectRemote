@@ -12,7 +12,7 @@ public class Main {
 	public final static int MAP_WIDTH = 100;
 	public final static int MAP_HEIGHT = 100;
 	
-	public final static int TILE_SIZE = 32;
+	public static final int TILE_SIZE = 32;
 	
 	public final static String GAME_TITLE = "101100";							
 	
@@ -26,7 +26,7 @@ public class Main {
 	private static Menu inGameGUI = new Menu(SCREEN_WIDTH, SCREEN_HEIGHT, 1);
 	
 	//we need to set panels in some contexts, so this has to be public;
-	public static GameWindow gameWindow = new GameWindow(GAME_TITLE, GamePanel.AssignAllPanels(mainPanel, mainMenu, pauseMenu, inGameGUI));
+	public static GameWindow gameWindow = new GameWindow(GAME_TITLE, GamePanel.assignAllPanels(mainPanel, mainMenu, pauseMenu, inGameGUI));
 	
 	public static GameLoop gameLoop = new GameLoop(gameWindow);
 	
@@ -35,6 +35,6 @@ public class Main {
 	private static GameRunningManager gameRunningManager = new GameRunningManager(gameLoop);
 	
 	public static void main(String[] args) {
-		gameRunningManager.StartGame();
+		gameRunningManager.startGame();
 	}
 }

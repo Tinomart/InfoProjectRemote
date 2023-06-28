@@ -55,8 +55,8 @@ public class GamePanel extends JPanel {
 		panelWidth = width * Main.TILE_SIZE;
 		panelHeight = height * Main.TILE_SIZE;
 		this.drawLayer = drawLayer;
-		InitializePanel();
-		inputManager.AddInputForPanel();
+		initializePanel();
+		inputManager.addInputForPanel();
 		
 //		try {
 //            image = ImageIO.read(new File("C:\\Users\\Daniel\\Desktop\\Kraken\\InfoProjectRemote\\PNG\\Test.png"));
@@ -65,7 +65,7 @@ public class GamePanel extends JPanel {
 //        }
 	}
 
-	private void InitializePanel() {
+	private void initializePanel() {
 		this.setPreferredSize(new Dimension(panelWidth, panelHeight));
 		
 		//"revalidate" is just something generic that checks all components and updates them
@@ -81,7 +81,7 @@ public class GamePanel extends JPanel {
 	// Method that will be used in GameRunningManager to assign to the GameWindow
 	// all panels it can possibly display, this is so that the SetPanel method can
 	// work with only one parameter
-	public static HashMap<PanelType, GamePanel> AssignAllPanels(GamePanel... panelsToAssign) {
+	public static HashMap<PanelType, GamePanel> assignAllPanels(GamePanel... panelsToAssign) {
 
 		HashMap<PanelType, GamePanel> panels = new HashMap<PanelType, GamePanel>();
 		PanelType[] panelTypes = PanelType.values();
@@ -104,15 +104,15 @@ public class GamePanel extends JPanel {
 			//AddCorrectGUI For Panels that require GUI.
 			switch (panelTypes[i]) {
 				case MainMenu: {
-					GUI.AddMainMenuGUI(panel);
+					GUI.addMainMenuGUI(panel);
 					break;
 				}
 				case PauseMenu: {
-					GUI.AddPauseMenuGUI(panel);
+					GUI.addPauseMenuGUI(panel);
 					break;
 				}
 				case InGameGUI: {
-					GUI.AddInGameGUI(panel);
+					GUI.addInGameGUI(panel);
 					break;
 				}
 				default:
@@ -128,7 +128,7 @@ public class GamePanel extends JPanel {
 		return panels;
 	}
 	
-	private void DrawGameObjects(ArrayDeque<GameObject> gameObjects, Graphics graphics) {
+	private void drawGameObjects(ArrayDeque<GameObject> gameObjects, Graphics graphics) {
 		
 		for (GameObject gameObject : gameObjects) {
 			gameObject.draw(graphics);
@@ -143,7 +143,9 @@ public class GamePanel extends JPanel {
 	    
 //	    tile.draw(graphics);
 	    
-	    DrawGameObjects(addedObjects, graphics2D);
+	    drawGameObjects(addedObjects, graphics2D);
+	    revalidate();
+//	    repaint();
 	    // to avoid paint trails of object that is being painted every frame
 	    
 	    graphics2D.dispose();

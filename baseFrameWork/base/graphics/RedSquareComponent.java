@@ -30,6 +30,7 @@ public class RedSquareComponent extends JComponent {
         super.paintComponent(g);
         g.setColor(new Color(255, 0, 0, 125));
         g.fillRect(0, 0, getWidth(), getHeight());
+        
     }
 	
 	//just using standard remove sometimes caused errors when panel switching

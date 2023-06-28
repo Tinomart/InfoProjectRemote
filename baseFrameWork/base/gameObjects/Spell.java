@@ -17,5 +17,5 @@ public abstract class Spell extends GameObject implements TileBased {
 		this.tiles = tiles;
 	}
 
-	public abstract void Cast();
+	public abstract void cast();
 }

@@ -30,13 +30,13 @@ public class StructureTile extends Tile {
 
 	//instead of getting this tile we get the structures mainTile
 	@Override
-	public Tile GetMainTile() {
+	public Tile getMainTile() {
 		return structure.mainTile;
 	}
 
 	//instead of getting this tile we get all tiles of the structure
 	@Override
-	public Tile[] GetTiles() {
+	public Tile[] getTiles() {
 		return structure.tiles;
 	}
 

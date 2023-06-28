@@ -28,7 +28,7 @@ public class GameWindow extends JFrame {
 		activePanels = new ArrayDeque<>();
 	}
 
-	public void InitializeScreen() {
+	public void initializeScreen() {
 
 		// so that the window can get Closed
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -39,7 +39,7 @@ public class GameWindow extends JFrame {
 	}
 
 	// Sets panel, so that it will be displayed in the Window
-	public void SetPanel(GamePanel.PanelType panelToSet) {
+	public void setPanel(GamePanel.PanelType panelToSet) {
 		if (!activePanels.contains(panelToSet)) {
 			activePanels.add(panelToSet);
 			GamePanel panel = getPanels().get(panelToSet);
@@ -54,14 +54,14 @@ public class GameWindow extends JFrame {
 				this.add(((Map) panel).scrollPanel);
 			}
 
-			SetCorrectDrawingOrder();
+			setCorrectDrawingOrder();
 		}
 
 	}
 
-	public void SetPanel(GamePanel.PanelType panelType, boolean isBeingSetToActive) {
+	public void setPanel(GamePanel.PanelType panelType, boolean isBeingSetToActive) {
 		if (isBeingSetToActive) {
-			SetPanel(panelType);
+			setPanel(panelType);
 		} else {
 			activePanels.remove(panelType);
 			GamePanel panel = getPanels().get(panelType);
@@ -73,11 +73,11 @@ public class GameWindow extends JFrame {
 //				remove its scroll panel instead if it is a Map, since that is what we are added before
 				this.remove(((Map) panel).scrollPanel);
 			}
-			SetCorrectDrawingOrder();
+			setCorrectDrawingOrder();
 		}
 	}
 
-	private void SetCorrectDrawingOrder() {
+	private void setCorrectDrawingOrder() {
 
 		// Get all of our gamePanels and scroll Panels with their corresponding layer
 		// ordered in two separate HashMaps
@@ -127,7 +127,7 @@ public class GameWindow extends JFrame {
 					// this statement literally none of the changes are reflected.
 					// you cannot reposition it either, keep it here or none of our
 					// entire panel drawing will work
-					this.revalidate();
+					revalidate();
 				}
 			}
 		}
@@ -170,7 +170,7 @@ public class GameWindow extends JFrame {
 
 	}
 
-	public void OpenWindow() {
+	public void openWindow() {
 		// so that the things we did in InitialzeScreen do something
 		this.pack();
 

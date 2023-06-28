@@ -38,12 +38,12 @@ public class Tile extends GameObject implements TileBased {
 	
 	
 	public Tile(Point tilePosition, TileGrid tileGrid, Sprite sprite) {
-		super(new Point(tilePosition.x * Main.TILE_SIZE, tilePosition.y * Main.TILE_SIZE), sprite);
+		super(new Point(tilePosition.x * tileGrid.tileSize, tilePosition.y * tileGrid.tileSize), sprite);
 		this.tileGrid = tileGrid;
 		this.tilePosition = tilePosition;
 		tileGrid.replaceTile(tilePosition, this);
 		mainPanel = tileGrid.gameLoop.window.getPanels().get(PanelType.MainPanel);
-		redsquare = new RedSquareComponent(tilePosition.x, tilePosition.y, Main.TILE_SIZE);
+		redsquare = new RedSquareComponent(tilePosition.x, tilePosition.y, tileGrid.tileSize);
 		spriteType = SpriteType.TestSprite;
 		this.sprite = sprite;
 	}
@@ -76,21 +76,25 @@ public class Tile extends GameObject implements TileBased {
 	//when hovered display the redsquare on the main panel
 	public void onHover() {
 		mainPanel.add(redsquare);
+		mainPanel.revalidate();
+		tileGrid.gameLoop.window.revalidate();
+		tileGrid.gameLoop.window.repaint();
+		
 	}
 	
-	public Point GetTilePosition() {
+	public Point getTilePosition() {
 		return tilePosition;
 	}
 	
 	@Override
-	public Tile GetMainTile() {
+	public Tile getMainTile() {
 		return this;
 	}
 
 
 
 	@Override
-	public Tile[] GetTiles() {
+	public Tile[] getTiles() {
 		return new Tile[]{this};
 	}
 	

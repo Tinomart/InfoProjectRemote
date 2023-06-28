@@ -21,5 +21,4 @@ public class CircleTile extends Tile {
 				.append(",").append("TileGrid").append(" ");
 		return stringBuilder.toString();
 	}
-
 }

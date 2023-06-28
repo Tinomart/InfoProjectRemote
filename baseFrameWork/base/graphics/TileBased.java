@@ -8,6 +8,6 @@ public interface TileBased {
 	//So basically I want a special tile position variable
 	//and potentially a sprite restriction or sprite cutter into
 	// tile shape
-	public Tile GetMainTile();
-	public Tile[] GetTiles();
+	public Tile getMainTile();
+	public Tile[] getTiles();
 }

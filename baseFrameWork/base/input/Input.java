@@ -5,6 +5,8 @@ import java.awt.event.*;
 import java.util.ArrayDeque;
 import javax.swing.JPanel;
 
+import game.Main;
+
 //this class is the class that gets all the inputs and transforms them into more digestible Formats. 
 //It gives all InputTypes to currentInput, so that we know what types of inputs are currently happening
 //and stores additional information about what keys are pressed in case of key press in the pressedKeys Variable. 
@@ -16,10 +18,11 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener, M
 	// Input Manager for when we actually want to add
 	// behaviour when certain actions are performed
 	public enum InputType {
-		leftpress, rightpress, keypress,
+		leftpress, rightpress, keypress
 	}
 
 	public JPanel panel;
+	public InputManager inputManager;
 
 	// for taking track of what types of Inputs are happening right now
 	public ArrayDeque<InputType> currentInput = new ArrayDeque<InputType>();
@@ -27,6 +30,7 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener, M
 	// to add additional behaviour based on the position
 	// of the mouse in Inputmanager
 	public Point mousePositionInWindow = new Point(0, 0);
+	public int scrollAmount = 0;
 
 	// this saves current clicked Input in int form because I doubt anyone
 	// would execute more than 60 clicks a second, which is the
@@ -74,7 +78,9 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener, M
 		// this is here so that if we make hovering over something
 		// change the color of a tile, the change happens, without
 		// messing with the draw order and maybe not being visible
-		panel.repaint();
+		panel.revalidate();
+		Main.gameWindow.revalidate();
+		Main.gameWindow.repaint();
 	}
 
 	@Override
@@ -128,6 +134,7 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener, M
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		// TODO potential if we want to add a zoom with the mouse wheel or something
+		int scrollWheelPos = e.getWheelRotation();
+		scrollAmount = scrollWheelPos;
 	}
 }

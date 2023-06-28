@@ -4,8 +4,8 @@ import java.awt.Point;
 import java.util.HashMap;
 
 import base.GameLoop;
-import base.gameObjects.GameObject;
 import base.gameObjects.Tile;
+import game.Main;
 
 	//TODO here we should add all the basic tile logic
 	//I want this to basically function a dual purpose
@@ -15,7 +15,7 @@ public class TileGrid {
 	
 	public HashMap<Point, Tile> tileMap = new HashMap<Point, Tile>();
 	public GameLoop gameLoop;
-	public int tileSize;
+	public int tileSize = Main.TILE_SIZE;
 	public int tileMapWidth;
 	public int tileMapHeight;
 	
