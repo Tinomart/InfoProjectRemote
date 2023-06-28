@@ -365,9 +365,7 @@ public class InputManager{
 		
 		//calculate MousePosition on our Map, as we only track the mouse position in the window right now
 		int xPositionOnPanel = input.mousePositionInWindow.x + Main.gameLoop.cameraPosition.x;
-		System.out.println(xPositionOnPanel);
 		int yPositionOnPanel = input.mousePositionInWindow.y + Main.gameLoop.cameraPosition.y;
-		System.out.println(Main.tileGrid.tileSize);
 		Point mouseTilePosition = new Point(xPositionOnPanel/Main.tileGrid.tileSize, yPositionOnPanel/Main.tileGrid.tileSize);
 		
 		
