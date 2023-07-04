@@ -5,8 +5,11 @@ import base.graphics.*;
 
 public class CityHall extends Structure {
 	
+	public static Point[] shape = new Point[] {new Point(-1,0)};
+	
 	public CityHall(Point position, TileGrid tileGrid) {
 		super(initializeTiles(position, tileGrid), initializeMainTile(position, tileGrid), tileGrid);
+		
 	}
 
 	private static Tile initializeMainTile(Point position, TileGrid tileGrid) {

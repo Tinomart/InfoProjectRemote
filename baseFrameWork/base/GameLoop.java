@@ -439,24 +439,25 @@ public class GameLoop implements Runnable {
 	}
 
 	public void destroyGameObject(GameObject gameObjectToDestroy) {
-		for (GameObject gameObject : gameObjects) {
-			if(gameObject.equals(gameObjectToDestroy)) {
-				if(gameObject instanceof TileBased) {
-					for (Tile tile : ((TileBased)gameObject).getTiles()) {
-							tile.getSprite().setImage(null);
-							tile.tileGrid.tileMap.remove(tile.getTilePosition());
-							createGameObject(PureGrassTile.class, new Object[] {tile.getTilePosition(), tile.tileGrid});
-							panels.get(PanelType.MainPanel).revalidate();
-							window.revalidate();
-					}
-					
-				} else {
-					Sprite nullSprite = new Sprite(new Point(0, 0));
-					gameObject.setSprite(nullSprite);
-				}
-//				gameObjects.remove(gameObject);
-			} 
-			window.repaint();
+		Iterator<GameObject> iterator = gameObjects.iterator();
+		while (iterator.hasNext()) {
+		    GameObject gameObject = iterator.next();
+		    if (gameObject.equals(gameObjectToDestroy)) {
+		        if (gameObject instanceof TileBased) {
+		            for (Tile tile : ((TileBased) gameObject).getTiles()) {
+		                tile.getSprite().setImage(null);
+		                tile.tileGrid.tileMap.remove(tile.getTilePosition());
+		                createGameObject(PureGrassTile.class, new Object[]{tile.getTilePosition(), tile.tileGrid});
+		                panels.get(PanelType.MainPanel).revalidate();
+		                window.revalidate();
+		            }
+		        } else {
+		            Sprite nullSprite = new Sprite(new Point(0, 0));
+		            gameObject.setSprite(nullSprite);
+		        }
+		        iterator.remove();
+		    }
+		    window.repaint();
 		}
 	}
 	

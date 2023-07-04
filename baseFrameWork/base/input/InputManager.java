@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayDeque;
+import java.util.Iterator;
 
 import javax.swing.JPanel;
 
@@ -356,10 +357,18 @@ public class InputManager{
 					Main.gameLoop.destroyGameObject(tile.structure);
 				}
 			}
+		} else if(selectedStructure != null) {
+			boolean placeable = true;
+			for (Tile tile : currentHoveredTiles) {
+				if(tile.structure != null) {
+					placeable = false;
+				}
+			}
+			if(placeable) {
+				Main.gameLoop.createGameObject(selectedStructure, new Object[] {currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid});
+			}
 		}
-		if(selectedStructure != null) {
-			Main.gameLoop.createGameObject(selectedStructure, new Object[] {currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid});
-		} 
+		 
 	}
 
 	private void executeLeftClick() {
@@ -404,6 +413,19 @@ public class InputManager{
 				for (Tile tile : Main.tileGrid.tileMap.get(mouseTilePosition).getTiles()) {
 					currentHoveredTiles.add(tile);
 				}
+				if(selectedStructure != null) {
+					try {
+						Point[] shape = (Point[]) selectedStructure.getDeclaredField("shape").get(null);
+						for (Point point : shape) {
+							for (Tile tile : Main.tileGrid.tileMap.get(new Point(mouseTilePosition.x + point.x, mouseTilePosition.y + point.y)).getTiles()) {
+								currentHoveredTiles.add(tile);
+							}
+						}
+					} catch (IllegalArgumentException|IllegalAccessException|NoSuchFieldException|SecurityException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+				}  
 			}
 			hoverTiles();
 		}
