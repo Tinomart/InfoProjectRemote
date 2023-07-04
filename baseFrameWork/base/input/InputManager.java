@@ -417,8 +417,10 @@ public class InputManager{
 					try {
 						Point[] shape = (Point[]) selectedStructure.getDeclaredField("shape").get(null);
 						for (Point point : shape) {
-							for (Tile tile : Main.tileGrid.tileMap.get(new Point(mouseTilePosition.x + point.x, mouseTilePosition.y + point.y)).getTiles()) {
-								currentHoveredTiles.add(tile);
+							if(Main.tileGrid.tileMap.get(new Point(mouseTilePosition.x + point.x, mouseTilePosition.y + point.y)) != null) {
+								for (Tile tile : Main.tileGrid.tileMap.get(new Point(mouseTilePosition.x + point.x, mouseTilePosition.y + point.y)).getTiles()) {
+									currentHoveredTiles.add(tile);
+								}
 							}
 						}
 					} catch (IllegalArgumentException|IllegalAccessException|NoSuchFieldException|SecurityException e) {
