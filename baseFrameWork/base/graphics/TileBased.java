@@ -1,5 +1,7 @@
 package base.graphics;
 
+import java.awt.Point;
+
 import base.gameObjects.Tile;
 
 public interface TileBased {
@@ -10,4 +12,5 @@ public interface TileBased {
 	// tile shape
 	public Tile getMainTile();
 	public Tile[] getTiles();
+	public Point getTilePosition();
 }

@@ -6,7 +6,7 @@ import javax.swing.*;
 
 //this entire class is just for debugging the Tile System and will be removed once
 //we have the entire sprite system in place
-public class RedSquareComponent extends JComponent {
+public class SquareComponent extends JComponent {
     /**
 	 * 
 	 */
@@ -15,10 +15,12 @@ public class RedSquareComponent extends JComponent {
 	//x and y for position to set the bounds later
 	private int x;
 	private int y;
+	public Color color;
 	
-	public RedSquareComponent(int x, int y, int tileSize) {
+	public SquareComponent(int x, int y, int tileSize, Color color) {
 		this.x = x*tileSize;
 		this.y = y*tileSize;
+		this.color = color;
 		
 		//set position with x and y and make its size tileSize*tileSize
 		this.setBounds(this.x, this.y, tileSize, tileSize);
@@ -28,7 +30,7 @@ public class RedSquareComponent extends JComponent {
 	//when painted fill the entire component with a rectangle of its size
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(new Color(255, 0, 0, 125));
+        g.setColor(color);
         g.fillRect(0, 0, getWidth(), getHeight());
         
     }

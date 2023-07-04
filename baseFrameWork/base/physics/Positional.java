@@ -16,7 +16,7 @@ public interface Positional {
 	public Point getPosition(Corner corner);
 
 	// by default you get the position of the top left corner
-	public default Point GetPosition() {
+	public default Point getPosition() {
 		return getPosition(Corner.topleft);
 	}
 

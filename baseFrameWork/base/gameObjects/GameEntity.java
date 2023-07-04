@@ -74,9 +74,6 @@ public class GameEntity implements Positional {
 	@Override
 	public Point getPosition(Corner corner) {
 		
-		//TODO: The return in the statement will be based off the sprite's
-		//width and height, so until the proper sprite system is implemented
-		//this will stay this way
 		switch (corner) {
 			case topleft: {
 				return position;
@@ -98,7 +95,7 @@ public class GameEntity implements Positional {
 	@Override
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder("");
-		stringBuilder.append("base.gameObjects.").append(getClass().getSimpleName()).append(",").append(GetPosition().x).append( ";").append(GetPosition().y).append(" ");
+		stringBuilder.append("base.gameObjects.").append(getClass().getSimpleName()).append(",").append(getPosition().x).append( ";").append(getPosition().y).append(" ");
 		return stringBuilder.toString();
 	}
 

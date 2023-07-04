@@ -50,7 +50,7 @@ public class Sprite {
         size.y = image.getHeight();
     }    
 
-    public Image getImage() {
+    public BufferedImage getImage() {
         return image;
     }
 

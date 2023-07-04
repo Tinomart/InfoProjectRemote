@@ -1,5 +1,6 @@
 package base.gameObjects;
 
+import java.awt.Color;
 import java.awt.Point;
 
 import base.graphics.Sprite;
@@ -21,11 +22,10 @@ public class StructureTile extends Tile {
 //	 add or remove a structure, it will remove or add
 //	 the normal tiles as well, so it is only determining the interaction 
 
-	private Structure structure;
-
-	public StructureTile(Point tilePosition, Structure structure, TileGrid tileGrid, Sprite sprite) {
+	public StructureTile(Point tilePosition, TileGrid tileGrid, Sprite sprite) {
 		super(tilePosition, tileGrid, sprite);
-		this.structure = structure;
+		//structure Tiles should have a red color when hovered to show that they cant just be built on like other tiles
+		highlightSquare.color = new Color(255, 0, 0, 125);
 	}
 
 	//instead of getting this tile we get the structures mainTile
@@ -39,5 +39,7 @@ public class StructureTile extends Tile {
 	public Tile[] getTiles() {
 		return structure.tiles;
 	}
+	
+	
 
 }

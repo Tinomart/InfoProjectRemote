@@ -41,9 +41,11 @@ public class GUI {
 	}
 	
 	private static void mainMenuButtonPress(ActionEvent e) {
-		for (PanelType panelType : PanelType.values()) {
-			Main.gameWindow.setPanel(panelType, false);
-		}
 		Main.gameWindow.setPanel(PanelType.MainMenu);
+		for (PanelType panelType : PanelType.values()) {
+			if(panelType != PanelType.MainMenu) {
+				Main.gameWindow.setPanel(panelType, false);
+			} 
+		}
 	}	
 }

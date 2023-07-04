@@ -10,8 +10,6 @@ import javax.swing.JPanel;
 import base.GameLoop.Direction;
 import base.gameObjects.*;
 
-import base.graphics.Sprite;
-import base.graphics.GamePanel;
 import base.graphics.GamePanel.PanelType;
 import base.input.Input.InputType;
 import game.Main;
@@ -27,10 +25,13 @@ public class InputManager{
 	//To track all tiles that are currently being hovered
 	public ArrayDeque<Tile> currentHoveredTiles = new ArrayDeque<Tile>();
 	public Class<? extends Tile> selectedTile;
+	public Class<? extends Structure> selectedStructure;
 	
 	public double zoomSpeed = 0.025;
-	private double zoomFactor;
-	public int maxTileSize = 33;
+	private double zoomFactor = .0;
+	public int maxTileSize = 40;
+	public int minTileSize = 8;
+	
 	
 	public InputManager(JPanel panel) {
 		this.panel = panel;
@@ -72,21 +73,15 @@ public class InputManager{
 		
 		addHoveredTiles();
 		if(input.scrollAmount != 0) {
-			zoom(zoomSpeed);
+//			zoom(zoomSpeed);
 		}
-		
-		
-		
-		
-
 	}
-	
-
-	
-
+		
+		
 	private void zoom(double zoomSpeed2) {
 		boolean zoomAmountIsLargeEnough = true;
 		boolean zoomMaxReached = false;
+		boolean zoomMinReached = false;
 		int positionDeltaX = 0;
 		int positionDeltaY = 0;
 		int sizeDeltaX = 0;
@@ -94,17 +89,15 @@ public class InputManager{
 		int tileSizeDelta = 0;
 		
 		for (GameObject gameObject : Main.gameLoop.gameObjects) {
-			positionDeltaX = (int)(zoomFactor*gameObject.GetPosition().x);
-			positionDeltaY = (int)(zoomFactor*gameObject.GetPosition().y);
-			sizeDeltaX = (int)(zoomFactor*gameObject.sprite.size.x);
-			sizeDeltaY = (int)(zoomFactor*gameObject.sprite.size.y);
+			positionDeltaX = (int)(zoomFactor*gameObject.getPosition().x);
+			positionDeltaY = (int)(zoomFactor*gameObject.getPosition().y);
+			sizeDeltaX = (int)(zoomFactor*gameObject.getSprite().size.x);
+			sizeDeltaY = (int)(zoomFactor*gameObject.getSprite().size.y);
 			tileSizeDelta = (int)(zoomFactor*Main.tileGrid.tileSize);
 			if(!(sizeDeltaX > 0 && sizeDeltaY > 0 && tileSizeDelta > 0)) {
 				zoomAmountIsLargeEnough = false;
 				zoomFactor += zoomSpeed2;
-			} else {
-				
-			}
+			} 
 		}
 		if(Main.tileGrid.tileSize + tileSizeDelta >= maxTileSize) {
 			zoomMaxReached = true;
@@ -112,48 +105,62 @@ public class InputManager{
 			zoomMaxReached = false;
 		}
 		
+		if(Main.tileGrid.tileSize - tileSizeDelta <= minTileSize) {
+			zoomMinReached = true;
+		} else {
+			zoomMinReached = false;
+		}
+		
 		if(zoomAmountIsLargeEnough) {
-			System.out.println("working");
 			for (GameObject gameObject : Main.gameLoop.gameObjects) {
-				positionDeltaX = (int)(zoomFactor*gameObject.GetPosition().x);
-				positionDeltaY = (int)(zoomFactor*gameObject.GetPosition().y);
-				sizeDeltaX = (int)(zoomFactor*gameObject.sprite.size.x);
-				sizeDeltaY = (int)(zoomFactor*gameObject.sprite.size.y);
+				positionDeltaX = (int)(zoomFactor*gameObject.getPosition().x);
+				positionDeltaY = (int)(zoomFactor*gameObject.getPosition().y);
+				sizeDeltaX = (int)(zoomFactor*gameObject.getSprite().size.x);
+				sizeDeltaY = (int)(zoomFactor*gameObject.getSprite().size.y);
 				tileSizeDelta = (int)(zoomFactor*Main.tileGrid.tileSize);
+				
 				if(input.scrollAmount < 0) {
 					if(!zoomMaxReached) {
-					 Main.tileGrid.tileSize += tileSizeDelta;
+			 			Main.tileGrid.tileSize += tileSizeDelta;
 					}
-				} else {
-					Main.tileGrid.tileSize-= tileSizeDelta;
+				} 	else {
+					if(!zoomMinReached) {
+						Main.tileGrid.tileSize -= tileSizeDelta;
+					}	
 				}
+				
 				if(input.scrollAmount < 0) {
 					if(!zoomMaxReached) {
-						gameObject.GetPosition().x += positionDeltaX;
-						gameObject.GetPosition().y += positionDeltaY;
-						gameObject.sprite.size.x += sizeDeltaX;
-						gameObject.sprite.size.y += sizeDeltaY;
+						gameObject.getPosition().x += positionDeltaX;
+						gameObject.getPosition().y += positionDeltaY;
+						gameObject.getSprite().size.x += sizeDeltaX;
+						gameObject.getSprite().size.y += sizeDeltaY;
 					}
 					
 				} else {
-					gameObject.GetPosition().x -= positionDeltaX;
-					gameObject.GetPosition().y -= positionDeltaY;
-					gameObject.sprite.size.x -= sizeDeltaX;
-					gameObject.sprite.size.y-= sizeDeltaY;
+					if(!zoomMinReached) {
+						gameObject.getPosition().x -= positionDeltaX;
+						gameObject.getPosition().y -= positionDeltaY;
+						gameObject.getSprite().size.x -= sizeDeltaX;
+						gameObject.getSprite().size.y-= sizeDeltaY;
+					}
+					
 				}
 				if(gameObject instanceof Tile) {
-					((Tile) gameObject).redsquare.setBounds(gameObject.GetPosition().x, gameObject.GetPosition().y, Main.tileGrid.tileSize, Main.tileGrid.tileSize);
+					((Tile) gameObject).highlightSquare.setBounds(gameObject.getPosition().x, gameObject.getPosition().y, Main.tileGrid.tileSize, Main.tileGrid.tileSize);
 				}
 				zoomFactor = zoomSpeed2;
 			}
 			panel.revalidate();
 			Main.gameWindow.revalidate();
 			Main.gameWindow.repaint();
+		} else {
+	    	zoomFactor += zoomSpeed2;
 		}
 		
 		zoomAmountIsLargeEnough = true;
 		input.scrollAmount = 0;
-//		System.out.println(zoomFactor);
+		
 		
 	}
 
@@ -327,6 +334,13 @@ public class InputManager{
 					selectedTile = null;
 				}
 				break;
+			case KeyEvent.VK_B: 
+				if(selectedStructure != CityHall.class) {
+					selectedStructure = CityHall.class;
+				} else {
+					selectedStructure = null;
+				}
+				break;
 			default:
 				break;
 				
@@ -336,16 +350,23 @@ public class InputManager{
 	}
 
 	private void executeRightClick() {
-		// TODO: Tell the game what to do if the right mouse button is cicked		
-		
+		if(input.pressedKeys.contains(KeyEvent.VK_SHIFT)) {
+			for (Tile tile : currentHoveredTiles) {
+				if(tile.structure != null) {
+					Main.gameLoop.destroyGameObject(tile.structure);
+				}
+			}
+		}
+		if(selectedStructure != null) {
+			Main.gameLoop.createGameObject(selectedStructure, new Object[] {currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid});
+		} 
 	}
 
 	private void executeLeftClick() {
 		// TODO Auto-generated method stub
 		if(selectedTile != null) {
-			Main.gameLoop.gameObjects.add(Main.gameLoop.createGameObject(selectedTile, new Object[] {currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid}));
-		}
-		
+			Main.gameLoop.createGameObject(selectedTile, new Object[] {currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid});
+		} 
 	}
 
 	private void executeRightPress() {
@@ -373,7 +394,7 @@ public class InputManager{
 		if(!currentHoveredTiles.contains(Main.tileGrid.tileMap.get(mouseTilePosition))) {
 			//remove highlighting redsquare
 			for (Tile tile : currentHoveredTiles) {
-				tile.redsquare.removeComponent();
+				tile.highlightSquare.removeComponent();
 			}
 			
 			//remove all previously hovered tiles

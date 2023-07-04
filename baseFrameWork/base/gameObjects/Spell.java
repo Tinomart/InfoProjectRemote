@@ -12,7 +12,7 @@ public abstract class Spell extends GameObject implements TileBased {
 	public Tile[] tiles;
 
 	public Spell(Tile[] tiles, Tile mainTile,Sprite sprite) {
-		super(mainTile.GetPosition(), sprite);
+		super(mainTile.getPosition(), sprite);
 		this.mainTile = mainTile;
 		this.tiles = tiles;
 	}

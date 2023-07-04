@@ -17,7 +17,7 @@ public class BeachTile_LeftBottom extends Tile {
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder("");
 		stringBuilder.append("base.gameObjects.").append(getClass().getSimpleName()).append(",")
-				.append(GetPosition().x / tileGrid.tileSize).append(";").append(GetPosition().y / tileGrid.tileSize)
+				.append(getPosition().x / tileGrid.tileSize).append(";").append(getPosition().y / tileGrid.tileSize)
 				.append(",").append("TileGrid").append(" ");
 		return stringBuilder.toString();
 	}

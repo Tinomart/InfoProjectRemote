@@ -1,19 +1,16 @@
 package base.graphics;
 
 import java.awt.Dimension;
-import base.gameObjects.Tile;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.HashMap;
+import java.util.Iterator;
 
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import base.gameObjects.GameObject;
+import base.gameObjects.Structure;
+import base.gameObjects.Character;
 import base.input.InputManager;
 import game.Main;
 
@@ -130,25 +127,48 @@ public class GamePanel extends JPanel {
 	
 	private void drawGameObjects(ArrayDeque<GameObject> gameObjects, Graphics graphics) {
 		
-		for (GameObject gameObject : gameObjects) {
-			gameObject.draw(graphics);
+		Iterator<GameObject> iterator = gameObjects.iterator();
+		while (iterator.hasNext()) {
+		    GameObject gameObject = iterator.next();
+		    if (!(gameObject instanceof Structure || gameObject instanceof Character)) {
+		        gameObject.draw(graphics);
+		    }
 		}
+		
+		iterator = gameObjects.iterator();
+		while (iterator.hasNext()) {
+		    GameObject gameObject = iterator.next();
+		    if (gameObject instanceof Character) {
+		        gameObject.draw(graphics);
+		    }
+		}
+		
+		iterator = gameObjects.iterator();
+		while (iterator.hasNext()) {
+		    GameObject gameObject = iterator.next();
+		    if (gameObject instanceof Structure) {
+		        gameObject.draw(graphics);
+		    }
+		}
+		
+		
+		
+		
+		
 	}
 	public void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 	    
-	    Graphics2D graphics2D = (Graphics2D) graphics.create();
+//	    Graphics2D graphics2D = (Graphics2D) graphics.create();
 	    
-//	    Graphics2D graphics2D = (Graphics2D) graphics;
-	    
-//	    tile.draw(graphics);
+	    Graphics2D graphics2D = (Graphics2D) graphics;
 	    
 	    drawGameObjects(addedObjects, graphics2D);
 	    revalidate();
 //	    repaint();
 	    // to avoid paint trails of object that is being painted every frame
 	    
-	    graphics2D.dispose();
+//	    graphics2D.dispose();
 	}
 	
 }

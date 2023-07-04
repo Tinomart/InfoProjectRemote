@@ -1,11 +1,13 @@
 package base;
 
 import java.awt.*;
+import java.util.List;
+import java.util.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -15,13 +17,14 @@ import java.util.ArrayDeque;
 import java.util.HashMap;
 
 import base.gameObjects.GameObject;
+import base.gameObjects.PureGrassTile;
 import base.gameObjects.Tile;
 import base.graphics.GamePanel.PanelType;
 import base.graphics.GameWindow;
 import base.graphics.Menu;
 import base.graphics.Sprite;
 import base.graphics.SpriteLoader;
-import base.graphics.SpriteLoader.SpriteType;
+import base.graphics.TileBased;
 import base.graphics.TileGrid;
 import game.Main;
 
@@ -38,7 +41,7 @@ public class GameLoop implements Runnable {
 
 	public HashMap<PanelType, GamePanel> panels;
 	private GamePanel mainPanel;
-
+	
 	public ArrayDeque<GameObject> gameObjects = new ArrayDeque<GameObject>();
 	private SpriteLoader spriteLoader = new SpriteLoader();
 
@@ -72,7 +75,7 @@ public class GameLoop implements Runnable {
 
 		setClosingFunctionality(window);
 		setMenuResizability(window);
-
+		
 		// Move our Camera to the Spawnpoint
 		for (int i = 0; i < spawnPoint.x / cameraSpeed; i++) {
 			moveCamera(Direction.right);
@@ -180,26 +183,25 @@ public class GameLoop implements Runnable {
 //			}
 
 			if (fpsCount >= autoSaveIntervallInSeconds * 60) {
-//				Save();
+				save();
 				fpsCount = 0;
 			}
-			for (PanelType panelType : window.activePanels) {
 
-				GamePanel panel = panels.get(panelType);
-				if (!(panel instanceof Menu)) {
+			GamePanel panel = panels.get(PanelType.MainPanel);
+			if (!(panel instanceof Menu)) {
 
-					for (GameObject gameObject : gameObjects) {
+				for (GameObject gameObject : gameObjects) {
 
-						if (gameObject.getPanelToDrawOn() == panelType && !(panel.addedObjects.contains(gameObject))) {
+					if (gameObject.getPanelToDrawOn() == PanelType.MainPanel && !(panel.addedObjects.contains(gameObject))) {
 
-							panel.addedObjects.add(gameObject);
-						}
+						panel.addedObjects.add(gameObject);
 					}
-
 				}
 
 			}
+
 			
+
 			updateGameObjects();
 //			window.revalidate();
 //			window.repaint();
@@ -212,8 +214,9 @@ public class GameLoop implements Runnable {
 		for (GameObject gameObject : gameObjects) {
 			gameObject.update();
 		}
-		
+
 	}
+
 	public static void executeEveryFrame(Thread thread) {
 
 		// The time frame of one frame in nanoseconds
@@ -274,7 +277,7 @@ public class GameLoop implements Runnable {
 			}
 
 			break;
-		
+
 		}
 		// set the negative location because we are moving the panel beneath the camera,
 		// not the actual camera itself, which
@@ -314,6 +317,8 @@ public class GameLoop implements Runnable {
 	}
 
 	public void load() {
+//		gameObjects.add(new CityHall(new Point(4,4), Main.tileGrid));
+//		System.out.println(gameObjects);
 		// try catch, because it is possible the file does not exist
 		try {
 			// reader, because we need the information from the file
@@ -336,9 +341,6 @@ public class GameLoop implements Runnable {
 			// successfully be created = is not null
 			for (String gameObjectString : gameObjectsStrings) {
 				GameObject createdObject = createGameObject(gameObjectString);
-				if (!gameObjects.contains(createdObject)) {
-					gameObjects.add(createdObject);
-				}
 
 			}
 			reader.close();
@@ -388,7 +390,15 @@ public class GameLoop implements Runnable {
 					// return a GameObject with the correct constructor and arguments
 					GameObject gameObject = (GameObject) constructor.newInstance(arguments);
 					initializeSprite(gameObject);
-					return gameObject;
+					boolean gameObjectExists = false;
+					for (GameObject object : gameObjects) {
+						if(object.equals(gameObject)) {
+							gameObjectExists = true;
+						}
+					}
+					if (!gameObjectExists) {
+						gameObjects.add(gameObject);
+					}
 				}
 			}
 		} catch (InvocationTargetException | IllegalArgumentException | ClassNotFoundException | InstantiationException
@@ -410,7 +420,16 @@ public class GameLoop implements Runnable {
 			constructor = type.getConstructor(argumentTypes);
 			GameObject gameObject = (GameObject) constructor.newInstance(arguments);
 			initializeSprite(gameObject);
-
+			
+			boolean gameObjectExists = false;
+			for (GameObject object : gameObjects) {
+				if(object.equals(gameObject)) {
+					gameObjectExists = true;
+				}
+			}
+			if (!gameObjectExists) {
+				gameObjects.add(gameObject);
+			}
 			return gameObject;
 		} catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException | InstantiationException
 				| NoSuchMethodException | SecurityException e) {
@@ -419,9 +438,56 @@ public class GameLoop implements Runnable {
 		return null;
 	}
 
-	private void initializeSprite(GameObject gameObject) {
-		if (gameObject.sprite.getImage() == null) {
-			gameObject.sprite = spriteLoader.sprites.get(gameObject.spriteType);
+	public void destroyGameObject(GameObject gameObjectToDestroy) {
+		for (GameObject gameObject : gameObjects) {
+			if(gameObject.equals(gameObjectToDestroy)) {
+				if(gameObject instanceof TileBased) {
+					for (Tile tile : ((TileBased)gameObject).getTiles()) {
+							tile.getSprite().setImage(null);
+							tile.tileGrid.tileMap.remove(tile.getTilePosition());
+							createGameObject(PureGrassTile.class, new Object[] {tile.getTilePosition(), tile.tileGrid});
+							panels.get(PanelType.MainPanel).revalidate();
+							window.revalidate();
+					}
+					
+				} else {
+					Sprite nullSprite = new Sprite(new Point(0, 0));
+					gameObject.setSprite(nullSprite);
+				}
+//				gameObjects.remove(gameObject);
+			} 
+			window.repaint();
+		}
+	}
+	
+	public void initializeSprite(GameObject gameObject) {
+		if (gameObject.getSprite().getImage() == null) {
+			Sprite sprite = spriteLoader.sprites.get(gameObject.spriteType);
+			if(gameObject instanceof TileBased) {
+				if(((TileBased)gameObject).getMainTile().structure != null) {
+					Sprite assignmentSprite = new Sprite(sprite.size);
+					int width = sprite.getImage().getWidth();
+			        int height = sprite.getImage().getHeight();
+
+			        BufferedImage assignmentImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			        for (int y = 0; y < height; y++) {
+			            for (int x = 0; x < width; x++) {
+			                int pixel = sprite.getImage().getRGB(x, y);
+			                assignmentImage.setRGB(x, y, pixel);
+			            }
+			        }
+
+					assignmentSprite.setImage(assignmentImage);
+					gameObject.setSprite(assignmentSprite);
+				} else {
+					gameObject.setSprite(sprite);
+				}
+			} else {
+				gameObject.setSprite(sprite);
+			}
+			
+			
+			
 		}
 	}
 
@@ -467,10 +533,9 @@ public class GameLoop implements Runnable {
 			return new Sprite(new Point(Integer.parseInt(coords[0]), Integer.parseInt(coords[1])));
 		} else {
 			GameObject createdGameObject = createGameObject(string);
+			gameObjects.remove(createdGameObject);
 			for (GameObject gameObject : gameObjects) {
-				if (gameObject == createdGameObject || (gameObject.GetPosition().x == createdGameObject.GetPosition().x
-						&& gameObject.GetPosition().y == createdGameObject.GetPosition().y
-						&& gameObject.getClass() == createdGameObject.getClass())) {
+				if (gameObject.equals(createdGameObject)) {
 					return gameObject;
 				}
 			}

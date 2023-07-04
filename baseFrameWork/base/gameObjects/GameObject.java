@@ -14,6 +14,8 @@ import base.graphics.Drawable;
 import base.graphics.GamePanel;
 import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
+import base.physics.Positional.Corner;
+import base.graphics.TileBased;
 import base.graphics.TileGrid;
 
 import java.io.File;
@@ -25,8 +27,19 @@ public class GameObject extends GameEntity implements Drawable {
 	
 	private GamePanel.PanelType panelToDrawOn;
 
-	public Sprite sprite;
+	private Sprite sprite;
+	public Sprite getSprite() {
+		return sprite;
+	}
+	public void setSprite(Sprite sprite) {
+		this.sprite = sprite;
+	}
+
+
+
+
 	public SpriteType spriteType;
+	public int drawLayer = 0;
 	
 	GamePanel gp;
 	
@@ -48,25 +61,46 @@ public class GameObject extends GameEntity implements Drawable {
 
 
 
-
+	
 	
 	
 	
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void start() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public GamePanel.PanelType getPanelToDrawOn() {
 		return panelToDrawOn;
+	}
+	
+	@Override
+	public Point getPosition(Corner corner) {
+		
+		switch (corner) {
+			case topleft: {
+				return position;
+			}
+			case topright: {
+				return new Point(position.x + sprite.size.x, position.y);
+			}
+			case bottomleft: {
+				return new Point(position.x, position.y + sprite.size.y);
+			}
+			case bottomright: {
+				return new Point(position.x + sprite.size.x, position.y + sprite.size.y);
+			}
+			default:
+				return position;
+		}
 	}
 	
 //	@Override
@@ -86,37 +120,22 @@ public class GameObject extends GameEntity implements Drawable {
 	
 	public void draw(Graphics graphics) {
 		if(isActive()) {
-			graphics.drawImage(sprite.getImage(),position.x, position.y, sprite.size.x, sprite.size.y, null);			
+			graphics.drawImage(sprite.getImage(), getPosition().x, getPosition().y, sprite.size.x, sprite.size.y, null);
 		}
 			
 	}
 	
-//	public void draw(Graphics graphics) {
-//		if(isActive()) {
-//			
-//			
-//			int col = 0;
-//			int row = 0;
-//			int x = 0;
-//			int y = 0;
-//			
-//			
-//			while(col < Main.MAP_HEIGHT && row < Main.MAP_WIDTH) {
-//				
-//				graphics.drawImage(tile[0].sprite.getImage(), x, y, Main.TILE_SIZE, Main.TILE_SIZE, null);
-//				
-//				col ++;
-//				x += sprite.size.x;
-//				
-//				if(col == Main.MAP_HEIGHT) {
-//					col = 0;
-//					x = 0;
-//					row++;
-//					y += sprite.size.x;
-//				}
-//			}
-//			
-//		}
+	public boolean equals(GameObject gameObject) {
+		if (this.getPosition().x == gameObject.getPosition().x
+				&& this.getPosition().y == gameObject.getPosition().y
+				&& this.sprite.size == gameObject.sprite.size
+				&& this.getClass() == gameObject.getClass()) {
+			System.out.println("true");
+			return true;
+		} else {
+			return false;
+		}
+	}
 		
 	
 
@@ -124,7 +143,7 @@ public class GameObject extends GameEntity implements Drawable {
 	@Override
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder("");
-		stringBuilder.append("base.gameObjects.").append(getClass().getSimpleName()).append(",").append(GetPosition().x).append( ";").append(GetPosition().y).append(",").append(sprite.size.x).append(";").append(sprite.size.y).append(" ");
+		stringBuilder.append("base.gameObjects.").append(getClass().getSimpleName()).append(",").append(getPosition().x).append( ";").append(getPosition().y).append(",").append(sprite.size.x).append(";").append(sprite.size.y).append(" ");
 		return stringBuilder.toString();
 	}
 

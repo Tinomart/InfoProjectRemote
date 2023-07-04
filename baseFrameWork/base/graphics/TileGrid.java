@@ -1,5 +1,7 @@
 package base.graphics;
 import base.gameObjects.PureGrassTile;
+import base.gameObjects.StructureTile;
+
 import java.awt.Point;
 import java.util.HashMap;
 
@@ -37,7 +39,7 @@ public class TileGrid {
 //		testSprite.loadImage(testSprite.imagePath);
 		for (int i = 0; i < tileMapWidth; i++) {
 			for (int k = 0; k < tileMapHeight; k++) {
-				gameLoop.gameObjects.add(gameLoop.createGameObject(PureGrassTile.class, new Object[] {new Point(i, k), this }));
+				gameLoop.createGameObject(PureGrassTile.class, new Object[] {new Point(i, k), this });
 			}
 		}
 	}	
@@ -54,9 +56,27 @@ public class TileGrid {
 	//Hashmaps can carry multiple object with the same key, which we dont want to allow
 	//so you can only replace tiles not set tiles.
 	public void replaceTile(Point tilePosition, Tile tile) {
-		gameLoop.gameObjects.remove(tileMap.get(tilePosition));
-		tileMap.remove(tilePosition);
-		tileMap.put(tilePosition, tile);
+		Tile tileToGetReplaced = tileMap.get(tilePosition);
+		if(tileToGetReplaced != null) {
+			if(tileToGetReplaced.structure != null && !(tile instanceof StructureTile)) {
+				tileMap.remove(tilePosition);
+				if(tileMap.containsKey(tilePosition)) {
+					Tile tileToGetReplacedBelow = tileMap.get(tilePosition);
+					gameLoop.gameObjects.remove(tileToGetReplacedBelow);
+					tileMap.remove(tilePosition);
+					tileMap.put(tilePosition, tile);
+				}
+				tileMap.put(tilePosition, tileToGetReplaced);
+			} else {
+				gameLoop.gameObjects.remove(tileToGetReplaced);
+				tileMap.remove(tilePosition);
+				tileMap.put(tilePosition, tile);
+			}
+		} else {
+			tileMap.put(tilePosition, tile);
+			tileMap.get(tilePosition);
+		}
+			
 		
 	}
 }
