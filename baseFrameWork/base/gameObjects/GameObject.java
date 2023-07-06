@@ -117,7 +117,6 @@ public class GameObject extends GameEntity implements Drawable {
 //	        
 //		}
 //	}
-	
 	public void draw(Graphics graphics) {
 		if(isActive()) {
 			graphics.drawImage(sprite.getImage(), getPosition().x, getPosition().y, sprite.size.x, sprite.size.y, null);
@@ -130,7 +129,6 @@ public class GameObject extends GameEntity implements Drawable {
 				&& this.getPosition().y == gameObject.getPosition().y
 				&& this.sprite.size == gameObject.sprite.size
 				&& this.getClass() == gameObject.getClass()) {
-			System.out.println("true");
 			return true;
 		} else {
 			return false;

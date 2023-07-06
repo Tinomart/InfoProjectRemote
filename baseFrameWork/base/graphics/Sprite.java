@@ -12,54 +12,45 @@ import javax.swing.ImageIcon;
 //common code for sprites
 public class Sprite {
 
-    public Point size;
-    
-    protected boolean visible;
-    protected BufferedImage image;
-    
-    public void setImage(BufferedImage image) {
+	public Point size;
+
+	protected boolean visible;
+	protected BufferedImage image;
+
+	public void setImage(BufferedImage image) {
 		this.image = image;
 	}
 
-    //constructor initiates x and y coordinates and visible variable
-    public Sprite(Point size) {
+	// constructor initiates x and y coordinates and visible variable
+	public Sprite(Point size) {
 
-        this.size = size;
-        visible = true;
-    }
+		this.size = size;
+		visible = true;
+	}
 
-//    protected void loadImage(String imageName) {
-//
-//        ImageIcon ii = new ImageIcon(imageName);
-//        image = ii.getImage();
-//    }
-    
-    public void  loadImage(String imagePath) {
-        try {
-            File file = new File(imagePath);
-            image = ImageIO.read(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-     
-    }
-    
-    protected void getImageDimensions() {
+	// method to perform the file reading operation and set the image to the image
+	// that was loaded in
+	public void loadImage(String imagePath) {
+		try {
+			File file = new File(imagePath);
+			image = ImageIO.read(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-        size.x = image.getWidth();
-        size.y = image.getHeight();
-    }    
+	}
+	
+	//getters and setter
 
-    public BufferedImage getImage() {
-        return image;
-    }
+	public BufferedImage getImage() {
+		return image;
+	}
 
+	public boolean isVisible() {
+		return visible;
+	}
 
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public void setVisible(Boolean visible) {
-        this.visible = visible;
-    }
+	public void setVisible(Boolean visible) {
+		this.visible = visible;
+	}
 }

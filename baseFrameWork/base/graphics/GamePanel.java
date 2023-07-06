@@ -127,6 +127,7 @@ public class GamePanel extends JPanel {
 	
 	private void drawGameObjects(ArrayDeque<GameObject> gameObjects, Graphics graphics) {
 		
+		//first draw lowest layer, call draw method of each gameObject that is not a character or structure
 		Iterator<GameObject> iterator = gameObjects.iterator();
 		while (iterator.hasNext()) {
 		    GameObject gameObject = iterator.next();
@@ -135,6 +136,7 @@ public class GamePanel extends JPanel {
 		    }
 		}
 		
+		//draw the next layer, do the same as above for all characters
 		iterator = gameObjects.iterator();
 		while (iterator.hasNext()) {
 		    GameObject gameObject = iterator.next();
@@ -143,6 +145,7 @@ public class GamePanel extends JPanel {
 		    }
 		}
 		
+		//draw the last layer, do the same as above for all structures
 		iterator = gameObjects.iterator();
 		while (iterator.hasNext()) {
 		    GameObject gameObject = iterator.next();
@@ -159,16 +162,13 @@ public class GamePanel extends JPanel {
 	public void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 	    
-//	    Graphics2D graphics2D = (Graphics2D) graphics.create();
+	    Graphics2D graphics2D = (Graphics2D) graphics.create();
 	    
-	    Graphics2D graphics2D = (Graphics2D) graphics;
-	    
+	    //call our drawGameObjects
 	    drawGameObjects(addedObjects, graphics2D);
-	    revalidate();
-//	    repaint();
-	    // to avoid paint trails of object that is being painted every frame
 	    
-//	    graphics2D.dispose();
+	    // to avoid paint trails of object that is being painted every frame
+	    graphics2D.dispose();
 	}
 	
 }

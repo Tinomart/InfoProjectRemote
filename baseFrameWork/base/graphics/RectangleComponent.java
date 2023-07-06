@@ -6,6 +6,7 @@ import java.awt.Graphics;
 
 import javax.swing.JComponent;
 
+//same as Square component, can just have different width and height
 public class RectangleComponent extends JComponent {
 	 /**
 		 * 
@@ -15,7 +16,7 @@ public class RectangleComponent extends JComponent {
 		//x and y for position to set the bounds later
 		private int x;
 		private int y;
-		public int width;
+		private int width;
 		private int height;
 		private Color color;
 		

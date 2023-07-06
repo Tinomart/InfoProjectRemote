@@ -59,10 +59,14 @@ public class GameWindow extends JFrame {
 
 	}
 
+	// overloaded setPanel method, to be able to "unset" panels as well if a boolean
+	// argument
 	public void setPanel(GamePanel.PanelType panelType, boolean isBeingSetToActive) {
+		//if we are setting it, use the regular set
 		if (isBeingSetToActive) {
 			setPanel(panelType);
 		} else {
+			//if not perform the opposite operations
 			activePanels.remove(panelType);
 			GamePanel panel = getPanels().get(panelType);
 
