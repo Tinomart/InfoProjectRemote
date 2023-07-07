@@ -1,7 +1,6 @@
 package base;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -18,9 +17,7 @@ import java.util.HashMap;
 
 import base.gameObjects.GameObject;
 import base.gameObjects.PureGrassTile;
-import base.gameObjects.Spell;
 import base.gameObjects.Tile;
-import base.gameObjects.Character;
 import base.graphics.GamePanel.PanelType;
 import base.graphics.GameWindow;
 import base.graphics.Menu;
@@ -46,6 +43,8 @@ public class GameLoop implements Runnable {
 	private GamePanel mainPanel;
 
 	public ArrayDeque<GameObject> gameObjects = new ArrayDeque<GameObject>();
+	public Level currentWave;
+	
 	private SpriteLoader spriteLoader = new SpriteLoader();
 
 	// if we need to ever add anything based on a specific frame
@@ -53,12 +52,15 @@ public class GameLoop implements Runnable {
 	// the game will save every time this many seconds have passed
 	// file reading and writing operations are quite resource intensive, so
 	// I would suggest keeping this at the very lowest at 60 seconds;
-	private int autoSaveIntervallInSeconds = 4;
+	private final int AUTO_SAVE_INTERVALL_IN_SECONDS = 4;
 
 	public int cameraSpeed = 4;
 
-	public Point spawnPoint = new Point(0, 0);
+	private Point spawnPoint = new Point(0, 0);
 	public Point cameraPosition = new Point(0, 0);
+	
+	//resources
+	public Resource[] resources;
 
 	public enum Direction {
 		up, left, down, right
@@ -191,7 +193,7 @@ public class GameLoop implements Runnable {
 			// because I watched a video, about the game celeste, where a speedrun category
 			// where a glitch was used after waiting for 118 hours and completely break the
 			// game as information would get lost
-			if (fpsCount >= autoSaveIntervallInSeconds * 60) {
+			if (fpsCount >= AUTO_SAVE_INTERVALL_IN_SECONDS * 60) {
 				save();
 				fpsCount = 0;
 			}
