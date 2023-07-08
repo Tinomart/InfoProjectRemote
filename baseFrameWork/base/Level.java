@@ -39,7 +39,9 @@ public class Level {
 			gameLoop.gameObjects.remove(character);
 		}
 		for (Resource resource : gameLoop.resources) {
-			resource.changeAmount(reward.get(resource.getClass()));
+			if(reward.get(resource.getClass()) != null) {
+				resource.changeAmount(reward.get(resource.getClass()));
+			}
 		}
 	}
 	

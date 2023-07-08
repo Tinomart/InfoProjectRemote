@@ -22,4 +22,9 @@ public class House_0_0_Tile extends StructureTile {
 		return stringBuilder.toString();
 	}
 
+	@Override 
+	public void onHover() {
+		super.onHover();
+		
+	}
 }
