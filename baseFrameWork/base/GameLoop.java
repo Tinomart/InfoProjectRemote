@@ -43,7 +43,8 @@ public class GameLoop implements Runnable {
 	private GamePanel mainPanel;
 
 	public ArrayDeque<GameObject> gameObjects = new ArrayDeque<GameObject>();
-	public Level currentWave;
+	public int currentWaveCount = 0;
+	public Level[] waves;
 	
 	private SpriteLoader spriteLoader = new SpriteLoader();
 
@@ -60,7 +61,7 @@ public class GameLoop implements Runnable {
 	public Point cameraPosition = new Point(0, 0);
 	
 	//resources
-	public Resource[] resources;
+	public Resource[] resources = new Resource[] {new Gold(0)};
 
 	public enum Direction {
 		up, left, down, right
@@ -297,6 +298,17 @@ public class GameLoop implements Runnable {
 		mainPanel.revalidate();
 		window.revalidate();
 		window.repaint();
+	}
+	
+	public void beginNextWave() {
+		for (GameObject gameObject : gameObjects) {
+			if(gameObject instanceof ResourceGenerating) {
+				((ResourceGenerating)gameObject).generateResources(resources);
+			}
+		}
+		waves[currentWaveCount].end();
+		currentWaveCount += 1;
+		waves[currentWaveCount].begin();
 	}
 
 	public void save() {
