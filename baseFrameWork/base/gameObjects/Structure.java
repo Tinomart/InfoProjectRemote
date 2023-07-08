@@ -1,10 +1,12 @@
 package base.gameObjects;
 
 import base.graphics.*;
+import base.graphics.GamePanel.PanelType;
+import base.physics.Damageable;
 import base.GameLoop;
 import java.awt.*;
 
-public abstract class Structure extends GameObject implements TileBased {
+public abstract class Structure extends GameObject implements TileBased, Damageable {
 
 	// Structures have a mainTile that is used when placing them it is the tile that
 	// will be on the cursor when trying to place a structure. The tiles are just an
@@ -15,26 +17,42 @@ public abstract class Structure extends GameObject implements TileBased {
 	private GameLoop gameLoop;
 	public TileGrid tileGrid;
 
-	//Structures can be attack Attacked and destroyed, which means they need health and MaxHealth
+	// Structures can be attack Attacked and destroyed, which means they need health
+	// and MaxHealth
 	private int maxHealth = 100;
 	private int health;
-	
-	//we need a healthbar to display that health
-	private Color healthBarColor = new Color(255, 0, 0, 255);
+
+	// we need a healthbar to display that health
+	private Color healthBarColor = new Color(25,190, 25, 255);
+	private int healthBarWidth;
 	private RectangleComponent healthBar;
-	
+
+	@Override
+	public RectangleComponent getHealthBar() {
+		return healthBar;
+	}
+
+	@Override
 	public int getHealth() {
 		return health;
 	}
-	
-	//setHealth should aslo immediately refelct the changes of the health on the healthbar
+
+	// setHealth should also immediately reflect the changes of the health on the
+	// health bar
+	@Override
 	public void setHealth(int health) {
-		double healthChange = this.health/health;
+		//save how much percent of the health is already missing
+		double healthPercent = (double) health / (double) maxHealth;
 		this.health = health;
-		healthBar.width = (int) (healthBar.width * healthChange);
+		//set the healthbar's width to be the original width times the remaing healthPercent
+		healthBar.setBounds(healthBar.getX(), healthBar.getY(), (int) (healthBarWidth * healthPercent), healthBar.getHeight());
 	}
 
-	
+	@Override
+	public void reduceHealth(int health) {
+		//use setHealth, so that the healthbarchanges are immediately visible
+		setHealth(this.health - health);
+	}
 
 	// The main tile is what determines the Position so it is determined as the
 	// positional argument of the superclass of GameObject
@@ -45,28 +63,46 @@ public abstract class Structure extends GameObject implements TileBased {
 		this.tiles = tiles;
 		this.tileGrid = tileGrid;
 		this.gameLoop = tileGrid.gameLoop;
-		this.healthBar = new RectangleComponent(mainTile.position.x + mainTile.tileGrid.tileSize,
-				mainTile.position.y + mainTile.tileGrid.tileSize/2, mainTile.tileGrid.tileSize * tiles.length, 5, healthBarColor);
+		healthBarWidth = mainTile.tileGrid.tileSize * tiles.length;
+
 		health = maxHealth;
+		// initiailze health bar to be the size of the amount of tiles and be positioned
+		// at the middle of the mainTile horizontal and slightly above it vertically
+		this.healthBar = new RectangleComponent(mainTile.position.x - mainTile.tileGrid.tileSize / 2,
+				mainTile.position.y - 7, healthBarWidth, 5, healthBarColor);
+		// set all of the tiles to have this as their structure, this is used as a check
+		// to see if tiles are part of a structure and potential to interact with it
 		setStructureOfTiles();
+		// since the sprites are not created with createGameObject, to avoid them being
+		// stored in gameLoop.gameobject we need to initialize their sprites manually
+		// here
 		initializSprites();
 	}
 
+	// for each of the strucutres sprites, call the initialize sprite method on them
 	private void initializSprites() {
 		for (Tile tile : tiles) {
 			tile.tileGrid.gameLoop.initializeSprite(tile);
 		}
 	}
 
+	// set the structure variable to this
 	private void setStructureOfTiles() {
 		for (Tile tile : tiles) {
 			tile.structure = this;
 		}
 	}
 
+	@Override
 	public void update() {
+		// as soon as a strucutre dies aka their health goes to 0 or below that the
+		// strucutre will be destroyed automatically
 		if (health <= 0) {
 			gameLoop.destroyGameObject(this);
+		}
+		//display healthbar as soon as the structure has taken damage
+		if(health != maxHealth) {
+			gameLoop.panels.get(PanelType.MainPanel).add(healthBar);
 		}
 
 	}
@@ -80,23 +116,30 @@ public abstract class Structure extends GameObject implements TileBased {
 	public Tile[] getTiles() {
 		return tiles;
 	}
-	
+
+	@Override
 	public Point getTilePosition() {
 		return mainTile.getTilePosition();
 	}
-	
+
 	@Override
 	public void draw(Graphics graphics) {
-		if(isActive()) {
+		// to draw a structure, draw all of its tiles instead
+		if (isActive()) {
 			for (Tile tile : tiles) {
 				tile.draw(graphics);
 			}
 		}
 	}
-	
+
+	// specific toString used for storing structures in the save file, containing
+	// all needed information to rebuild the gameObject once starting up the game
+	// again
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder("");
-		stringBuilder.append("base.gameObjects.").append(getClass().getSimpleName()).append(",").append(getPosition().x/tileGrid.tileSize).append( ";").append(getPosition().y/tileGrid.tileSize).append(",").append("TileGrid").append(" ");
+		stringBuilder.append("base.gameObjects.").append(getClass().getSimpleName()).append(",")
+				.append(getPosition().x / tileGrid.tileSize).append(";").append(getPosition().y / tileGrid.tileSize)
+				.append(",").append("TileGrid").append(" ");
 		return stringBuilder.toString();
 	}
 

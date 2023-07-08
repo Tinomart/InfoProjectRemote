@@ -1,7 +1,6 @@
 package base;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -26,6 +25,7 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader;
 import base.graphics.TileBased;
 import base.graphics.TileGrid;
+import base.physics.Damageable;
 import game.Main;
 
 //What this class does on a basic level is pretty obvious
@@ -41,8 +41,10 @@ public class GameLoop implements Runnable {
 
 	public HashMap<PanelType, GamePanel> panels;
 	private GamePanel mainPanel;
-	
+
 	public ArrayDeque<GameObject> gameObjects = new ArrayDeque<GameObject>();
+	public Level currentWave;
+	
 	private SpriteLoader spriteLoader = new SpriteLoader();
 
 	// if we need to ever add anything based on a specific frame
@@ -50,12 +52,15 @@ public class GameLoop implements Runnable {
 	// the game will save every time this many seconds have passed
 	// file reading and writing operations are quite resource intensive, so
 	// I would suggest keeping this at the very lowest at 60 seconds;
-	private int autoSaveIntervallInSeconds = 4;
+	private final int AUTO_SAVE_INTERVALL_IN_SECONDS = 4;
 
 	public int cameraSpeed = 4;
 
-	public Point spawnPoint = new Point(0, 0);
+	private Point spawnPoint = new Point(0, 0);
 	public Point cameraPosition = new Point(0, 0);
+	
+	//resources
+	public Resource[] resources;
 
 	public enum Direction {
 		up, left, down, right
@@ -75,7 +80,7 @@ public class GameLoop implements Runnable {
 
 		setClosingFunctionality(window);
 		setMenuResizability(window);
-		
+
 		// Move our Camera to the Spawnpoint
 		for (int i = 0; i < spawnPoint.x / cameraSpeed; i++) {
 			moveCamera(Direction.right);
@@ -141,6 +146,7 @@ public class GameLoop implements Runnable {
 
 	public void stop() {
 		// stop the thread, thus stopping the main loop
+		save();
 		gameThread = null;
 	}
 
@@ -182,34 +188,36 @@ public class GameLoop implements Runnable {
 //				}
 //			}
 
-			if (fpsCount >= autoSaveIntervallInSeconds * 60) {
+			// save the game every time the time of ausaveintervallinseconds has passed and
+			// reset the fps count, to avoid the number from getting too big. I did this
+			// because I watched a video, about the game celeste, where a speedrun category
+			// where a glitch was used after waiting for 118 hours and completely break the
+			// game as information would get lost
+			if (fpsCount >= AUTO_SAVE_INTERVALL_IN_SECONDS * 60) {
 				save();
 				fpsCount = 0;
 			}
 
+			// communicate with the mainpanel and make it know all different gameObjects
+			// that should be drawn on it by adding them to addedObjects
 			GamePanel panel = panels.get(PanelType.MainPanel);
-			if (!(panel instanceof Menu)) {
+			for (GameObject gameObject : gameObjects) {
 
-				for (GameObject gameObject : gameObjects) {
+				if (gameObject.getPanelToDrawOn() == PanelType.MainPanel
+						&& !(panel.addedObjects.contains(gameObject))) {
 
-					if (gameObject.getPanelToDrawOn() == PanelType.MainPanel && !(panel.addedObjects.contains(gameObject))) {
-
-						panel.addedObjects.add(gameObject);
-					}
+					panel.addedObjects.add(gameObject);
 				}
-
 			}
 
-			
-
 			updateGameObjects();
-//			window.revalidate();
-//			window.repaint();
 
 		}
 
 	}
 
+	// call the update method of each gameObject to make pretty much every part of
+	// the individual logic possible, like movement, damage checks, etc.
 	private void updateGameObjects() {
 		for (GameObject gameObject : gameObjects) {
 			gameObject.update();
@@ -249,6 +257,8 @@ public class GameLoop implements Runnable {
 		}
 	}
 
+	// basic method to enable the camera control for the player, to see the
+	// different parts of the map
 	public void moveCamera(Direction direction) {
 		mainPanel = panels.get(PanelType.MainPanel);
 
@@ -337,8 +347,7 @@ public class GameLoop implements Runnable {
 			// all objects are seperated with spaces so we split the string of the entire
 			// line to get an array of all object strings
 			String[] gameObjectsStrings = fileString.split(" ");
-			// create the GameObject and add it to our gameObjects, if the gameObject could
-			// successfully be created = is not null
+			// create the GameObject, which adds it to our gameObjects
 			for (String gameObjectString : gameObjectsStrings) {
 				GameObject createdObject = createGameObject(gameObjectString);
 
@@ -351,6 +360,10 @@ public class GameLoop implements Runnable {
 
 	}
 
+	// the method that returns a gameObject based on a string, very important to
+	// make reading of the save file possible. it also add the gameObject to our
+	// gameObjects, which for the context of our game means physically existing in
+	// our game, if it does not already exist, to avoid duplicates
 	public GameObject createGameObject(String gameObjectString) {
 		try {
 			// the type of the object and all arguments of each gameobjectstring are
@@ -389,13 +402,19 @@ public class GameLoop implements Runnable {
 					}
 					// return a GameObject with the correct constructor and arguments
 					GameObject gameObject = (GameObject) constructor.newInstance(arguments);
+					// initialing the sprite to finish up all the setup for a complete drawable
+					// gameObject
 					initializeSprite(gameObject);
 					boolean gameObjectExists = false;
+					// check if the gameObject already exist by iterating through gameObjects and
+					// using the equals method, which is defined for all gameObjects and checks
+					// their position, size and type
 					for (GameObject object : gameObjects) {
-						if(object.equals(gameObject)) {
+						if (object.equals(gameObject)) {
 							gameObjectExists = true;
 						}
 					}
+					// if the gameObject doesnt already exist add it to gameObjects
 					if (!gameObjectExists) {
 						gameObjects.add(gameObject);
 					}
@@ -405,25 +424,33 @@ public class GameLoop implements Runnable {
 				| IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		// if reading the file was unsuccessful the method return null
+		// if reading the string was unsuccessful the method return null
 		return null;
 
 	}
 
+	// overloaded createGameObject method, to allow creation of a gameObject based
+	// on a given type and an array of the different arguments
 	public GameObject createGameObject(Class<? extends GameObject> type, Object[] arguments) {
+		// code to deterime all the different types of arguments to see their type for
+		// creating an object with the constructor of the given types
 		Constructor<?> constructor;
 		Class<?>[] argumentTypes = new Class<?>[arguments.length];
 		for (int i = 0; i < argumentTypes.length; i++) {
 			argumentTypes[i] = arguments[i].getClass();
 		}
 		try {
+			// similar to earlier method, searching for the constructor and finishing up our
+			// object with initialize sprite
 			constructor = type.getConstructor(argumentTypes);
 			GameObject gameObject = (GameObject) constructor.newInstance(arguments);
 			initializeSprite(gameObject);
-			
+
+			// same code as first method for checking if the gameObejct already exists to
+			// avoid duplicates
 			boolean gameObjectExists = false;
 			for (GameObject object : gameObjects) {
-				if(object.equals(gameObject)) {
+				if (object.equals(gameObject)) {
 					gameObjectExists = true;
 				}
 			}
@@ -435,61 +462,103 @@ public class GameLoop implements Runnable {
 				| NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
+		// if trying to find the constructor and class was unsuccessful the method
+		// returns null
 		return null;
 	}
 
+	// opposite operation to our createGameObject method.
 	public void destroyGameObject(GameObject gameObjectToDestroy) {
+		// iterators to avoid concurrent modification exceptions, as we are actively
+		// altering our data structure
+		// we iterate through gameObjects to search for our gameObject to see if we can
+		// even destroy the gameObject
 		Iterator<GameObject> iterator = gameObjects.iterator();
 		while (iterator.hasNext()) {
-		    GameObject gameObject = iterator.next();
-		    if (gameObject.equals(gameObjectToDestroy)) {
-		        if (gameObject instanceof TileBased) {
-		            for (Tile tile : ((TileBased) gameObject).getTiles()) {
-		                tile.getSprite().setImage(null);
-		                tile.tileGrid.tileMap.remove(tile.getTilePosition());
-		                createGameObject(PureGrassTile.class, new Object[]{tile.getTilePosition(), tile.tileGrid});
-		                panels.get(PanelType.MainPanel).revalidate();
-		                window.revalidate();
-		            }
-		        } else {
-		            Sprite nullSprite = new Sprite(new Point(0, 0));
-		            gameObject.setSprite(nullSprite);
-		        }
-		        iterator.remove();
-		    }
-		    window.repaint();
+			GameObject gameObject = iterator.next();
+			if (gameObject.equals(gameObjectToDestroy)) {
+				// we have found a gameObject we want to destroy, if it is tilebased set the
+				// images of all tiles to null and replace them with a pure grass tile,
+				// essentially removing all visual traces from our panel, that would remain if
+				// we didnt do that
+				if (gameObject instanceof TileBased) {
+					for (Tile tile : ((TileBased) gameObject).getTiles()) {
+						tile.getSprite().setImage(null);
+						createGameObject(PureGrassTile.class, new Object[] { tile.getTilePosition(), tile.tileGrid });
+					}
+				} else {
+					// if the gameObject is not tile based, simply set its own sprite to null
+					gameObject.setSprite(null);
+				}
+				if(gameObject instanceof Damageable) {
+					panels.get(PanelType.MainPanel).remove(((Damageable)gameObject).getHealthBar());
+				}
+				// remove the gameObject out of gameObjects, essentially making it non existant
+				// for the scope of our game
+				iterator.remove();
+			}
 		}
 	}
-	
+
+	// method to make our entire sprite system somewhat efficient. since we have so
+	// many tiles making each of them have their own image loaded would take ages,
+	// so we reuse if we dont intend to interactig with it and duplicate it if we
+	// do, since file loading operations are so expensive
 	public void initializeSprite(GameObject gameObject) {
+		// only initialize if no image exists yet
 		if (gameObject.getSprite().getImage() == null) {
+			// load sprite from gameObject.spriteType, this is the reuse of same sprites to
+			// make sure only one loading for each sprite happens
 			Sprite sprite = spriteLoader.sprites.get(gameObject.spriteType);
-			if(gameObject instanceof TileBased) {
-				if(((TileBased)gameObject).getMainTile().structure != null) {
-					Sprite assignmentSprite = new Sprite(sprite.size);
-					int width = sprite.getImage().getWidth();
-			        int height = sprite.getImage().getHeight();
-
-			        BufferedImage assignmentImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-			        for (int y = 0; y < height; y++) {
-			            for (int x = 0; x < width; x++) {
-			                int pixel = sprite.getImage().getRGB(x, y);
-			                assignmentImage.setRGB(x, y, pixel);
-			            }
-			        }
-
-					assignmentSprite.setImage(assignmentImage);
-					gameObject.setSprite(assignmentSprite);
+			if (gameObject instanceof TileBased) {
+				if (((TileBased) gameObject).getMainTile().structure != null) {
+					// regular tiles that are not part of structure dont need to be destroyable, so
+					// they should just be able to share sprites, which is much more efficient and
+					// needed considering most of our gameObjects are just plain tiles
+					gameObject.setSprite(duplicateSprite(sprite));
 				} else {
+					// if it is part of a structure aka the structure variable is not null, create a
+//					// duplicate sprite and assign, it. This because these tiles should be able to
+//					// get destroyed and altered, which requires them to have their own sprite, as to not affect
+//					// other gameObject that would have the same object reference assigned to their
+//					// sprite variable
 					gameObject.setSprite(sprite);
 				}
 			} else {
-				gameObject.setSprite(sprite);
+				// all other gameObjects should probably be destroyable, so they have to have
+				// their own duplicate for the same reason as given above
+				gameObject.setSprite(duplicateSprite(sprite));
 			}
-			
-			
-			
+
 		}
+	}
+
+	// method that returns a new sprite with the same information as the given
+	// sprite
+	private Sprite duplicateSprite(Sprite sprite) {
+		// create new sprite of the same size as the old one
+		Sprite duplicateSprite = new Sprite(sprite.size);
+
+		// save image width and height
+		int width = sprite.getImage().getWidth();
+		int height = sprite.getImage().getHeight();
+
+		// create new Image that should newly be assigned of the same width and height
+		// as the originial
+		BufferedImage assignmentImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		// iterate through each pixel of the original and set the new Images RGB value
+		// to the same as the originals pix
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				int pixel = sprite.getImage().getRGB(x, y);
+				assignmentImage.setRGB(x, y, pixel);
+			}
+		}
+
+		// assign the new image to our new sprite
+		duplicateSprite.setImage(assignmentImage);
+		// return the now complete duplicate
+		return duplicateSprite;
 	}
 
 	// here are all the conversions for the String representations of the types into
@@ -533,6 +602,10 @@ public class GameLoop implements Runnable {
 			// first and second argument of our returned point
 			return new Sprite(new Point(Integer.parseInt(coords[0]), Integer.parseInt(coords[1])));
 		} else {
+			// if a gameObject has another gameObject as a parameter, just create that
+			// object and check if it already exists, and if it does return the existing
+			// object instead, else add the created object to the gameObject and return it
+			// instead
 			GameObject createdGameObject = createGameObject(string);
 			gameObjects.remove(createdGameObject);
 			for (GameObject gameObject : gameObjects) {
@@ -540,6 +613,7 @@ public class GameLoop implements Runnable {
 					return gameObject;
 				}
 			}
+			gameObjects.add(createdGameObject);
 			return createdGameObject;
 		}
 	}

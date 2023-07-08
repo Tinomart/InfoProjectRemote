@@ -4,13 +4,13 @@ import java.awt.Point;
 
 import base.gameObjects.Tile;
 
+//infterface to allow specific code for all TileBased gameObjects
 public interface TileBased {
-	//TODO this will be a short interface that should
-	//store a few base rules for tile based GameObjects
-	//So basically I want a special tile position variable
-	//and potentially a sprite restriction or sprite cutter into
-	// tile shape
+	// all tilebased object should have a main tile an array that stores all of its
+	// tiles and should have a tilePosition at all times
 	public Tile getMainTile();
+
 	public Tile[] getTiles();
+
 	public Point getTilePosition();
 }

@@ -4,8 +4,9 @@ import java.awt.*;
 
 import javax.swing.*;
 
-//this entire class is just for debugging the Tile System and will be removed once
-//we have the entire sprite system in place
+//this entire class is just for making highlighting of sprites easy
+//we simply let all sprites have at least one of these in the color 
+//we want it to be.
 public class SquareComponent extends JComponent {
     /**
 	 * 

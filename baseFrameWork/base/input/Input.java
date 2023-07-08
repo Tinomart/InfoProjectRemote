@@ -132,6 +132,7 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener, M
 	public void keyTyped(KeyEvent e) {
 	}
 
+	//if we scroll with our mouse the value of the scroll gets saved. it is -1 if the wheel is scrolled up and +1 if it is scrolled down
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		int scrollWheelPos = e.getWheelRotation();

@@ -48,7 +48,7 @@ public class Tile extends GameObject implements TileBased {
 	}
 	
 		
-	//when hovered display the redsquare on the main panel
+	//when hovered display the highlight square on the main panel and repaint to show changes
 	public void onHover() {
 		mainPanel.add(highlightSquare);
 		mainPanel.revalidate();
@@ -73,14 +73,7 @@ public class Tile extends GameObject implements TileBased {
 		return new Tile[]{this};
 	}
 	
-	@Override
-	public void draw(Graphics graphics) {
-		if(isActive()) {
-			graphics.drawImage(getSprite().getImage(), getPosition().x, getPosition().y, getSprite().size.x, getSprite().size.y, null);
-		}
-	}
-	
-	//Tile has one more argument than GameEntity, so it needs to have a new toString that also returns the value of its bonus argument, which is tileGrid
+	//individual toString method that stores all necessary information to be able to create an identical tile when loading in the game
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder("");
 		stringBuilder.append("base.gameObjects.").append(getClass().getSimpleName()).append(",").append(getPosition().x/tileGrid.tileSize).append( ";").append(getPosition().y/tileGrid.tileSize).append(",").append("TileGrid").append(",").append(getSprite().size.x).append(";").append(getSprite().size.y).append(" ");
