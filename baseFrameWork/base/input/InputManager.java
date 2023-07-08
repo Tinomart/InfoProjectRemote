@@ -338,6 +338,13 @@ public class InputManager {
 				selectedStructure = null;
 			}
 			break;
+		case KeyEvent.VK_Y:
+			if (selectedStructure != PolisHouse.class) {
+				selectedStructure = PolisHouse.class;
+			} else {
+				selectedStructure = null;
+			}
+			break;
 		default:
 			break;
 
