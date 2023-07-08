@@ -78,6 +78,7 @@ public class GUI {
 		startButton.setBorderPainted(false);
 		startButton.setContentAreaFilled(false);
 		startButton.addActionListener(e -> startButtonPress(e));	
+		
 //		startButton.setFont(new Font("Arial", Font.BOLD, 15));
 //		startButton.setForeground(Color.WHITE);
 //		startButton.setBackground(Color.BLUE);
@@ -111,7 +112,7 @@ public class GUI {
 		
 		//quit button
 		JButton quitButton = new JButton ("Quit");
-		quitButton.addActionListener(e -> startButtonPress(e));	
+		quitButton.addActionListener(e -> quitButtonPress(e));	
 		quitButton.setFont(new Font("Arial", Font.BOLD, 15));
 		gbc.insets = new Insets(12, 12, 12, 12);
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
@@ -134,10 +135,52 @@ public class GUI {
 		panel.add(mainMenuButton);
 	}
 
+//-----------------------------------------------------------------------------	
 	//in game icons n shit -"Matteo Holzer"
+	//idk why, but it will place it on every borderside except SOUTH where we want it to be
 	public static void addInGameGUI(JPanel panel) {
-		panel.setOpaque(false);
-		
+		panel.setLayout(new BorderLayout());
+	    panel.setOpaque(false);
+	    
+	    //Panel for the different Elements ingame
+	    JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+	    userPanel.setOpaque(false);	
+	    
+	    //different buttons
+	    JButton button1 = new JButton("Haus");
+	    JButton button2 = new JButton("Tür");
+	    JButton button3 = new JButton("Kaserne");
+	    
+	    //loading the image
+	    ImageIcon originalIcon = new ImageIcon("res/internetHaus.png");
+	    Image originalImage = originalIcon.getImage();	
+	    //TODO find out how the image is automatically resized to the button size without needing to change the coordinates everywhere
+	    //TODO probably define so local dimensions so that we only need to change it in one place
+	    //resizing the image
+	    Image resizedImage = originalImage.getScaledInstance(100, 60, Image.SCALE_SMOOTH);
+	    //create imageIcon with resized image
+	    ImageIcon resizedIcon = new ImageIcon(resizedImage);
+	    //creating button with resized imageIcon
+	    JButton button4 = new JButton(resizedIcon);
+	    
+	    //customize the Buttons; later on we can add images to them
+	    button1.setFont(new Font("Arial", Font.ITALIC, 10));
+	    button1.setPreferredSize(new Dimension(100, 60));
+	    button2.setFont(new Font("Arial", Font.ITALIC, 10));
+	    button2.setPreferredSize(new Dimension(100, 60));
+	    button3.setFont(new Font("Arial", Font.ITALIC, 10));
+	    button3.setPreferredSize(new Dimension(100, 60));
+	    
+	    userPanel.add(button1);
+	    userPanel.add(button2);
+	    userPanel.add(button3);
+	    userPanel.add(button4);
+	    
+	    //this two lines are for increasing the Size of the UserPanel if we need it later on
+	    Dimension userPanelSize = new Dimension(panel.getWidth(), 60);
+	    userPanel.setPreferredSize(userPanelSize);
+	    
+	    panel.add(userPanel, BorderLayout.NORTH);		
 	}
 	
 	private static void startButtonPress(ActionEvent e) {
