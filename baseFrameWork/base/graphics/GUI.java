@@ -1,5 +1,6 @@
 package base.graphics;
 
+import java.awt.Graphics2D;
 import java.awt.BorderLayout;
 
 //import java.awt.BorderLayout;
@@ -8,13 +9,19 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
-
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicButtonUI;
 
 import base.graphics.GamePanel.PanelType;
 import game.Main;
@@ -37,7 +44,7 @@ public class GUI {
 		
 		//TitlePanel
 		JPanel titlePanel = new JPanel (new BorderLayout());
-		titlePanel.setBackground(Color.RED);
+		titlePanel.setBackground(new Color(170, 71, 186));
 		
 		
 		//Create TitleLabel for Title
@@ -49,13 +56,43 @@ public class GUI {
 		
 		//Button-Panel
 		JPanel buttonPanel = new JPanel(new GridBagLayout());
-		buttonPanel.setBackground(Color.GREEN);
+		buttonPanel.setBackground(new Color(147, 15, 165));
+		
+		//Image for startButton
+		BufferedImage originalImage = null;
+		try {
+			originalImage = ImageIO.read(new File("res/Start Button.jpg"));
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+		//for resizing the image because it was really huge
+		int imageWidth = 50;
+		int imageHeight = 50;
+		Image scaledImage = originalImage.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
 		
 		//Start-Button
-		JButton startButton = new JButton("Start");
+		JButton startButton = new JButton();
+		startButton.setIcon(new ImageIcon(scaledImage));
+		startButton.setOpaque(false);
+		startButton.setBorderPainted(false);
+		startButton.setContentAreaFilled(false);
 		startButton.addActionListener(e -> startButtonPress(e));	
-		startButton.setFocusable(false);
-		startButton.setFont(new Font("Arial", Font.BOLD, 15));	
+//		startButton.setFont(new Font("Arial", Font.BOLD, 15));
+//		startButton.setForeground(Color.WHITE);
+//		startButton.setBackground(Color.BLUE);
+
+		//this should change when you hover the startButton
+//		startButton.setUI(new BasicButtonUI() {
+//			@Override
+//			public void paint(Graphics g, JComponent c) {
+//				Graphics g2 = (Graphics2D) g.create();
+//				g2.setColor(c.getBackground());
+//				g2.fillRect(0, 0, c.getWidth(), c.getHeight());
+//				g2.dispose();
+//				super.paint(g, c);
+//			}
+//		});
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.gridwidth = GridBagConstraints.REMAINDER; //this will end the column and jump to the next
 		buttonPanel.add(startButton, gbc);
@@ -74,10 +111,12 @@ public class GUI {
 		
 		//quit button
 		JButton quitButton = new JButton ("Quit");
+		quitButton.addActionListener(e -> startButtonPress(e));	
 		quitButton.setFont(new Font("Arial", Font.BOLD, 15));
 		gbc.insets = new Insets(12, 12, 12, 12);
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		buttonPanel.add(quitButton, gbc);
+		
 	
 		//add the titlePanel to Mainpanel
 		panel.add(titlePanel, BorderLayout.NORTH);
@@ -107,6 +146,12 @@ public class GUI {
 		Main.gameWindow.setPanel(PanelType.MainMenu, false);
 	}
 	
+	//cant close whole window
+	private static void quitButtonPress(ActionEvent e) {
+		Main.gameLoop.stop();
+        System.exit(0);
+	}
+	
 	private static void mainMenuButtonPress(ActionEvent e) {
 		Main.gameWindow.setPanel(PanelType.MainMenu);
 		for (PanelType panelType : PanelType.values()) {
@@ -117,14 +162,14 @@ public class GUI {
 	}	
 	
 	//this method is for the GridBagLayout and includes the variables for different UI elements
-		private GridBagConstraints makegbc(int x, int y, int width, int height) {
-			
-			GridBagConstraints gbc = new GridBagConstraints();
-			gbc.gridx = x;
-			gbc.gridy = y;
-			gbc.gridwidth = width;
-			gbc.gridheight = height;
-			gbc.insets = new Insets(1, 1, 1, 1);
-			return gbc;
-		}
+//		private GridBagConstraints makegbc(int x, int y, int width, int height) {
+//			
+//			GridBagConstraints gbc = new GridBagConstraints();
+//			gbc.gridx = x;
+//			gbc.gridy = y;
+//			gbc.gridwidth = width;
+//			gbc.gridheight = height;
+//			gbc.insets = new Insets(1, 1, 1, 1);
+//			return gbc;
+//		}
 }
