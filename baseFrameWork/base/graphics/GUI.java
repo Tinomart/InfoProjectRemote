@@ -36,9 +36,9 @@ public class GUI {
 	//title screen, Quit, Play buttons etc.
 	public static void addMainMenuGUI(JPanel panel) {
 		
-		//GridBagLayout for our panel
+		
 		panel.setLayout(new BorderLayout());
-		panel.setBackground(Color.BLUE);
+//		panel.setBackground(Color.BLUE); //we dont actually need the main panel to be colored
 		
 		GridBagConstraints gbc = new GridBagConstraints();
 		
@@ -48,10 +48,11 @@ public class GUI {
 		
 		
 		//Create TitleLabel for Title
-		JLabel titleLabel = new JLabel("Titel");
+		JLabel titleLabel = new JLabel("POLIS");
 		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		titleLabel.setVerticalAlignment(SwingConstants.TOP);
-		titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+		titleLabel.setFont(new Font("Arial", Font.ITALIC, 40));
+		titleLabel.setForeground(Color.RED);
 		titlePanel.add(titleLabel, BorderLayout.NORTH);
 		
 		//Button-Panel
@@ -137,59 +138,92 @@ public class GUI {
 
 //-----------------------------------------------------------------------------	
 	//in game icons n shit -"Matteo Holzer"
-	//idk why, but it will place it on every borderside except SOUTH where we want it to be
 	public static void addInGameGUI(JPanel panel) {
 		panel.setLayout(new BorderLayout());
 	    panel.setOpaque(false);
 	    
-	    //Panel for the different Elements ingame
+	    //Panel for the different objects ingame
 	    JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 	    userPanel.setOpaque(false);	
+	    userPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE, 4, true));
+	    
+	    Dimension userPanelSize = new Dimension(120, 60);
+	    userPanel.setPreferredSize(userPanelSize);
 	    
 	    //different buttons
-	    JButton button1 = new JButton("Haus");
-	    JButton button2 = new JButton("Tür");
-	    JButton button3 = new JButton("Kaserne");
+	    JButton hausButton = new JButton("Haus");
+	    JButton türButton = new JButton("Tür");
+	    JButton kaserneButton = new JButton("Kaserne");
 	    
-	    //loading the image
+	    //loading the image-example for the haus2-Button
 	    ImageIcon originalIcon = new ImageIcon("res/internetHaus.png");
 	    Image originalImage = originalIcon.getImage();	
-	    //TODO find out how the image is automatically resized to the button size without needing to change the coordinates everywhere
+	    //TODO find out how the image is automatically resized to the button size without needing
+	    //to change the coordinates everywhere
 	    //TODO probably define so local dimensions so that we only need to change it in one place
 	    //resizing the image
 	    Image resizedImage = originalImage.getScaledInstance(100, 60, Image.SCALE_SMOOTH);
 	    //create imageIcon with resized image
 	    ImageIcon resizedIcon = new ImageIcon(resizedImage);
 	    //creating button with resized imageIcon
-	    JButton button4 = new JButton(resizedIcon);
+	    JButton haus2 = new JButton(resizedIcon);
 	    
 	    //customize the Buttons; later on we can add images to them
-	    button1.setFont(new Font("Arial", Font.ITALIC, 10));
-	    button1.setPreferredSize(new Dimension(100, 60));
-	    button2.setFont(new Font("Arial", Font.ITALIC, 10));
-	    button2.setPreferredSize(new Dimension(100, 60));
-	    button3.setFont(new Font("Arial", Font.ITALIC, 10));
-	    button3.setPreferredSize(new Dimension(100, 60));
+	    hausButton.setFont(new Font("Arial", Font.ITALIC, 10));
+	    hausButton.setPreferredSize(new Dimension(100, 60));
+	    türButton.setFont(new Font("Arial", Font.ITALIC, 10));
+	    türButton.setPreferredSize(new Dimension(100, 60));
+	    kaserneButton.setFont(new Font("Arial", Font.ITALIC, 10));
+	    kaserneButton.setPreferredSize(new Dimension(100, 60));
+	    haus2.setFont(new Font ("Arial", Font.ITALIC, 10));
+	    haus2.setPreferredSize(new Dimension(100,60));
 	    
-	    userPanel.add(button1);
-	    userPanel.add(button2);
-	    userPanel.add(button3);
-	    userPanel.add(button4);
+	    userPanel.add(hausButton);
+	    userPanel.add(türButton);
+	    userPanel.add(kaserneButton);
+	    userPanel.add(haus2);
 	    
-	    //this two lines are for increasing the Size of the UserPanel if we need it later on
-	    Dimension userPanelSize = new Dimension(panel.getWidth(), 60);
-	    userPanel.setPreferredSize(userPanelSize);
+	    panel.add(userPanel, BorderLayout.WEST);		
 	    
-	    panel.add(userPanel, BorderLayout.NORTH);		
+	    //draw ressources on the right side
+	
+	    JPanel ressources = new JPanel(new FlowLayout(FlowLayout.LEFT));
+	    ressources.setOpaque(false);	
+	    ressources.setBorder(BorderFactory.createLineBorder(Color.BLUE, 4, true));
+	    
+	    Dimension ressourcesSize = new Dimension(125, 60);
+	    ressources.setPreferredSize(ressourcesSize);
+
+	  //will be changed to JLabels or smth so that it only shows
+	  //the counter for our ressources
+	    
+	    //TODO replace the name of "ressources1,2,3" to the ressources we want to implement
+	    JButton ressources1 = new JButton("ressources1");
+	    JButton ressources2 = new JButton("ressources2");
+	    JButton ressources3 = new JButton("ressources3");
+	    
+	    ressources1.setFont(new Font("Arial", Font.ITALIC, 10));
+	    ressources1.setPreferredSize(new Dimension(100, 60));
+	    ressources2.setFont(new Font("Arial", Font.ITALIC, 10));
+	    ressources2.setPreferredSize(new Dimension(100, 60));
+	    ressources3.setFont(new Font("Arial", Font.ITALIC, 10));
+	    ressources3.setPreferredSize(new Dimension(100, 60));
+	    
+	    ressources.add(ressources1);
+	    ressources.add(ressources2);
+	    ressources.add(ressources3);
+	
+	    //ressource-Panel added to the east side of the main-Panel
+	    panel.add(ressources, BorderLayout.EAST);		
 	}
 	
+
 	private static void startButtonPress(ActionEvent e) {
 		Main.gameWindow.setPanel(PanelType.MainPanel);
 		Main.gameWindow.setPanel(PanelType.InGameGUI);
 		Main.gameWindow.setPanel(PanelType.MainMenu, false);
 	}
 	
-	//cant close whole window
 	private static void quitButtonPress(ActionEvent e) {
 		Main.gameLoop.stop();
         System.exit(0);

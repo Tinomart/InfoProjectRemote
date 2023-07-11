@@ -27,7 +27,8 @@ public class GamePanel extends JPanel {
 		MainPanel,
 		MainMenu,
 		PauseMenu,
-		InGameGUI
+		InGameGUI,
+		
 	}
 	
 	
