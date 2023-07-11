@@ -5,6 +5,7 @@ import java.awt.Point;
 
 import base.graphics.RectangleComponent;
 import base.graphics.Sprite;
+import base.GameLoop;
 import base.graphics.GamePanel.PanelType;
 import base.physics.Damageable;
 import game.Main;
@@ -14,6 +15,21 @@ public abstract class Character extends GameObject implements Damageable{
 	//it really depends on what we want to do with them and they still need 
 	//sprites working and such before we can resonably implement them
 	
+	protected GameLoop gameLoop;
+	
+	protected Tile currentTileTopLeft;
+	protected Tile currentTileBottomLeft;
+	protected Tile currentTileTopRight;
+	protected Tile currentTileBottomRight;
+	
+	public GameLoop getGameLoop() {
+		return gameLoop;
+	}
+
+	public void setGameLoop(GameLoop gameLoop) {
+		this.gameLoop = gameLoop;
+	}
+
 	//just like structures, characters should also have health and healthbars that dynamically change
 	private int maxHealth = 100;
 	public int health;
@@ -49,8 +65,8 @@ public abstract class Character extends GameObject implements Damageable{
 		setHealth(this.health - health);
 	}
 	
-	private int attackDamage;
-	private int moveSpeed;
+	protected  int attackDamage;
+	protected int moveSpeed;
 	
 	public Character(Point position, Sprite sprite) {
 		super(position, sprite);
@@ -79,6 +95,14 @@ public abstract class Character extends GameObject implements Damageable{
 		if(health != maxHealth) {
 			Main. gameLoop.panels.get(PanelType.MainPanel).add(healthBar);
 		}
+		
+		if(gameLoop != null) {
+			currentTileTopLeft = gameLoop.tileGrid.tileMap.get(new Point(getPosition().x/gameLoop.tileGrid.tileSize, getPosition().y/gameLoop.tileGrid.tileSize));
+			currentTileBottomLeft = gameLoop.tileGrid.tileMap.get(new Point(getPosition(Corner.bottomleft).x/gameLoop.tileGrid.tileSize, getPosition(Corner.bottomleft).y/gameLoop.tileGrid.tileSize));
+			currentTileTopRight = gameLoop.tileGrid.tileMap.get(new Point(getPosition(Corner.topright).x/gameLoop.tileGrid.tileSize, getPosition(Corner.topright).y/gameLoop.tileGrid.tileSize));
+			currentTileBottomRight = gameLoop.tileGrid.tileMap.get(new Point(getPosition(Corner.bottomright).x/gameLoop.tileGrid.tileSize, getPosition(Corner.bottomright).y/gameLoop.tileGrid.tileSize));
+		}
+		
 	}
 
 

@@ -26,6 +26,8 @@ public class StructureTile extends Tile {
 		super(tilePosition, tileGrid, sprite);
 		//structure Tiles should have a red color when hovered to show that they cant just be built on like other tiles
 		highlightSquare.color = new Color(255, 0, 0, 125);
+		
+		this.solid = true;
 	}
 
 	//instead of getting this tile we get the structures mainTile

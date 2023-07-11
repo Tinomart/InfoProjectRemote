@@ -12,12 +12,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import base.graphics.GamePanel;
-import java.util.ArrayDeque;
-import java.util.HashMap;
-
 import base.gameObjects.GameObject;
 import base.gameObjects.PureGrassTile;
 import base.gameObjects.Tile;
+import base.gameObjects.Enemy_1;
+import base.gameObjects.Character;
+import base.gameObjects.CityHall;
 import base.graphics.GamePanel.PanelType;
 import base.graphics.GameWindow;
 import base.graphics.Menu;
@@ -44,7 +44,9 @@ public class GameLoop implements Runnable {
 
 	public ArrayDeque<GameObject> gameObjects = new ArrayDeque<GameObject>();
 	public int currentWaveCount = 0;
-	public Level[] waves;
+	public ArrayList<Level> waves = new ArrayList<Level>();
+	
+	public CityHall cityHall;
 	
 	private SpriteLoader spriteLoader = new SpriteLoader();
 
@@ -89,6 +91,23 @@ public class GameLoop implements Runnable {
 		for (int j = 0; j < spawnPoint.y / cameraSpeed; j++) {
 			moveCamera(Direction.down);
 		}
+		
+		
+		ArrayList<Character> level1Enemies = new ArrayList<Character>();
+		level1Enemies.add(new Enemy_1(new Point(50, 50)));
+		Level level1 = new Level(level1Enemies, allEnemiesDefeated(level1Enemies), new HashMap<Class<? extends Resource>, Integer>(), this);
+		
+		waves.add(level1);
+		waves.get(currentWaveCount).begin();
+	}
+	private boolean allEnemiesDefeated(ArrayList<Character> level1Enemies) {
+		boolean anyEnemyContained = false;
+		for (Character character : level1Enemies) {
+			if(gameObjects.contains(character)) {
+				anyEnemyContained = true;
+			}
+		}
+		return anyEnemyContained;
 	}
 	// This had to be its own thing, because for some reason the basic resize
 	// implementation was failing me, so I had to write my own.
@@ -106,7 +125,7 @@ public class GameLoop implements Runnable {
 						menu.revalidate();
 
 						// this fixes a bug where the player was able to have a small window, move to
-						// the edge of the screen and resize the window to the
+						// the edge of the screen and resize the window to a larger size, thus get out of bounds
 						int outOfBoundsWidth = gameLoop.cameraPosition.x + window.getBounds().width
 								- Main.MAP_WIDTH * tileGrid.tileSize;
 						int outOfBoundsHeight = gameLoop.cameraPosition.y + window.getBounds().height
@@ -158,17 +177,6 @@ public class GameLoop implements Runnable {
 		while (gameThread != null) {
 			executeEveryFrame(gameThread);
 
-			// this is part of the fps count, that I am still unsure we need
-			fpsCount += 1;
-//			if(fpsCount >= 60) {
-//				fpsCount = 1;
-//			}
-
-			// TODO this needs to be readded once the Draw() function in GameObject is
-			// properly
-			// implemented
-			// DrawGameObjects();
-
 			// The Main Menu has its inputs read;
 			// requestFocus is so that the JFrame and JPanel doesnt all of the
 			// sudden shift focus and stops listening to our MainPanel
@@ -211,12 +219,17 @@ public class GameLoop implements Runnable {
 				}
 			}
 
-			updateGameObjects();
+			updateGame();
 
 		}
 
 	}
 
+	private void updateGame() {
+		updateGameObjects();
+		waves.get(currentWaveCount).update();
+		
+	}
 	// call the update method of each gameObject to make pretty much every part of
 	// the individual logic possible, like movement, damage checks, etc.
 	private void updateGameObjects() {
@@ -306,9 +319,9 @@ public class GameLoop implements Runnable {
 				((ResourceGenerating)gameObject).generateResources(resources);
 			}
 		}
-		waves[currentWaveCount].end();
+		waves.get(currentWaveCount).end();
 		currentWaveCount += 1;
-		waves[currentWaveCount].begin();
+		waves.get(currentWaveCount).begin();
 	}
 
 	public void save() {
@@ -326,11 +339,13 @@ public class GameLoop implements Runnable {
 			// if the file does not yet contain the gameObject we are trying to save, write
 			// the gameObjects toString into the file
 			for (GameObject gameObject : gameObjects) {
-				String objectString = gameObject.toString();
-				writer.write(objectString);
+				if(!waves.get(currentWaveCount).getCharacters().contains(gameObject)) {
+					String objectString = gameObject.toString();
+					writer.write(objectString);
+				}
 			}
-			// this needs to be here because java is angry if it isn't. No clue why we need
-			// it
+			writer.newLine();
+			writer.write("" + currentWaveCount);
 			writer.close();
 
 		} catch (IOException e) {
@@ -364,6 +379,9 @@ public class GameLoop implements Runnable {
 				GameObject createdObject = createGameObject(gameObjectString);
 
 			}
+			
+			readLine = reader.readLine();
+			currentWaveCount = Integer.valueOf(readLine);
 			reader.close();
 
 		} catch (IOException e) {
@@ -509,7 +527,13 @@ public class GameLoop implements Runnable {
 				// for the scope of our game
 				iterator.remove();
 			}
+			
+			if(gameObject == cityHall) {
+				cityHall = null;
+			}
 		}
+		
+		
 	}
 
 	// method to make our entire sprite system somewhat efficient. since we have so

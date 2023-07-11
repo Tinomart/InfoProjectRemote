@@ -41,7 +41,7 @@ public class GameObject extends GameEntity implements Drawable {
 	public SpriteType spriteType;
 	public int drawLayer = 0;
 	
-	GamePanel gp;
+	public boolean solid = false;
 	
 	//we need this array for loading and implementing the map tiles later on (ca. min 15)
 //	Tile[] tile;

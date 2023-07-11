@@ -12,6 +12,7 @@ public class BeachTile_Bottom extends Tile {
 
 		super(tilePosition, tileGrid, new Sprite(new Point(0, 0)));
 		spriteType = SpriteType.BeachTile_BottomSprite;
+		this.solid = true;
 	}
 
 	public String toString() {

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 
 public class Tile extends GameObject implements TileBased {
+	
 	private Point tilePosition;
 	
 	public TileGrid tileGrid;

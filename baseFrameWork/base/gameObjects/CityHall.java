@@ -9,6 +9,7 @@ public class CityHall extends Structure {
 	
 	public CityHall(Point position, TileGrid tileGrid) {
 		super(initializeTiles(position, tileGrid), initializeMainTile(position, tileGrid), tileGrid);
+		tileGrid.gameLoop.cityHall = this;
 		
 	}
 
