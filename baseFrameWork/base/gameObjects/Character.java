@@ -2,6 +2,7 @@ package base.gameObjects;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.util.*;
 
 import base.graphics.RectangleComponent;
 import base.graphics.Sprite;
@@ -21,6 +22,14 @@ public abstract class Character extends GameObject implements Damageable{
 	protected Tile currentTileBottomLeft;
 	protected Tile currentTileTopRight;
 	protected Tile currentTileBottomRight;
+	
+	protected ArrayList<Tile> standingTiles = new ArrayList<Tile>();
+	
+	
+	
+	protected double defaultMoveDirection = Math.random();
+	protected Point previousPosition;
+	protected Tile tileInMovementDirection;
 	
 	public GameLoop getGameLoop() {
 		return gameLoop;
@@ -79,6 +88,8 @@ public abstract class Character extends GameObject implements Damageable{
 				healthBarColor);
 		health = maxHealth;
 		
+		
+		
 	}
 	
 	
@@ -101,8 +112,73 @@ public abstract class Character extends GameObject implements Damageable{
 			currentTileBottomLeft = gameLoop.tileGrid.tileMap.get(new Point(getPosition(Corner.bottomleft).x/gameLoop.tileGrid.tileSize, getPosition(Corner.bottomleft).y/gameLoop.tileGrid.tileSize));
 			currentTileTopRight = gameLoop.tileGrid.tileMap.get(new Point(getPosition(Corner.topright).x/gameLoop.tileGrid.tileSize, getPosition(Corner.topright).y/gameLoop.tileGrid.tileSize));
 			currentTileBottomRight = gameLoop.tileGrid.tileMap.get(new Point(getPosition(Corner.bottomright).x/gameLoop.tileGrid.tileSize, getPosition(Corner.bottomright).y/gameLoop.tileGrid.tileSize));
+			if(!standingTiles.contains(currentTileBottomLeft)) {
+				standingTiles.add(currentTileBottomLeft);
+			}
+			if(!standingTiles.contains(currentTileBottomRight)) {
+				standingTiles.add(currentTileBottomRight);
+			}
+			if(!standingTiles.contains(currentTileTopLeft)) {
+				standingTiles.add(currentTileTopLeft);
+			}
+			if(!standingTiles.contains(currentTileTopRight)) {
+				standingTiles.add(currentTileTopRight);
+			}
 		}
 		
+	}
+	
+	public Tile getMovableTile() {
+		ArrayList<Tile> nonSolidTiles = new ArrayList<Tile>();
+		for (Tile tile : standingTiles) {
+			if(tile != null) {
+				if(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x + 1, tile.getTilePosition().y)) != null) {
+					if(!gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x + 1, tile.getTilePosition().y)).solid) {
+						nonSolidTiles.add(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x + 1, tile.getTilePosition().y)));
+					}
+				}
+				if(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x - 1, tile.getTilePosition().y)) != null) {
+					if(!gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x + 1, tile.getTilePosition().y)).solid) {
+						nonSolidTiles.add(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x + 1, tile.getTilePosition().y)));
+					}
+				}
+				if(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x, tile.getTilePosition().y + 1)) != null) {
+					if(!gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x + 1, tile.getTilePosition().y)).solid) {
+						nonSolidTiles.add(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x + 1, tile.getTilePosition().y)));
+					}
+				}
+				if(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x, tile.getTilePosition().y - 1)) != null) {
+					if(!gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x + 1, tile.getTilePosition().y)).solid) {
+						nonSolidTiles.add(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x + 1, tile.getTilePosition().y)));
+					}
+				}
+			}
+		}
+		if(nonSolidTiles.size() != 0) {
+			int chosenTileIndex = (int) Math.ceil(defaultMoveDirection*nonSolidTiles.size());
+			return nonSolidTiles.get(chosenTileIndex);
+		}
+		
+		return null;
+		
+	}
+	
+	public void moveTowardsPoint(Point positionToMoveTowards) {
+		Point movementVector = new Point(positionToMoveTowards.x - position.x, positionToMoveTowards.y - position.y);
+		if(movementVector.x <= 0 && movementVector.y <= 0) {
+			tileInMovementDirection = currentTileBottomLeft;
+		} else if (movementVector.x >= 0 && movementVector.y <= 0) {
+			tileInMovementDirection = currentTileBottomRight;
+		} else if (movementVector.x <= 0 && movementVector.y >= 0) {
+			tileInMovementDirection = currentTileTopLeft;
+		} else if (movementVector.x >= 0 && movementVector.y >= 0) {
+			tileInMovementDirection = currentTileTopRight;
+		}
+		movementVector.x /= 0.1*Math.sqrt(Math.pow(movementVector.x, 2) + Math.pow(movementVector.y, 2));
+		movementVector.y /= 0.1*Math.sqrt(Math.pow(movementVector.x, 2) + Math.pow(movementVector.y, 2));
+		
+		position.x += movementVector.x * moveSpeed/10;
+		position.y += movementVector.y * moveSpeed/10;
 	}
 
 

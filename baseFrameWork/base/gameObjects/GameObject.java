@@ -103,20 +103,7 @@ public class GameObject extends GameEntity implements Drawable {
 		}
 	}
 	
-//	@Override
-//	public void Draw(GamePanel gamePanel) {
-//		if(isActive()) {
-//			Graphics2D g2d = (Graphics2D) sprite.getImage().getGraphics();
-//			g2d.drawImage(sprite.getImage(), position.x, position.y, sprite.size.x, sprite.size.y, gamePanel);
-//	            
-//			
-//			//TODO Add code that draws the sprite for the GameObject to the Correct GamePanel
-//			//obviously only possible after a sprite system is implemented
-//				
-//			g2d.dispose();
-//	        
-//		}
-//	}
+
 	public void draw(Graphics graphics) {
 		if(isActive()) {
 			graphics.drawImage(sprite.getImage(), getPosition().x, getPosition().y, sprite.size.x, sprite.size.y, null);

@@ -2,6 +2,7 @@ package base.gameObjects;
 
 import java.awt.Point;
 
+import base.GameLoop;
 import base.graphics.Sprite;
 import base.graphics.TileGrid;
 import game.Main;
@@ -9,8 +10,7 @@ import base.graphics.SpriteLoader.SpriteType;
 
 public class Enemy_1 extends Character {
 	
-	private double defaultMoveDirection = Math.random();
-	private Point previousPosition;
+	
 
 	
 	public Enemy_1(Point position) {
@@ -52,24 +52,91 @@ public class Enemy_1 extends Character {
 	@Override
 	protected void move(int moveSpeed) {
 		if(getGameLoop() != null) {
-			if(gameLoop.cityHall != null) {
-				if(currentTileTopLeft != null && currentTileBottomLeft != null && currentTileTopRight != null && currentTileBottomRight != null) {
-					if(!(currentTileTopLeft.solid || currentTileBottomLeft.solid || currentTileTopRight.solid || currentTileBottomRight.solid)) {
-						Point movementVector = new Point(gameLoop.cityHall.position.x - position.x, gameLoop.cityHall.position.y - position.y);
-						movementVector.x /= 0.1*Math.sqrt(Math.pow(movementVector.x, 2) + Math.pow(movementVector.y, 2));
-						movementVector.y /= 0.1*Math.sqrt(Math.pow(movementVector.x, 2) + Math.pow(movementVector.y, 2));
+			System.out.println();
+			if(gameLoop.cityHall != null && (currentTileTopLeft != null && currentTileBottomLeft != null && currentTileTopRight != null && currentTileBottomRight != null)) {
+				if(!(currentTileTopLeft.solid || currentTileBottomLeft.solid || currentTileTopRight.solid || currentTileBottomRight.solid)) {
+					moveTowardsPoint(gameLoop.cityHall.position);
+				} else {
+					
+					if(currentTileTopLeft.structure == null && currentTileBottomLeft.structure == null && currentTileTopRight.structure == null && currentTileBottomRight.structure == null) {
+						previousPosition = new Point(position.x, position.y);
+						if(defaultMoveDirection <= 0.5) {
+							Point targetAvoidPoint = new Point(-gameLoop.cityHall.position.y, gameLoop.cityHall.position.x);
+							boolean directionIsValid = true;
+							if(gameLoop.tileGrid.tileMap.get(new Point(tileInMovementDirection.getTilePosition().x + targetAvoidPoint.x/Math.abs(targetAvoidPoint.x), tileInMovementDirection.getTilePosition().y + targetAvoidPoint.y/Math.abs(targetAvoidPoint.y))).solid) {
+								directionIsValid = false;
+							}
+							if(directionIsValid) {
+								double moveDistance = 0;
+								while(moveDistance < gameLoop.tileGrid.tileSize) {
+									GameLoop.executeEveryFrame(Main.gameLoop.gameThread);
+									previousPosition = new Point(position.x, position.y);
+									moveTowardsPoint(targetAvoidPoint);
+									moveDistance += position.distance(previousPosition);
+									if(previousPosition.x == position.x && previousPosition.y == position.y) {
+										gameLoop.destroyGameObject(this);
+										break;
+									}
+								}
+								defaultMoveDirection = Math.random();
+								
+								
+							}
+							
+						} else {
+							System.out.println("happeneing");
+							Point targetAvoidPoint = new Point(gameLoop.cityHall.position.y, -gameLoop.cityHall.position.x);
+							boolean directionIsValid = true;
+							
+							if(Math.abs(targetAvoidPoint.x) >= Math.abs(targetAvoidPoint.y)) {
+								if(gameLoop.tileGrid.tileMap.get(new Point(tileInMovementDirection.getTilePosition().x + targetAvoidPoint.x/Math.abs(targetAvoidPoint.x), tileInMovementDirection.getTilePosition().y)).solid) {
+									directionIsValid = false;
+								}
+							} else {
+								if(gameLoop.tileGrid.tileMap.get(new Point(tileInMovementDirection.getTilePosition().x , tileInMovementDirection.getTilePosition().y + targetAvoidPoint.y/Math.abs(targetAvoidPoint.y))).solid) {
+									directionIsValid = false;
+								}
+							}
+							if(directionIsValid) {
+								double moveDistance = 0;
+								while(moveDistance < gameLoop.tileGrid.tileSize) {
+									GameLoop.executeEveryFrame(Main.gameLoop.gameThread);
+									previousPosition = new Point(position.x, position.y);
+									moveTowardsPoint(targetAvoidPoint);
+									moveDistance += position.distance(previousPosition);
+									if(previousPosition.x == position.x && previousPosition.y == position.y) {
+										gameLoop.destroyGameObject(this);
+										break;
+									}
+								}
+							}
+						}
+						System.out.println("checking");
+						System.out.println(position);
+						System.out.println(previousPosition);
+						if(previousPosition.x == position.x && previousPosition.y == position.y) {
+							double moveDistance = 0;
+							while(moveDistance < gameLoop.tileGrid.tileSize) {
+								GameLoop.executeEveryFrame(Main.gameLoop.gameThread);
+								previousPosition = new Point(position.x, position.y);
+								moveTowardsPoint(new Point(-gameLoop.cityHall.position.y, gameLoop.cityHall.position.x));
+								moveDistance += position.distance(previousPosition);
+								if(previousPosition.x == position.x && previousPosition.y == position.y) {
+									gameLoop.destroyGameObject(this);
+									break;
+								}
+							}
+							defaultMoveDirection = Math.random();
+						}
 						
-						previousPosition = position;
-						
-						position.x += movementVector.x * moveSpeed/10;
-						position.y += movementVector.y * moveSpeed/10;
-					} else {
-						position = previousPosition;
 					}
+
+					
 				}
 				
-			}
-		} 
+			} 
+	
+		}
 		
 	}
  

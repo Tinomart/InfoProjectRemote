@@ -1,6 +1,7 @@
 package base;
 
 import java.awt.*;
+
 import java.util.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -35,7 +36,7 @@ import game.Main;
 //so that we can access them later in the Main Class of the game package
 public class GameLoop implements Runnable {
 
-	private Thread gameThread;
+	public Thread gameThread;
 	public GameWindow window;
 
 	public TileGrid tileGrid;
@@ -532,9 +533,11 @@ public class GameLoop implements Runnable {
 				iterator.remove();
 			}
 			
-			if(gameObject == cityHall) {
-				cityHall = null;
-			}
+			
+		}
+		
+		if(gameObjectToDestroy == cityHall) {
+			cityHall = null;
 		}
 		
 		
