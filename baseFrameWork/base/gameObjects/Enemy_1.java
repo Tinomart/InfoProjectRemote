@@ -3,6 +3,7 @@ package base.gameObjects;
 import java.awt.Point;
 
 import base.GameLoop;
+import base.ResourceGenerating;
 import base.graphics.Sprite;
 import base.graphics.TileGrid;
 import game.Main;
@@ -51,17 +52,27 @@ public class Enemy_1 extends Character {
 
 	@Override
 	protected void move(int moveSpeed) {
-		if(getGameLoop() != null) {
+		if(gameLoop != null) {
+			
 			System.out.println();
 			if(gameLoop.cityHall != null && (currentTileTopLeft != null && currentTileBottomLeft != null && currentTileTopRight != null && currentTileBottomRight != null)) {
+				currentTarget = gameLoop.cityHall;
+				for (GameObject gameObject : gameLoop.gameObjects) {
+					if(gameObject instanceof ResourceGenerating || gameObject instanceof CityHall) {
+						if(position.distance(gameObject.position) < position.distance(currentTarget.position)) {
+							System.out.println("im doing it");
+							currentTarget = (Structure) gameObject;
+						}
+					}
+				}
 				if(!(currentTileTopLeft.solid || currentTileBottomLeft.solid || currentTileTopRight.solid || currentTileBottomRight.solid)) {
-					moveTowardsPoint(gameLoop.cityHall.position);
+					moveTowardsPoint(currentTarget.position);
 				} else {
 					
 					if(currentTileTopLeft.structure == null && currentTileBottomLeft.structure == null && currentTileTopRight.structure == null && currentTileBottomRight.structure == null) {
 						previousPosition = new Point(position.x, position.y);
 						if(defaultMoveDirection <= 0.5) {
-							Point targetAvoidPoint = new Point(-gameLoop.cityHall.position.y, gameLoop.cityHall.position.x);
+							Point targetAvoidPoint = new Point(-currentTarget.position.y, currentTarget.position.x);
 							boolean directionIsValid = true;
 							if(gameLoop.tileGrid.tileMap.get(new Point(tileInMovementDirection.getTilePosition().x + targetAvoidPoint.x/Math.abs(targetAvoidPoint.x), tileInMovementDirection.getTilePosition().y + targetAvoidPoint.y/Math.abs(targetAvoidPoint.y))).solid) {
 								directionIsValid = false;
@@ -84,8 +95,7 @@ public class Enemy_1 extends Character {
 							}
 							
 						} else {
-							System.out.println("happeneing");
-							Point targetAvoidPoint = new Point(gameLoop.cityHall.position.y, -gameLoop.cityHall.position.x);
+							Point targetAvoidPoint = new Point(currentTarget.position.y, -currentTarget.position.x);
 							boolean directionIsValid = true;
 							
 							if(Math.abs(targetAvoidPoint.x) >= Math.abs(targetAvoidPoint.y)) {
@@ -119,7 +129,7 @@ public class Enemy_1 extends Character {
 							while(moveDistance < gameLoop.tileGrid.tileSize) {
 								GameLoop.executeEveryFrame(Main.gameLoop.gameThread);
 								previousPosition = new Point(position.x, position.y);
-								moveTowardsPoint(new Point(-gameLoop.cityHall.position.y, gameLoop.cityHall.position.x));
+								moveTowardsPoint(new Point(-currentTarget.position.y, currentTarget.position.x));
 								moveDistance += position.distance(previousPosition);
 								if(previousPosition.x == position.x && previousPosition.y == position.y) {
 									gameLoop.destroyGameObject(this);

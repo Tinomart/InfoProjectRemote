@@ -18,10 +18,16 @@ public abstract class Character extends GameObject implements Damageable{
 	
 	protected GameLoop gameLoop;
 	
+	public void setGameLoop(GameLoop gameLoop) {
+		this.gameLoop = gameLoop;
+		
+	}
+	
 	protected Tile currentTileTopLeft;
 	protected Tile currentTileBottomLeft;
 	protected Tile currentTileTopRight;
 	protected Tile currentTileBottomRight;
+	protected Structure currentTarget;
 	
 	protected ArrayList<Tile> standingTiles = new ArrayList<Tile>();
 	
@@ -31,13 +37,7 @@ public abstract class Character extends GameObject implements Damageable{
 	protected Point previousPosition;
 	protected Tile tileInMovementDirection;
 	
-	public GameLoop getGameLoop() {
-		return gameLoop;
-	}
-
-	public void setGameLoop(GameLoop gameLoop) {
-		this.gameLoop = gameLoop;
-	}
+	
 
 	//just like structures, characters should also have health and healthbars that dynamically change
 	private int maxHealth = 100;
@@ -87,9 +87,6 @@ public abstract class Character extends GameObject implements Damageable{
 				healthBarWidth, 32, 5,
 				healthBarColor);
 		health = maxHealth;
-		
-		
-		
 	}
 	
 	
@@ -186,4 +183,6 @@ public abstract class Character extends GameObject implements Damageable{
 
 
 	protected abstract void move(int moveSpeed);
+
+	
 }
