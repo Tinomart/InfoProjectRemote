@@ -345,6 +345,13 @@ public class InputManager {
 				selectedStructure = null;
 			}
 			break;
+		case KeyEvent.VK_X:
+			if (selectedStructure != Watchtower.class) {
+				selectedStructure = Watchtower.class;
+			} else {
+				selectedStructure = null;
+			}
+			break;
 		default:
 			break;
 

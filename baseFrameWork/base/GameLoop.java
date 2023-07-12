@@ -15,6 +15,7 @@ import base.graphics.GamePanel;
 import base.gameObjects.GameObject;
 import base.gameObjects.PureGrassTile;
 import base.gameObjects.Tile;
+import base.gameObjects.Watchtower;
 import base.gameObjects.Enemy_1;
 import base.gameObjects.Character;
 import base.gameObjects.CityHall;
@@ -48,6 +49,8 @@ public class GameLoop implements Runnable {
 	
 	public CityHall cityHall;
 	
+	public Watchtower watchtower;
+	
 	private SpriteLoader spriteLoader = new SpriteLoader();
 
 	// if we need to ever add anything based on a specific frame
@@ -64,6 +67,7 @@ public class GameLoop implements Runnable {
 	
 	//resources
 	public Resource[] resources = new Resource[] {new Gold(0)};
+	public Watchtower Watchtower;
 
 	public enum Direction {
 		up, left, down, right
