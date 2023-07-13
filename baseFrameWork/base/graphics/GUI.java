@@ -25,6 +25,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 
+import base.Gold;
+import base.Resource;
 import base.graphics.GamePanel.PanelType;
 import game.Main;
 
@@ -35,6 +37,10 @@ import game.Main;
 public class GUI {
 	
 	static Font pythia;
+	
+	public static Resource[] resources = new Resource[] {new Gold(0)};
+		
+	
 	
 	//title screen, Quit, Play buttons etc.
 	public static void addMainMenuGUI(JPanel panel) {
@@ -225,9 +231,11 @@ public class GUI {
 	    ressources.setPreferredSize(ressourcesSize);
 	    
 	    //TODO replace the name of "ressources1,2,3" to the ressources we want to implement
-	    JLabel ressourceGold = new JLabel("Gold" + "x");
+	    JLabel ressourceGold = new JLabel("Gold: " + resources[0].getAmount());
 	    JLabel ressourceFaith = new JLabel("Faith");
 	    JLabel ressources3 = new JLabel("ressources3");
+	    
+	    
 	    
 	    ressourceGold.setFont(new Font("Arial", Font.BOLD, 15));
 	    ressourceGold.setForeground(Color.RED);
@@ -255,6 +263,7 @@ public class GUI {
 		Main.gameWindow.setPanel(PanelType.MainPanel);
 		Main.gameWindow.setPanel(PanelType.InGameGUI);
 		Main.gameWindow.setPanel(PanelType.MainMenu, false);
+		resources = Main.gameLoop.resources;
 	}
 	
 	private static void quitButtonPress(ActionEvent e) {

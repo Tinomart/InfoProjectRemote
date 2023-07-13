@@ -5,6 +5,8 @@ import java.util.*;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
+import base.Gold;
+import base.Resource;
 import base.graphics.GamePanel.PanelType;
 
 public class GameWindow extends JFrame {
@@ -18,6 +20,7 @@ public class GameWindow extends JFrame {
 	private HashMap<GamePanel.PanelType, GamePanel> panels;
 	public ArrayDeque<GamePanel.PanelType> activePanels;
 
+	
 	public GameWindow(String title, HashMap<GamePanel.PanelType, GamePanel> panels) {
 		this.title = title;
 

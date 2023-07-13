@@ -78,6 +78,7 @@ public class GameLoop implements Runnable {
 		this.window = window;
 		panels = window.getPanels();
 		mainPanel = panels.get(PanelType.MainPanel);
+		
 
 //		Sprite testSprite = new Sprite(new Point(50, 50));
 //		testSprite.imagePath = "res/Kreis.png";
