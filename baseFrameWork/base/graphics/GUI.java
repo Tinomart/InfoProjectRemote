@@ -155,14 +155,63 @@ public class GUI {
 		panel.add(buttonPanel, BorderLayout.CENTER);
 	}
 	
-
-	//in game Menu with Quit, etc.
+	
 	public static void addPauseMenuGUI(JPanel panel) {
 		panel.setOpaque(false);
-		JButton mainMenuButton = new JButton("MainMenu");
+		
+		BufferedImage continueImage = null;
+		try {
+			continueImage = ImageIO.read(new File("res/fonts/continue.jpg"));
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		//Image scaledcontinueImage = continueImage.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
+		
+		
+		//for resizing the image
+		int imageWidth = 200;
+		int imageHeight = 100;
+		Image scaledContinueImage = continueImage.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
+		//in game Menu with Quit, etc.
+		
+		JButton continueButton = new JButton();
+		continueButton.setOpaque(false);
+		continueButton.setBorderPainted(false);
+		continueButton.setContentAreaFilled(false);
+		continueButton.setIcon(new ImageIcon(scaledContinueImage));
+		continueButton.addActionListener(e -> continueButtonPress(e));
+		panel.add(continueButton);
+
+		BufferedImage mainMenuImage = null;
+		try {
+			mainMenuImage = ImageIO.read(new File("res/fonts/mainMenu.jpg"));
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		Image scaledMainMenuImage = mainMenuImage.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
+		
+		JButton mainMenuButton = new JButton();
+		mainMenuButton.setOpaque(false);
+		mainMenuButton.setBorderPainted(false);
+		mainMenuButton.setContentAreaFilled(false);
+		mainMenuButton.setIcon(new ImageIcon(scaledMainMenuImage));
 		mainMenuButton.addActionListener(e -> mainMenuButtonPress(e));
 		panel.add(mainMenuButton);
+		
+		
+		
 	}
+
+	private static void continueButtonPress(ActionEvent e) {
+		Main.gameWindow.setPanel(PanelType.InGameGUI);
+		for (PanelType panelType : PanelType.values()) {
+			if(panelType != PanelType.MainMenu) {
+				Main.gameWindow.setPanel(PanelType.PauseMenu, false);
+			} 
+		}
+	}	
+	
+
 
 //-----------------------------------------------------------------------------	
 	//in game icons n shit -"Matteo Holzer"
