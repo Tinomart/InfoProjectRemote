@@ -3,13 +3,13 @@ package base.gameObjects;
 import java.awt.Point;
 import base.graphics.*;
 
-public class CityHall extends Structure {
+public class Watchtower extends Structure {
 	
-	public static Point[] shape = new Point[] {new Point(-1,0)};
+	public static Point[] shape = new Point[] {new Point(0,1)};
 	
-	public CityHall(Point position, TileGrid tileGrid) {
+	public Watchtower(Point position, TileGrid tileGrid) {
 		super(initializeTiles(position, tileGrid), initializeMainTile(position, tileGrid), tileGrid);
-		tileGrid.gameLoop.cityHall = this;
+		tileGrid.gameLoop.Watchtower = this;
 		
 	}
 
@@ -18,8 +18,8 @@ public class CityHall extends Structure {
 	}
 
 	private static Tile[] initializeTiles(Point position, TileGrid tileGrid) {
-		Tile mainTile = new BeachTile_Bottom(position, tileGrid);
-	    Tile[] tiles = new Tile[]{mainTile, new BeachTile_Left(new Point(position.x - 1, position.y), tileGrid)};
+		Tile mainTile = new WatchtowerTopTile(position, tileGrid);
+	    Tile[] tiles = new Tile[]{mainTile, new WatchtowerBottomTile(new Point(position.x , position.y + 1), tileGrid)};
 		return tiles;
 	}
 }

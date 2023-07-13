@@ -6,13 +6,12 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
-public class BeachTile_Bottom extends Tile {
+public class House_1_0_Tile extends StructureTile {
 
-	public BeachTile_Bottom(Point tilePosition, TileGrid tileGrid) {
+	public House_1_0_Tile(Point tilePosition, TileGrid tileGrid) {
 
 		super(tilePosition, tileGrid, new Sprite(new Point(0, 0)));
-		spriteType = SpriteType.BeachTile_BottomSprite;
-		this.solid = true;
+		spriteType = SpriteType.House_1_0_TileSprite;
 	}
 
 	public String toString() {

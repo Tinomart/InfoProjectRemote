@@ -6,13 +6,12 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
-public class BeachTile_Bottom extends Tile {
+public class WatchtowerBottomTile extends StructureTile {
 
-	public BeachTile_Bottom(Point tilePosition, TileGrid tileGrid) {
+	public WatchtowerBottomTile(Point tilePosition, TileGrid tileGrid) {
 
 		super(tilePosition, tileGrid, new Sprite(new Point(0, 0)));
-		spriteType = SpriteType.BeachTile_BottomSprite;
-		this.solid = true;
+		spriteType = SpriteType.WatchtowerBottomSprite;
 	}
 
 	public String toString() {
@@ -23,4 +22,9 @@ public class BeachTile_Bottom extends Tile {
 		return stringBuilder.toString();
 	}
 
+	@Override 
+	public void onHover() {
+		super.onHover();
+		
+	}
 }

@@ -16,6 +16,8 @@ public class SpriteLoader {
 		PureGrassTileSprite, GrassFlower_2TileSprite, WaterTile_FishSprite, BeachTile_LeftBottomSprite,
 		BeachTile_BottomSprite, BeachTile_RightBottomSprite, BeachTile_TopSprite, BeachTile_LeftTopSprite,
 		BeachTile_RightTopSprite, BeachTile_LeftSprite, BeachTile_RightSprite, WaterTileSprite, WaterTile_DucksSprite,
+		House_0_0_TileSprite,House_0_1_TileSprite, House_1_0_TileSprite, House_1_1_TileSprite, Enemy_1TileSprite,
+		WatchtowerTopSprite, WatchtowerBottomSprite,
 
 	}
 
@@ -99,5 +101,33 @@ public class SpriteLoader {
 		Sprite WaterTile_DucksSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
 		WaterTile_DucksSprite.loadImage("res/WaterTile_Ducks.png");
 		sprites.put(SpriteType.WaterTile_DucksSprite, WaterTile_DucksSprite);
+		
+		Sprite House_0_0_TileSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		House_0_0_TileSprite.loadImage("res/House_0_0_Tile.png");
+		sprites.put(SpriteType.House_0_0_TileSprite, House_0_0_TileSprite);
+		
+		Sprite House_0_1_TileSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		House_0_1_TileSprite.loadImage("res/House_0_1_Tile.png");
+		sprites.put(SpriteType.House_0_1_TileSprite, House_0_1_TileSprite);
+		
+		Sprite House_1_0_TileSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		House_1_0_TileSprite.loadImage("res/House_1_0_Tile.png");
+		sprites.put(SpriteType.House_1_0_TileSprite, House_1_0_TileSprite);
+		
+		Sprite House_1_1_TileSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		House_1_1_TileSprite.loadImage("res/House_1_1_Tile.png");
+		sprites.put(SpriteType.House_1_1_TileSprite, House_1_1_TileSprite);
+		
+		Sprite Enemy_1TileSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		Enemy_1TileSprite.loadImage("res/Enemy_1Tile.png");
+		sprites.put(SpriteType.Enemy_1TileSprite, Enemy_1TileSprite);
+		
+		Sprite WatchtowerTopSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		WatchtowerTopSprite.loadImage("res/WatchtowerTop.png");
+		sprites.put(SpriteType.WatchtowerTopSprite, WatchtowerTopSprite);
+		
+		Sprite WatchtowerBottomSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		WatchtowerBottomSprite.loadImage("res/WatchtowerBottom.png");
+		sprites.put(SpriteType.WatchtowerBottomSprite, WatchtowerBottomSprite);
 	}
 }

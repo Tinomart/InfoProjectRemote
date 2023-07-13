@@ -20,6 +20,7 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 
 public class Tile extends GameObject implements TileBased {
+	
 	private Point tilePosition;
 	
 	public TileGrid tileGrid;
@@ -51,9 +52,9 @@ public class Tile extends GameObject implements TileBased {
 	//when hovered display the highlight square on the main panel and repaint to show changes
 	public void onHover() {
 		mainPanel.add(highlightSquare);
-		mainPanel.revalidate();
-		tileGrid.gameLoop.window.revalidate();
-		tileGrid.gameLoop.window.repaint();
+//		mainPanel.revalidate();
+//		tileGrid.gameLoop.window.revalidate();
+//		tileGrid.gameLoop.window.repaint();
 		
 	}
 	
