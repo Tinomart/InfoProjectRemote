@@ -155,6 +155,9 @@ public class GUI {
 		JButton mainMenuButton = new JButton("MainMenu");
 		mainMenuButton.addActionListener(e -> mainMenuButtonPress(e));
 		panel.add(mainMenuButton);
+		JButton continueButton = new JButton("continue");
+		continueButton.addActionListener(e -> continueButtonPress(e));
+		panel.add(continueButton);
 	}
 
 //-----------------------------------------------------------------------------	
@@ -265,7 +268,14 @@ public class GUI {
 			} 
 		}
 	}
-	
+	private static void continueButtonPress(ActionEvent e) {
+		Main.gameWindow.setPanel(PanelType.InGameGUI);
+		for (PanelType panelType : PanelType.values()) {
+			if(panelType != PanelType.MainMenu) {
+				Main.gameWindow.setPanel(PanelType.PauseMenu, false);
+			} 
+		}
+	}	
 	//TODO obviously need to add code for getting the object from the buttons to the gamefield
 	//so that it can be placed
 	private static Object cityHallButtonPress(ActionEvent e) {
