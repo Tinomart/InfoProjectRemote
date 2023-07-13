@@ -121,7 +121,7 @@ public class GUI {
 		//loading the custom quit-Button Image
 		BufferedImage quitImage = null;
 		try {
-			quitImage = ImageIO.read(new File("res/fonts/quit.jpg"));
+			quitImage = ImageIO.read(new File("res/fonts/Quit.jpg"));
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -181,7 +181,7 @@ public class GUI {
 	    //different buttons
 	    JButton cityHallButton = new JButton(resizedIcon);
 	    JButton houseButton = new JButton("Haus");
-	    JButton defenseTowerButton = new JButton("TÃ¼r");
+	    JButton defenseTowerButton = new JButton("defTower");
 	    JButton templeButton = new JButton("Kaserne");
 	    
 	        
