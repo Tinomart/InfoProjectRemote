@@ -121,7 +121,11 @@ public class GUI {
 		//loading the custom quit-Button Image
 		BufferedImage quitImage = null;
 		try {
+<<<<<<< HEAD
 			quitImage = ImageIO.read(new File("res/fonts/Quit.jpg"));
+=======
+			quitImage = ImageIO.read(new File("res/fonts/quit.jpg"));
+>>>>>>> GuiDevelopment
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -181,7 +185,11 @@ public class GUI {
 	    //different buttons
 	    JButton cityHallButton = new JButton(resizedIcon);
 	    JButton houseButton = new JButton("Haus");
+<<<<<<< HEAD
 	    JButton defenseTowerButton = new JButton("defTower");
+=======
+	    JButton defenseTowerButton = new JButton("Tür");
+>>>>>>> GuiDevelopment
 	    JButton templeButton = new JButton("Kaserne");
 	    
 	        
@@ -208,6 +216,7 @@ public class GUI {
 	    userPanel.add(cityHallButton);
 	    
 	    panel.add(userPanel, BorderLayout.WEST);		
+<<<<<<< HEAD
 	    
 	    //draw ressources on the right side
 	
@@ -233,6 +242,33 @@ public class GUI {
 	    ressources3.setForeground(Color.RED);
 	    ressources3.setPreferredSize(new Dimension(100, 60));
 	    
+=======
+	    
+	    //draw ressources on the right side
+	
+	    JPanel ressources = new JPanel(new FlowLayout(FlowLayout.LEFT));
+	    ressources.setOpaque(false);	
+	    ressources.setBorder(BorderFactory.createLineBorder(Color.BLUE, 4, true));
+	    
+	    Dimension ressourcesSize = new Dimension(125, 60);
+	    ressources.setPreferredSize(ressourcesSize);
+	    
+	    //TODO replace the name of "ressources1,2,3" to the ressources we want to implement
+	    JLabel ressourceGold = new JLabel("Gold" + "x");
+	    JLabel ressourceFaith = new JLabel("Faith");
+	    JLabel ressources3 = new JLabel("ressources3");
+	    
+	    ressourceGold.setFont(new Font("Arial", Font.BOLD, 15));
+	    ressourceGold.setForeground(Color.RED);
+	    ressourceGold.setPreferredSize(new Dimension(100, 60));
+	    ressourceFaith.setFont(new Font("Arial", Font.BOLD, 15));
+	    ressourceFaith.setForeground(Color.RED);
+	    ressourceFaith.setPreferredSize(new Dimension(100, 60));
+	    ressources3.setFont(new Font("Arial", Font.BOLD, 15));
+	    ressources3.setForeground(Color.RED);
+	    ressources3.setPreferredSize(new Dimension(100, 60));
+	    
+>>>>>>> GuiDevelopment
 	    ressources.add(ressourceGold);
 	    ressources.add(ressourceFaith);
 	    ressources.add(ressources3);
