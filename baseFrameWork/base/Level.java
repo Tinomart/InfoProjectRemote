@@ -23,17 +23,14 @@ public class Level {
 
 	private GameLoop gameLoop;
 
-	private boolean endCondition;
-
 	// not every level necessarily gives equal amounts of resources, so each
 	// resource that will be given has an according integer as a reward
 	private HashMap<Class<? extends Resource>, Integer> reward;
 
-	public Level(ArrayList<Character> characters, boolean endCondition, HashMap<Class<? extends Resource>, Integer> reward,
+	public Level(ArrayList<Character> characters, HashMap<Class<? extends Resource>, Integer> reward,
 			GameLoop gameLoop) {
 		this.characters = characters;
 		this.gameLoop = gameLoop;
-		this.endCondition = endCondition;
 		this.reward = reward;
 		initializeCharacters();
 	}
@@ -48,6 +45,7 @@ public class Level {
 
 	// when the level begins all gameObjects
 	public void begin() {
+		System.out.println(this);
 		for (Character character : characters) {
 			gameLoop.gameObjects.add(character);
 		}
@@ -56,7 +54,6 @@ public class Level {
 	public void end() {
 		// once the game ends destroy all characters for safety if the goal is not to
 		// destroy all enemies, then it destroys all still existing enemies
-
 		for (Character character : characters) {
 			gameLoop.destroyGameObject(character);
 		}
@@ -72,8 +69,8 @@ public class Level {
 
 	//if the endcondition is fullfilled, automatically begin the next wave
 	public void update() {
-		if (endCondition) {
-			gameLoop.beginNextWave();
+		if (gameLoop.allEnemiesDefeated(characters)) {
+			gameLoop.setCombatPhase(false);
 		}
 	}
 

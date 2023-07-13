@@ -95,14 +95,16 @@ public abstract class Structure extends GameObject implements TileBased, Damagea
 
 	@Override
 	public void update() {
+		
+		//display healthbar as soon as the structure has taken damage
+		if(health != maxHealth) {
+			gameLoop.panels.get(PanelType.MainPanel).add(healthBar);
+		}
+		
 		// as soon as a strucutre dies aka their health goes to 0 or below that the
 		// strucutre will be destroyed automatically
 		if (health <= 0) {
 			gameLoop.destroyGameObject(this);
-		}
-		//display healthbar as soon as the structure has taken damage
-		if(health != maxHealth) {
-			gameLoop.panels.get(PanelType.MainPanel).add(healthBar);
 		}
 
 	}

@@ -352,6 +352,11 @@ public class InputManager {
 				selectedStructure = null;
 			}
 			break;
+		case KeyEvent.VK_ENTER:
+			if (!Main.gameLoop.isCombatPhase()) {
+				Main.gameLoop.setCombatPhase(true);;
+			}
+			break;
 		default:
 			break;
 
