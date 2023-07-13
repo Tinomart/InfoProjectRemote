@@ -280,23 +280,38 @@ public class GUI {
 	    ressources.setPreferredSize(ressourcesSize);
 	    
 	    //TODO replace the name of "ressources1,2,3" to the ressources we want to implement
-	    JLabel ressourceGold = new JLabel("Gold: " + resources[0].getAmount());
+	    JLabel resourceGold = new JLabel("" + resources[0].getAmount());
 	    JLabel ressourceFaith = new JLabel("Faith");
 	    JLabel ressources3 = new JLabel("ressources3");
 	    
+	    ImageIcon goldIcon = new ImageIcon("res/fonts/Gold.jpg");
+	    Image goldImage = goldIcon.getImage();	
 	    
+	    Image resizedGoldImage = goldImage.getScaledInstance(50, 40, Image.SCALE_SMOOTH);
+	    ImageIcon resizedGoldIcon = new ImageIcon(resizedGoldImage);
 	    
-	    ressourceGold.setFont(new Font("Arial", Font.BOLD, 15));
-	    ressourceGold.setForeground(Color.RED);
-	    ressourceGold.setPreferredSize(new Dimension(100, 60));
+	    resourceGold.setFont(new Font("Arial", Font.BOLD, 15));
+	    resourceGold.setIcon(resizedGoldIcon);
+	    resourceGold.setForeground(Color.RED);
+	    resourceGold.setPreferredSize(new Dimension(100, 60));
+	    
+	  //loading the faith-Image
+	    ImageIcon faithIcon = new ImageIcon("res/fonts/Faith.jpg");
+	    Image faithImage = faithIcon.getImage();	
+	    
+	    Image resizedFaithImage = faithImage.getScaledInstance(50, 40, Image.SCALE_SMOOTH);
+	    ImageIcon resizedFaithIcon = new ImageIcon(resizedFaithImage);
+	    
 	    ressourceFaith.setFont(new Font("Arial", Font.BOLD, 15));
 	    ressourceFaith.setForeground(Color.RED);
+	    ressourceFaith.setIcon(resizedFaithIcon);
 	    ressourceFaith.setPreferredSize(new Dimension(100, 60));
+	    
 	    ressources3.setFont(new Font("Arial", Font.BOLD, 15));
 	    ressources3.setForeground(Color.RED);
 	    ressources3.setPreferredSize(new Dimension(100, 60));
 	    
-	    ressources.add(ressourceGold);
+	    ressources.add(resourceGold);
 	    ressources.add(ressourceFaith);
 	    ressources.add(ressources3);
 	
