@@ -1,6 +1,7 @@
 package base.graphics;
 
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.BorderLayout;
 
 //import java.awt.BorderLayout;
@@ -9,6 +10,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -33,89 +35,108 @@ import game.Main;
 //TODO 
 public class GUI {
 	
+	static Font pythia;
+	
 	//title screen, Quit, Play buttons etc.
 	public static void addMainMenuGUI(JPanel panel) {
 		
+		//this is a standard code for implementing custom fonts so that it looks more ancient
+		//source: https://www.youtube.com/watch?v=43duJsYmhxQ&t=300s
+		try {
+			pythia = Font.createFont(Font.TRUETYPE_FONT, new File("res/fonts/pythia.ttf")).deriveFont(70f);
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("pythia.ttf")));
+			
+		}catch(IOException | FontFormatException e) {
+			
+		}
 		
 		panel.setLayout(new BorderLayout());
-//		panel.setBackground(Color.BLUE); //we dont actually need the main panel to be colored
 		
 		GridBagConstraints gbc = new GridBagConstraints();
 		
 		//TitlePanel
 		JPanel titlePanel = new JPanel (new BorderLayout());
-		titlePanel.setBackground(new Color(170, 71, 186));
+		titlePanel.setBackground(new Color(0, 0, 0));
 		
 		
 		//Create TitleLabel for Title
 		JLabel titleLabel = new JLabel("POLIS");
 		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		titleLabel.setVerticalAlignment(SwingConstants.TOP);
-		titleLabel.setFont(new Font("Arial", Font.ITALIC, 40));
-		titleLabel.setForeground(Color.RED);
+		titleLabel.setFont(pythia);
+		titleLabel.setForeground(Color.WHITE);
 		titlePanel.add(titleLabel, BorderLayout.NORTH);
 		
 		//Button-Panel
 		JPanel buttonPanel = new JPanel(new GridBagLayout());
-		buttonPanel.setBackground(new Color(147, 15, 165));
+		buttonPanel.setBackground(new Color(0, 0, 0));
 		
 		//Image for startButton
-		BufferedImage originalImage = null;
+		BufferedImage startImage = null;
 		try {
-			originalImage = ImageIO.read(new File("res/Start Button.jpg"));
+			startImage = ImageIO.read(new File("res/fonts/start.jpg"));
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
 		
-		//for resizing the image because it was really huge
-		int imageWidth = 50;
-		int imageHeight = 50;
-		Image scaledImage = originalImage.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
+		//for resizing the image
+		int imageWidth = 200;
+		int imageHeight = 100;
+		Image scaledStartImage = startImage.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
 		
 		//Start-Button
 		JButton startButton = new JButton();
-		startButton.setIcon(new ImageIcon(scaledImage));
+		startButton.setIcon(new ImageIcon(scaledStartImage));
 		startButton.setOpaque(false);
 		startButton.setBorderPainted(false);
 		startButton.setContentAreaFilled(false);
 		startButton.addActionListener(e -> startButtonPress(e));	
 		
-//		startButton.setFont(new Font("Arial", Font.BOLD, 15));
-//		startButton.setForeground(Color.WHITE);
-//		startButton.setBackground(Color.BLUE);
-
-		//this should change when you hover the startButton
-//		startButton.setUI(new BasicButtonUI() {
-//			@Override
-//			public void paint(Graphics g, JComponent c) {
-//				Graphics g2 = (Graphics2D) g.create();
-//				g2.setColor(c.getBackground());
-//				g2.fillRect(0, 0, c.getWidth(), c.getHeight());
-//				g2.dispose();
-//				super.paint(g, c);
-//			}
-//		});
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.gridwidth = GridBagConstraints.REMAINDER; //this will end the column and jump to the next
 		buttonPanel.add(startButton, gbc);
 		
+		//this should change when you hover the startButton
+		
+		//this is for loading the custom setting-Button
+		BufferedImage settingImage = null;
+		try {
+			settingImage = ImageIO.read(new File("res/fonts/settings.jpg"));
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		Image scaledSettingImage = settingImage.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
 		
 		//settings button
-		JButton settingButton = new JButton("Settings");
-		settingButton.setFont(new Font("Arial", Font.BOLD, 15));
-		settingButton.setFocusable(false);
-		settingButton.setForeground(Color.BLACK); //changes the font color
-		settingButton.setBackground(Color.LIGHT_GRAY); //changes background of the button
-		settingButton.setBorder(BorderFactory.createLoweredBevelBorder());//creates a Border for the button
-		gbc.insets = new Insets(11, 11, 11, 11);
+		JButton settingButton = new JButton();
+		settingButton.setIcon(new ImageIcon(scaledSettingImage));
+		settingButton.setOpaque(false);
+		settingButton.setBorderPainted(false);
+		settingButton.setContentAreaFilled(false);
+		settingButton.setBackground(Color.BLACK); //changes background of the button
+		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		buttonPanel.add(settingButton, gbc);
 		
+		//loading the custom quit-Button Image
+		BufferedImage quitImage = null;
+		try {
+			quitImage = ImageIO.read(new File("res/fonts/quit.jpg"));
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		Image scaledQuitImage = quitImage.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
+		
 		//quit button
-		JButton quitButton = new JButton ("Quit");
+		JButton quitButton = new JButton ();
+		quitButton.setIcon(new ImageIcon(scaledQuitImage));
+		quitButton.setOpaque(false);
+		quitButton.setBorderPainted(false);
+		quitButton.setContentAreaFilled(false);
+		quitButton.setBackground(Color.BLACK);
 		quitButton.addActionListener(e -> quitButtonPress(e));	
-		quitButton.setFont(new Font("Arial", Font.BOLD, 15));
-		gbc.insets = new Insets(12, 12, 12, 12);
+		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		buttonPanel.add(quitButton, gbc);
 		
@@ -150,38 +171,42 @@ public class GUI {
 	    Dimension userPanelSize = new Dimension(120, 60);
 	    userPanel.setPreferredSize(userPanelSize);
 	    
-	    //different buttons
-	    JButton hausButton = new JButton("Haus");
-	    JButton türButton = new JButton("Tür");
-	    JButton kaserneButton = new JButton("Kaserne");
-	    
-	    //loading the image-example for the haus2-Button
+	  //loading the image-example for the cityHall-Button
 	    ImageIcon originalIcon = new ImageIcon("res/internetHaus.png");
 	    Image originalImage = originalIcon.getImage();	
-	    //TODO find out how the image is automatically resized to the button size without needing
-	    //to change the coordinates everywhere
-	    //TODO probably define so local dimensions so that we only need to change it in one place
-	    //resizing the image
+	    
 	    Image resizedImage = originalImage.getScaledInstance(100, 60, Image.SCALE_SMOOTH);
 	    //create imageIcon with resized image
 	    ImageIcon resizedIcon = new ImageIcon(resizedImage);
-	    //creating button with resized imageIcon
-	    JButton haus2 = new JButton(resizedIcon);
 	    
+	    //different buttons
+	    JButton cityHallButton = new JButton(resizedIcon);
+	    JButton houseButton = new JButton("Haus");
+	    JButton defenseTowerButton = new JButton("Tür");
+	    JButton templeButton = new JButton("Kaserne");
+	    
+	        
 	    //customize the Buttons; later on we can add images to them
-	    hausButton.setFont(new Font("Arial", Font.ITALIC, 10));
-	    hausButton.setPreferredSize(new Dimension(100, 60));
-	    türButton.setFont(new Font("Arial", Font.ITALIC, 10));
-	    türButton.setPreferredSize(new Dimension(100, 60));
-	    kaserneButton.setFont(new Font("Arial", Font.ITALIC, 10));
-	    kaserneButton.setPreferredSize(new Dimension(100, 60));
-	    haus2.setFont(new Font ("Arial", Font.ITALIC, 10));
-	    haus2.setPreferredSize(new Dimension(100,60));
+	    houseButton.setFont(new Font("Arial", Font.ITALIC, 10));
+	    houseButton.setPreferredSize(new Dimension(100, 60));
+	    defenseTowerButton.setFont(new Font("Arial", Font.ITALIC, 10));
+	    defenseTowerButton.setPreferredSize(new Dimension(100, 60));
+	    templeButton.setFont(new Font("Arial", Font.ITALIC, 10));
+	    templeButton.setPreferredSize(new Dimension(100, 60));
+	    cityHallButton.setFont(new Font ("Arial", Font.ITALIC, 10));
+	    cityHallButton.setPreferredSize(new Dimension(100,60));
 	    
-	    userPanel.add(hausButton);
-	    userPanel.add(türButton);
-	    userPanel.add(kaserneButton);
-	    userPanel.add(haus2);
+	    //ActionListener for each Object
+	    defenseTowerButton.addActionListener(e -> defenseTowerButtonPress(e));
+	    houseButton.addActionListener(e -> houseButtonPress(e));
+	    templeButton.addActionListener(e -> templeButtonPress(e));
+	    cityHallButton.addActionListener(e -> cityHallButtonPress(e));
+	    
+	    //adding the object-buttons to the userPanel
+	    userPanel.add(houseButton);
+	    userPanel.add(defenseTowerButton);
+	    userPanel.add(templeButton);
+	    userPanel.add(cityHallButton);
 	    
 	    panel.add(userPanel, BorderLayout.WEST);		
 	    
@@ -193,30 +218,33 @@ public class GUI {
 	    
 	    Dimension ressourcesSize = new Dimension(125, 60);
 	    ressources.setPreferredSize(ressourcesSize);
-
-	  //will be changed to JLabels or smth so that it only shows
-	  //the counter for our ressources
 	    
 	    //TODO replace the name of "ressources1,2,3" to the ressources we want to implement
-	    JButton ressources1 = new JButton("ressources1");
-	    JButton ressources2 = new JButton("ressources2");
-	    JButton ressources3 = new JButton("ressources3");
+	    JLabel ressourceGold = new JLabel("Gold" + "x");
+	    JLabel ressourceFaith = new JLabel("Faith");
+	    JLabel ressources3 = new JLabel("ressources3");
 	    
-	    ressources1.setFont(new Font("Arial", Font.ITALIC, 10));
-	    ressources1.setPreferredSize(new Dimension(100, 60));
-	    ressources2.setFont(new Font("Arial", Font.ITALIC, 10));
-	    ressources2.setPreferredSize(new Dimension(100, 60));
-	    ressources3.setFont(new Font("Arial", Font.ITALIC, 10));
+	    ressourceGold.setFont(new Font("Arial", Font.BOLD, 15));
+	    ressourceGold.setForeground(Color.RED);
+	    ressourceGold.setPreferredSize(new Dimension(100, 60));
+	    ressourceFaith.setFont(new Font("Arial", Font.BOLD, 15));
+	    ressourceFaith.setForeground(Color.RED);
+	    ressourceFaith.setPreferredSize(new Dimension(100, 60));
+	    ressources3.setFont(new Font("Arial", Font.BOLD, 15));
+	    ressources3.setForeground(Color.RED);
 	    ressources3.setPreferredSize(new Dimension(100, 60));
 	    
-	    ressources.add(ressources1);
-	    ressources.add(ressources2);
+	    ressources.add(ressourceGold);
+	    ressources.add(ressourceFaith);
 	    ressources.add(ressources3);
 	
 	    //ressource-Panel added to the east side of the main-Panel
 	    panel.add(ressources, BorderLayout.EAST);		
 	}
 	
+
+	
+
 
 	private static void startButtonPress(ActionEvent e) {
 		Main.gameWindow.setPanel(PanelType.MainPanel);
@@ -236,9 +264,35 @@ public class GUI {
 				Main.gameWindow.setPanel(panelType, false);
 			} 
 		}
-	}	
+	}
+	
+	//TODO obviously need to add code for getting the object from the buttons to the gamefield
+	//so that it can be placed
+	private static Object cityHallButtonPress(ActionEvent e) {
+		
+		return null;
+		}
+
+
+		private static Object templeButtonPress(ActionEvent e) {
+		
+		return null;
+		}
+
+
+		private static Object houseButtonPress(ActionEvent e) {
+		
+		return null;
+		}
+
+
+		private static Object defenseTowerButtonPress(ActionEvent e) {
+		
+		return null;
+		}
 	
 	//this method is for the GridBagLayout and includes the variables for different UI elements
+		//can be deleted later on because we dont really need it
 //		private GridBagConstraints makegbc(int x, int y, int width, int height) {
 //			
 //			GridBagConstraints gbc = new GridBagConstraints();
@@ -249,4 +303,5 @@ public class GUI {
 //			gbc.insets = new Insets(1, 1, 1, 1);
 //			return gbc;
 //		}
+		
 }
