@@ -32,7 +32,6 @@ import game.Main;
 //TODO Here we will create all the different UI Elements and add them in a static way
 //to our GamePanels later if needed
 
-//TODO 
 public class GUI {
 	
 	static Font pythia;
@@ -122,7 +121,9 @@ public class GUI {
 		//loading the custom quit-Button Image
 		BufferedImage quitImage = null;
 		try {
+
 			quitImage = ImageIO.read(new File("res/fonts/quit.jpg"));
+
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -185,7 +186,10 @@ public class GUI {
 	    //different buttons
 	    JButton cityHallButton = new JButton(resizedIcon);
 	    JButton houseButton = new JButton("Haus");
-	    JButton defenseTowerButton = new JButton("Tür");
+
+	    JButton defenseTowerButton = new JButton("defTower");
+
+
 	    JButton templeButton = new JButton("Kaserne");
 	    
 	        
@@ -212,6 +216,7 @@ public class GUI {
 	    userPanel.add(cityHallButton);
 	    
 	    panel.add(userPanel, BorderLayout.WEST);		
+
 	    
 	    //draw ressources on the right side
 	
@@ -315,3 +320,4 @@ public class GUI {
 //		}
 		
 }
+
