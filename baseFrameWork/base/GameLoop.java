@@ -45,6 +45,7 @@ public class GameLoop implements Runnable {
 	private GamePanel mainPanel;
 
 	public ArrayDeque<GameObject> gameObjects = new ArrayDeque<GameObject>();
+	private ArrayDeque<GameObject> gameObjectsToRemove = new ArrayDeque<GameObject>();
 	public int currentWaveCount;
 	public ArrayList<Level> waves = new ArrayList<Level>();
 
@@ -273,8 +274,15 @@ public class GameLoop implements Runnable {
 			}
 
 			updateGame();
+			
+			for (GameObject gameObject : gameObjectsToRemove) {
+				gameObjects.remove(gameObject);
+			}
+			gameObjectsToRemove.clear();
 
 		}
+		
+		
 
 	}
 
@@ -572,7 +580,7 @@ public class GameLoop implements Runnable {
 				}
 				// remove the gameObject out of gameObjects, essentially making it non existant
 				// for the scope of our game
-				iterator.remove();
+				gameObjectsToRemove.add(gameObject);
 			}
 
 		}
