@@ -157,6 +157,7 @@ public class GUI {
 	
 	
 	public static void addPauseMenuGUI(JPanel panel) {
+		panel.setLayout(new GridBagLayout()); // Set GridBagLayout for the panel
 		panel.setOpaque(false);
 		
 		BufferedImage continueImage = null;
@@ -165,10 +166,14 @@ public class GUI {
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
-				
+		//Image scaledcontinueImage = continueImage.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
+		
+		
+		//for resizing the image
 		int imageWidth = 200;
 		int imageHeight = 100;
 		Image scaledContinueImage = continueImage.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
+		//in game Menu with Quit, etc.
 		
 		JButton continueButton = new JButton();
 		continueButton.setOpaque(false);
@@ -192,8 +197,25 @@ public class GUI {
 		mainMenuButton.setContentAreaFilled(false);
 		mainMenuButton.setIcon(new ImageIcon(scaledMainMenuImage));
 		mainMenuButton.addActionListener(e -> mainMenuButtonPress(e));
-		panel.add(mainMenuButton);
-				
+		JPanel buttonPanel = new JPanel(); // Create a new panel to hold the buttons
+	    buttonPanel.setOpaque(false);
+	    buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS)); // Set vertical BoxLayout for the button panel
+	    buttonPanel.add(Box.createVerticalGlue()); // Add vertical glue to center the buttons
+	    buttonPanel.add(continueButton);
+	    buttonPanel.add(mainMenuButton);
+	    buttonPanel.add(Box.createVerticalGlue()); // Add vertical glue to center the buttons
+	    
+	    // Create GridBagConstraints to center the button panel
+	    GridBagConstraints gbc = new GridBagConstraints();
+	    gbc.gridx = 0;
+	    gbc.gridy = 0;
+	    gbc.weightx = 1.0;
+	    gbc.weighty = 1.0;
+	    gbc.fill = GridBagConstraints.CENTER;
+	    panel.add(buttonPanel, gbc); // Add the button panel using GridBagConstraints
+		
+		
+		
 	}
 
 	
