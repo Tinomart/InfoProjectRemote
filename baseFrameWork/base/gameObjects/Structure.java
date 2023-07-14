@@ -5,6 +5,9 @@ import base.graphics.GamePanel.PanelType;
 import base.physics.Damageable;
 import base.GameLoop;
 import java.awt.*;
+import java.util.HashMap;
+import base.Resource;
+import base.Gold;
 
 public abstract class Structure extends GameObject implements TileBased, Damageable {
 
@@ -16,6 +19,12 @@ public abstract class Structure extends GameObject implements TileBased, Damagea
 	public Tile[] tiles;
 	private GameLoop gameLoop;
 	public TileGrid tileGrid;
+	public static HashMap<Class<? extends Resource>, Integer> cost = new HashMap<>();
+
+	static {
+	    cost.put(Gold.class, 10);
+	    // Add more key-value pairs as needed
+	}
 
 	// Structures can be attack Attacked and destroyed, which means they need health
 	// and MaxHealth
@@ -132,6 +141,31 @@ public abstract class Structure extends GameObject implements TileBased, Damagea
 				tile.draw(graphics);
 			}
 		}
+	}
+	
+	public static boolean applyCost(GameLoop gameLoop, HashMap<Class<? extends Resource>, Integer> cost) {
+		boolean canAfford = true;
+		for (Class<? extends Resource > resourceClass : cost.keySet()) {
+			for (Resource resource : gameLoop.resources) {
+				if(resource.getClass() == resourceClass) {
+					if(resource.getAmount() < cost.get(resourceClass)) {
+						canAfford = false;
+					}
+				}
+			}
+		}
+		if(canAfford) {
+			for (Class<? extends Resource > resourceClass : cost.keySet()) {
+				for (Resource resource : gameLoop.resources) {
+					if(resource.getClass() == resourceClass) {
+						resource.changeAmount(-cost.get(resourceClass));
+					}
+				}
+			}
+		}
+		
+		return canAfford;
+		
 	}
 
 	// specific toString used for storing structures in the save file, containing

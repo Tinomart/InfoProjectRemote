@@ -32,6 +32,7 @@ public class GamePanel extends JPanel {
 	
 	
 	public ArrayDeque<GameObject> addedObjects= new ArrayDeque<GameObject>();
+	public ArrayDeque<GameObject> removedObjects= new ArrayDeque<GameObject>();
 	public InputManager inputManager = new InputManager(this);
 
 	private int panelWidth;
@@ -131,7 +132,7 @@ public class GamePanel extends JPanel {
 		Iterator<GameObject> iterator = gameObjects.iterator();
 		while (iterator.hasNext()) {
 		    GameObject gameObject = iterator.next();
-		    if (!(gameObject instanceof Structure || gameObject instanceof Character)) {
+		    if (!(gameObject instanceof Structure || gameObject instanceof Character && !removedObjects.contains(gameObject))) {
 		        gameObject.draw(graphics);
 		    }
 		}
@@ -140,7 +141,7 @@ public class GamePanel extends JPanel {
 		iterator = gameObjects.iterator();
 		while (iterator.hasNext()) {
 		    GameObject gameObject = iterator.next();
-		    if (gameObject instanceof Character) {
+		    if (gameObject instanceof Character && !removedObjects.contains(gameObject)) {
 		        gameObject.draw(graphics);
 		    }
 		}
@@ -149,14 +150,16 @@ public class GamePanel extends JPanel {
 		iterator = gameObjects.iterator();
 		while (iterator.hasNext()) {
 		    GameObject gameObject = iterator.next();
-		    if (gameObject instanceof Structure) {
+		    if (gameObject instanceof Structure && !removedObjects.contains(gameObject)) {
 		        gameObject.draw(graphics);
 		    }
 		}
 		
-		
-		
-		
+		iterator = removedObjects.iterator();
+		while (iterator.hasNext()) {
+		    GameObject gameObject = iterator.next();
+		    addedObjects.remove(gameObject);
+		}
 		
 	}
 	public void paintComponent(Graphics graphics) {
@@ -166,8 +169,9 @@ public class GamePanel extends JPanel {
 	    
 	    //call our drawGameObjects
 	    drawGameObjects(addedObjects, graphics2D);
-	    
 	    // to avoid paint trails of object that is being painted every frame
+	    
+	    
 	    graphics2D.dispose();
 	}
 	

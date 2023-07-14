@@ -45,7 +45,6 @@ public class Level {
 
 	// when the level begins all gameObjects
 	public void begin() {
-		System.out.println(this);
 		for (Character character : characters) {
 			gameLoop.gameObjects.add(character);
 		}
@@ -71,6 +70,7 @@ public class Level {
 	public void update() {
 		if (gameLoop.allEnemiesDefeated(characters)) {
 			gameLoop.setCombatPhase(false);
+			gameLoop.beginNextWave();
 		}
 	}
 

@@ -3,6 +3,10 @@ package base.gameObjects;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.util.HashMap;
+
+import base.Gold;
+import base.Resource;
 import base.graphics.*;
 
 public class Watchtower extends Structure {
@@ -15,6 +19,13 @@ public class Watchtower extends Structure {
 	public Watchtower(Point position, TileGrid tileGrid) {
 		super(initializeTiles(position, tileGrid), initializeMainTile(position, tileGrid), tileGrid);
 		tileGrid.gameLoop.Watchtower = this;
+	}
+	
+	public static HashMap<Class<? extends Resource>, Integer> cost = new HashMap<>();
+
+	static {
+	    cost.put(Gold.class, 10);
+	    // Add more key-value pairs as needed
 	}
 	
 	@Override

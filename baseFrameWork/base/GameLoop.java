@@ -49,7 +49,16 @@ public class GameLoop implements Runnable {
 	public int currentWaveCount;
 	public ArrayList<Level> waves = new ArrayList<Level>();
 
-	private boolean combatPhase = false;
+	public boolean combatPhase = false;
+	private boolean paused;
+	
+	public boolean isPaused() {
+		return paused;
+	}
+
+	public void setPaused(boolean paused) {
+		this.paused = paused;
+	}
 
 	public boolean isCombatPhase() {
 		return combatPhase;
@@ -57,8 +66,13 @@ public class GameLoop implements Runnable {
 
 	public void setCombatPhase(boolean combatPhase) {
 		if (combatPhase) {
-			beginNextWave();
-			waves.get(currentWaveCount).begin();
+			if(currentWaveCount > waves.size()) {
+				waves.get(currentWaveCount).begin();
+			} else {
+				addBonusWave();
+				waves.get(currentWaveCount).begin();
+			}
+			
 		} else {
 			for (GameObject gameObject : gameObjects) {
 				if (gameObject instanceof ResourceGenerating) {
@@ -69,6 +83,7 @@ public class GameLoop implements Runnable {
 		}
 		this.combatPhase = combatPhase;
 	}
+
 
 	public CityHall cityHall;
 
@@ -83,13 +98,13 @@ public class GameLoop implements Runnable {
 	// I would suggest keeping this at the very lowest at 60 seconds;
 	private final int AUTO_SAVE_INTERVALL_IN_SECONDS = 100;
 
-	public int cameraSpeed = 4;
+	public int cameraSpeed = 7;
 
 	private Point spawnPoint = new Point(0, 0);
 	public Point cameraPosition = new Point(0, 0);
 
 	// resources
-	public Resource[] resources = new Resource[] { new Gold(0) };
+	public Resource[] resources = new Resource[] { new Gold(20) };
 	public Watchtower Watchtower;
 
 	public enum Direction {
@@ -136,9 +151,6 @@ public class GameLoop implements Runnable {
 
 		waves.add(level1);
 		waves.add(level2);
-		
-		combatPhase =  true;
-		waves.get(currentWaveCount).begin();
 	}
 
 	public boolean allEnemiesDefeated(ArrayList<Character> level1Enemies) {
@@ -153,6 +165,21 @@ public class GameLoop implements Runnable {
 		}
 		return anyEnemyContained;
 	}
+	
+	private void addBonusWave() {
+		ArrayList<Character> bonusEnemies = new ArrayList<Character>();
+		for (int i = 0; i < waves.get(currentWaveCount - 1).getCharacters().size(); i++) {
+			bonusEnemies.add(new Enemy_1(new Point((int)( Math.random()*window.getWidth()),(int)(Math.random()*panels.get(PanelType.MainPanel).getHeight()))));
+		}
+		bonusEnemies.add(new Enemy_1(new Point((int)( Math.random()* window .getWidth()),(int)(Math.random()* window.getHeight()))));
+		
+		Level bonusLevel = new Level(bonusEnemies, new HashMap<Class<? extends Resource>, Integer>(), this);
+		bonusEnemies.add(new Enemy_1(new Point((int)( Math.random()*window.getWidth()),(int)(Math.random()*window.getHeight()))));
+		bonusEnemies.add(new Enemy_1(new Point((int)( Math.random()*window.getWidth()),(int)(Math.random()*window.getHeight()))));
+		bonusEnemies.add(new Enemy_1(new Point((int)( Math.random()*window.getWidth()),(int)(Math.random()*window.getHeight()))));
+		waves.add(bonusLevel);
+	}
+	
 	// This had to be its own thing, because for some reason the basic resize
 	// implementation was failing me, so I had to write my own.
 
@@ -221,6 +248,8 @@ public class GameLoop implements Runnable {
 		// main thread(happens very frame)
 		while (gameThread != null) {
 			executeEveryFrame(gameThread);
+			
+			gameObjectsToRemove.clear();
 
 			// The Main Menu has its inputs read;
 			// requestFocus is so that the JFrame and JPanel doesnt all of the
@@ -265,20 +294,31 @@ public class GameLoop implements Runnable {
 					panel.addedObjects.add(gameObject);
 				}
 			}
+			
 			iterator = panel.addedObjects.iterator();
 			while (iterator.hasNext()) {
 				GameObject gameObject = iterator.next();
-				if (!gameObjects.contains(gameObject)) {
-					iterator.remove();
-				}
+				if (!Main.gameLoop.gameObjects.contains(gameObject)) {
+					panel.removedObjects.add(gameObject);
+					}
 			}
-
+			
+//			iterator = panel.addedObjects.iterator();
+//			while (iterator.hasNext()) {
+//				GameObject gameObject = iterator.next();
+//				if (Main.gameLoop.gameObjects.contains(gameObject)) {
+//					iterator.remove();
+//				}
+//			}
+			
 			updateGame();
 			
 			for (GameObject gameObject : gameObjectsToRemove) {
 				gameObjects.remove(gameObject);
 			}
-			gameObjectsToRemove.clear();
+			
+
+			
 
 		}
 		
@@ -571,10 +611,11 @@ public class GameLoop implements Runnable {
 						tile.getSprite().setImage(null);
 						createGameObject(PureGrassTile.class, new Object[] { tile.getTilePosition(), tile.tileGrid });
 					}
-				} else {
-					// if the gameObject is not tile based, simply set its own sprite to null
-					// gameObject.setSprite(null);
-				}
+				} 
+//				else {
+//					// if the gameObject is not tile based, simply set its own sprite to null
+//					 gameObject.setSprite(null);
+//				}
 				if (gameObject instanceof Damageable) {
 					panels.get(PanelType.MainPanel).remove(((Damageable) gameObject).getHealthBar());
 				}
@@ -708,6 +749,8 @@ public class GameLoop implements Runnable {
 			return createdGameObject;
 		}
 	}
+
+	
 
 	// TODO: Add methods that change the game world on a basic level
 	// e.g Create Map, ChangeTile, AddEnemy, AddBuilding, etc.
