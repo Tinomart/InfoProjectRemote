@@ -373,12 +373,10 @@ public class GUI {
 	}
 	
 	private static void continueButtonPress(ActionEvent e) {
-		Main.gameWindow.setPanel(PanelType.InGameGUI);
-		for (PanelType panelType : PanelType.values()) {
-			if(panelType != PanelType.MainMenu) {
-				Main.gameWindow.setPanel(PanelType.PauseMenu, false);
-			} 
-		}
+		Main.gameWindow.setPanel(PanelType.PauseMenu, false);
+			
+		Main.gameWindow.setPanel(PanelType.PauseMenu, false);
+		Main.gameLoop.setPaused(false);
 	}	
 	
 	//TODO obviously need to add code for getting the object from the buttons to the gamefield
