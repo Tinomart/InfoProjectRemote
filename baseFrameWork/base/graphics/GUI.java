@@ -352,7 +352,10 @@ public class GUI {
 
 
 	private static void startButtonPress(ActionEvent e) {
-		Main.gameLoop.load("res/BaseSave");
+		if(!Main.gameLoop.hasGameLoaded()) {
+			Main.gameLoop.load("res/BaseSave");
+		}
+		
 		Main.gameWindow.setPanel(PanelType.MainPanel);
 		Main.gameWindow.setPanel(PanelType.InGameGUI);
 		Main.gameWindow.setPanel(PanelType.MainMenu, false);
@@ -360,7 +363,10 @@ public class GUI {
 	}
 	
 	private static void mainMenuContinueButtonPress(ActionEvent e) {
-		Main.gameLoop.load("SaveData");
+		if(!Main.gameLoop.hasGameLoaded()) {
+			Main.gameLoop.load("SaveData");
+		}
+		
 		Main.gameWindow.setPanel(PanelType.MainPanel);
 		Main.gameWindow.setPanel(PanelType.InGameGUI);
 		Main.gameWindow.setPanel(PanelType.MainMenu, false);

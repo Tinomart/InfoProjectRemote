@@ -45,7 +45,7 @@ public class GameLoop implements Runnable {
 	private GamePanel mainPanel;
 
 	public ArrayDeque<GameObject> gameObjects = new ArrayDeque<GameObject>();
-	private ArrayDeque<GameObject> gameObjectsToRemove = new ArrayDeque<GameObject>();
+	public ArrayDeque<GameObject> gameObjectsToRemove = new ArrayDeque<GameObject>();
 	public int currentWaveCount;
 	public ArrayList<Level> waves = new ArrayList<Level>();
 
@@ -56,6 +56,10 @@ public class GameLoop implements Runnable {
 	private boolean paused = true;
 
 	private boolean gameHasLoaded = false;
+
+	public boolean hasGameLoaded() {
+		return gameHasLoaded;
+	}
 
 	public boolean isPaused() {
 		return paused;
