@@ -44,7 +44,7 @@ public class Tile extends GameObject implements TileBased {
 		tileGrid.replaceTile(tilePosition, this);
 		mainPanel = tileGrid.gameLoop.window.getPanels().get(PanelType.MainPanel);
 		highlightSquare = new SquareComponent(tilePosition.x, tilePosition.y, tileGrid.tileSize, new Color(255, 255, 255, 125));
-		spriteType = SpriteType.TestSprite;
+		spriteType = SpriteType.PureGrassTileSprite;
 		setSprite(sprite);
 	}
 	
