@@ -45,13 +45,50 @@ public class GameLoop implements Runnable {
 	private GamePanel mainPanel;
 
 	public ArrayDeque<GameObject> gameObjects = new ArrayDeque<GameObject>();
-	public int currentWaveCount = 0;
+	private ArrayDeque<GameObject> gameObjectsToRemove = new ArrayDeque<GameObject>();
+	public int currentWaveCount;
 	public ArrayList<Level> waves = new ArrayList<Level>();
+
+	public boolean combatPhase = false;
+	private boolean paused = true;
 	
+	public boolean isPaused() {
+		return paused;
+	}
+
+	public void setPaused(boolean paused) {
+		this.paused = paused;
+	}
+
+	public boolean isCombatPhase() {
+		return combatPhase;
+	}
+
+	public void setCombatPhase(boolean combatPhase) {
+		if (combatPhase) {
+			if(currentWaveCount > waves.size()) {
+				waves.get(currentWaveCount).begin();
+			} else {
+				addBonusWave();
+				waves.get(currentWaveCount).begin();
+			}
+			
+		} else {
+			for (GameObject gameObject : gameObjects) {
+				if (gameObject instanceof ResourceGenerating) {
+					((ResourceGenerating) gameObject).generateResources(resources);
+				}
+			}
+			waves.get(currentWaveCount).end();
+		}
+		this.combatPhase = combatPhase;
+	}
+
+
 	public CityHall cityHall;
-	
+
 	public Watchtower watchtower;
-	
+
 	private SpriteLoader spriteLoader = new SpriteLoader();
 
 	// if we need to ever add anything based on a specific frame
@@ -59,15 +96,15 @@ public class GameLoop implements Runnable {
 	// the game will save every time this many seconds have passed
 	// file reading and writing operations are quite resource intensive, so
 	// I would suggest keeping this at the very lowest at 60 seconds;
-	private final int AUTO_SAVE_INTERVALL_IN_SECONDS = 4;
+	private final int AUTO_SAVE_INTERVALL_IN_SECONDS = 100;
 
-	public int cameraSpeed = 4;
+	public int cameraSpeed = 7;
 
 	private Point spawnPoint = new Point(0, 0);
 	public Point cameraPosition = new Point(0, 0);
-	
-	//resources
-	public Resource[] resources = new Resource[] {new Gold(0)};
+
+	// resources
+	public Resource[] resources = new Resource[] { new Gold(20), new Faith(0) };
 	public Watchtower Watchtower;
 
 	public enum Direction {
@@ -79,13 +116,6 @@ public class GameLoop implements Runnable {
 		panels = window.getPanels();
 		mainPanel = panels.get(PanelType.MainPanel);
 		
-
-//		Sprite testSprite = new Sprite(new Point(50, 50));
-//		testSprite.imagePath = "res/Kreis.png";
-//		testSprite.loadImage(testSprite.imagePath);
-
-//		gameObjects.add(new GameObject(new Point(12, 17), testSprite));
-//		gameObjects.add(createGameObject(GameObject.class, (new Object[]{new Point(12, 17), new Sprite(new Point(50, 50))})));
 
 		setClosingFunctionality(window);
 		setMenuResizability(window);
@@ -99,22 +129,35 @@ public class GameLoop implements Runnable {
 		}
 		
 		
-		ArrayList<Character> level1Enemies = new ArrayList<Character>();
-		level1Enemies.add(new Enemy_1(new Point(50, 50)));
-		Level level1 = new Level(level1Enemies, allEnemiesDefeated(level1Enemies), new HashMap<Class<? extends Resource>, Integer>(), this);
-		
-		waves.add(level1);
-		waves.get(currentWaveCount).begin();
 	}
-	private boolean allEnemiesDefeated(ArrayList<Character> level1Enemies) {
+
+	public boolean allEnemiesDefeated(ArrayList<Character> level1Enemies) {
 		boolean anyEnemyContained = false;
-		for (Character character : level1Enemies) {
-			if(gameObjects.contains(character)) {
-				anyEnemyContained = true;
+		if (combatPhase) {
+			anyEnemyContained = true;
+			for (Character character : level1Enemies) {
+				if (gameObjects.contains(character)) {
+					anyEnemyContained = false;
+				}
 			}
 		}
 		return anyEnemyContained;
 	}
+	
+	private void addBonusWave() {
+		ArrayList<Character> bonusEnemies = new ArrayList<Character>();
+		for (int i = 0; i < waves.get(currentWaveCount - 1).getCharacters().size(); i++) {
+			bonusEnemies.add(new Enemy_1(new Point((int)( Math.random()*window.getWidth()),(int)(Math.random()*panels.get(PanelType.MainPanel).getHeight()))));
+		}
+		bonusEnemies.add(new Enemy_1(new Point((int)( Math.random()* window .getWidth()),(int)(Math.random()* window.getHeight()))));
+		
+		Level bonusLevel = new Level(bonusEnemies, new HashMap<Class<? extends Resource>, Integer>(), this);
+		bonusEnemies.add(new Enemy_1(new Point((int)( Math.random()*window.getWidth()),(int)(Math.random()*window.getHeight()))));
+		bonusEnemies.add(new Enemy_1(new Point((int)( Math.random()*window.getWidth()),(int)(Math.random()*window.getHeight()))));
+		bonusEnemies.add(new Enemy_1(new Point((int)( Math.random()*window.getWidth()),(int)(Math.random()*window.getHeight()))));
+		waves.add(bonusLevel);
+	}
+	
 	// This had to be its own thing, because for some reason the basic resize
 	// implementation was failing me, so I had to write my own.
 
@@ -131,7 +174,8 @@ public class GameLoop implements Runnable {
 						menu.revalidate();
 
 						// this fixes a bug where the player was able to have a small window, move to
-						// the edge of the screen and resize the window to a larger size, thus get out of bounds
+						// the edge of the screen and resize the window to a larger size, thus get out
+						// of bounds
 						int outOfBoundsWidth = gameLoop.cameraPosition.x + window.getBounds().width
 								- Main.MAP_WIDTH * tileGrid.tileSize;
 						int outOfBoundsHeight = gameLoop.cameraPosition.y + window.getBounds().height
@@ -178,10 +222,13 @@ public class GameLoop implements Runnable {
 
 	@Override
 	public void run() {
-		load();
+		load("res/BaseSave");
+		
 		// main thread(happens very frame)
 		while (gameThread != null) {
 			executeEveryFrame(gameThread);
+			
+			gameObjectsToRemove.clear();
 
 			// The Main Menu has its inputs read;
 			// requestFocus is so that the JFrame and JPanel doesnt all of the
@@ -216,33 +263,63 @@ public class GameLoop implements Runnable {
 			// communicate with the mainpanel and make it know all different gameObjects
 			// that should be drawn on it by adding them to addedObjects
 			GamePanel panel = panels.get(PanelType.MainPanel);
-			for (GameObject gameObject : gameObjects) {
 
+			Iterator<GameObject> iterator = gameObjects.iterator();
+			while (iterator.hasNext()) {
+				GameObject gameObject = iterator.next();
 				if (gameObject.getPanelToDrawOn() == PanelType.MainPanel
 						&& !(panel.addedObjects.contains(gameObject))) {
 
 					panel.addedObjects.add(gameObject);
 				}
 			}
+			
+			iterator = panel.addedObjects.iterator();
+			while (iterator.hasNext()) {
+				GameObject gameObject = iterator.next();
+				if (!Main.gameLoop.gameObjects.contains(gameObject)) {
+					panel.removedObjects.add(gameObject);
+					}
+			}
+			
+//			iterator = panel.addedObjects.iterator();
+//			while (iterator.hasNext()) {
+//				GameObject gameObject = iterator.next();
+//				if (Main.gameLoop.gameObjects.contains(gameObject)) {
+//					iterator.remove();
+//				}
+//			}
+			if(!paused) {
+				updateGame();
+			}
+			
+			
+			for (GameObject gameObject : gameObjectsToRemove) {
+				gameObjects.remove(gameObject);
+			}
+			
 
-			updateGame();
+			
 
 		}
+		
+		
 
 	}
 
 	private void updateGame() {
-		updateGameObjects();
 		waves.get(currentWaveCount).update();
-		
+		updateGameObjects();
 	}
+
 	// call the update method of each gameObject to make pretty much every part of
 	// the individual logic possible, like movement, damage checks, etc.
 	private void updateGameObjects() {
-		for (GameObject gameObject : gameObjects) {
+		Iterator<GameObject> iterator = gameObjects.iterator();
+		while (iterator.hasNext()) {
+			GameObject gameObject = iterator.next();
 			gameObject.update();
 		}
-
 	}
 
 	public static void executeEveryFrame(Thread thread) {
@@ -318,16 +395,9 @@ public class GameLoop implements Runnable {
 		window.revalidate();
 		window.repaint();
 	}
-	
+
 	public void beginNextWave() {
-		for (GameObject gameObject : gameObjects) {
-			if(gameObject instanceof ResourceGenerating) {
-				((ResourceGenerating)gameObject).generateResources(resources);
-			}
-		}
-		waves.get(currentWaveCount).end();
 		currentWaveCount += 1;
-		waves.get(currentWaveCount).begin();
 	}
 
 	public void save() {
@@ -345,13 +415,21 @@ public class GameLoop implements Runnable {
 			// if the file does not yet contain the gameObject we are trying to save, write
 			// the gameObjects toString into the file
 			for (GameObject gameObject : gameObjects) {
-				if(!waves.get(currentWaveCount).getCharacters().contains(gameObject)) {
+				if (!waves.get(currentWaveCount).getCharacters().contains(gameObject)) {
 					String objectString = gameObject.toString();
 					writer.write(objectString);
 				}
 			}
+			
+			//Save currentWave
 			writer.newLine();
 			writer.write("" + currentWaveCount);
+			
+			//Save the amount of resources
+			writer.newLine();
+			for (Resource resource : resources) {
+				writer.write("" + resource.getAmount() + " ");
+			}
 			writer.close();
 
 		} catch (IOException e) {
@@ -359,13 +437,13 @@ public class GameLoop implements Runnable {
 		}
 	}
 
-	public void load() {
+	public void load(String save) {
 //		gameObjects.add(new CityHall(new Point(4,4), Main.tileGrid));
 //		System.out.println(gameObjects);
 		// try catch, because it is possible the file does not exist
 		try {
 			// reader, because we need the information from the file
-			BufferedReader reader = new BufferedReader(new FileReader("SaveData"));
+			BufferedReader reader = new BufferedReader(new FileReader(save));
 			String fileString = "";
 			String readLine = reader.readLine();
 
@@ -382,12 +460,29 @@ public class GameLoop implements Runnable {
 			String[] gameObjectsStrings = fileString.split(" ");
 			// create the GameObject, which adds it to our gameObjects
 			for (String gameObjectString : gameObjectsStrings) {
-				GameObject createdObject = createGameObject(gameObjectString);
+				createGameObject(gameObjectString);
 
 			}
-			
+
 			readLine = reader.readLine();
 			currentWaveCount = Integer.valueOf(readLine);
+			
+			//same setup as before this time for
+			readLine = reader.readLine();
+			if (readLine != null) {
+				fileString = readLine;
+			} else {
+				reader.close();
+				return;
+			}
+			// all objects are seperated with spaces so we split the string of the entire
+			// line to get an array of all object strings
+			String[] resourceString = fileString.split(" ");
+			for (int i = 0; i < resourceString.length; i++) {
+				int resourceAmount = Integer.parseInt(resourceString[i]);
+				resources[i].setAmount(resourceAmount);
+			}
+			
 			reader.close();
 
 		} catch (IOException e) {
@@ -522,26 +617,25 @@ public class GameLoop implements Runnable {
 						tile.getSprite().setImage(null);
 						createGameObject(PureGrassTile.class, new Object[] { tile.getTilePosition(), tile.tileGrid });
 					}
-				} else {
-					// if the gameObject is not tile based, simply set its own sprite to null
-					gameObject.setSprite(null);
-				}
-				if(gameObject instanceof Damageable) {
-					panels.get(PanelType.MainPanel).remove(((Damageable)gameObject).getHealthBar());
+				} 
+//				else {
+//					// if the gameObject is not tile based, simply set its own sprite to null
+//					 gameObject.setSprite(null);
+//				}
+				if (gameObject instanceof Damageable) {
+					panels.get(PanelType.MainPanel).remove(((Damageable) gameObject).getHealthBar());
 				}
 				// remove the gameObject out of gameObjects, essentially making it non existant
 				// for the scope of our game
-				iterator.remove();
+				gameObjectsToRemove.add(gameObject);
 			}
-			
-			
+
 		}
-		
-		if(gameObjectToDestroy == cityHall) {
+
+		if (gameObjectToDestroy == cityHall) {
 			cityHall = null;
 		}
-		
-		
+
 	}
 
 	// method to make our entire sprite system somewhat efficient. since we have so
@@ -661,6 +755,8 @@ public class GameLoop implements Runnable {
 			return createdGameObject;
 		}
 	}
+
+	
 
 	// TODO: Add methods that change the game world on a basic level
 	// e.g Create Map, ChangeTile, AddEnemy, AddBuilding, etc.

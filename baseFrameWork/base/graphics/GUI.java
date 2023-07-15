@@ -353,12 +353,16 @@ public class GUI {
 		Main.gameWindow.setPanel(PanelType.MainPanel);
 		Main.gameWindow.setPanel(PanelType.InGameGUI);
 		Main.gameWindow.setPanel(PanelType.MainMenu, false);
+<<<<<<< HEAD
 		resources = Main.gameLoop.resources;
 	}
 	
 	private static void quitButtonPress(ActionEvent e) {
 		Main.gameLoop.stop();
         System.exit(0);
+=======
+		Main.gameLoop.setPaused(false);
+>>>>>>> MapObjectDevelopment
 	}
 	
 	private static void mainMenuButtonPress(ActionEvent e) {

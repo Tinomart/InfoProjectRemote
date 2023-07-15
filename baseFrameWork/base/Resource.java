@@ -15,6 +15,10 @@ public abstract class Resource {
 		return false;
 	}
 	
+	public void setAmount(int amount) {
+		this.amount = amount;
+	}
+
 	public Resource(int startAmount) {
 		this.amount = startAmount;
 	}
