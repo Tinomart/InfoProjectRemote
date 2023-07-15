@@ -237,8 +237,6 @@ public class GameLoop implements Runnable {
 
 	@Override
 	public void run() {
-		load("res/BaseSave");
-
 		// main thread(happens very frame)
 		while (gameThread != null) {
 			executeEveryFrame(gameThread);

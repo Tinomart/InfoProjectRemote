@@ -17,7 +17,6 @@ public class GameRunningManager {
 	public void startGame() {
 		gameWindow.setPanel(PanelType.MainMenu);
 		gameWindow.openWindow();
-		gameLoop.start();
 	}
 
 	

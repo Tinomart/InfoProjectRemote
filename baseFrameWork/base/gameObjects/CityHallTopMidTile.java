@@ -6,7 +6,7 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
-public class CityHallTopMidTile extends Tile {
+public class CityHallTopMidTile extends StructureTile {
 
 	public CityHallTopMidTile(Point tilePosition, TileGrid tileGrid) {
 

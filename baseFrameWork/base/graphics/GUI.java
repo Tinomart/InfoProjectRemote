@@ -107,24 +107,25 @@ public class GUI {
 		//this should change when you hover the startButton
 		
 		//this is for loading the custom setting-Button
-		BufferedImage settingImage = null;
+		BufferedImage continueImage = null;
 		try {
-			settingImage = ImageIO.read(new File("res/fonts/settings.jpg"));
+			continueImage = ImageIO.read(new File("res/fonts/continue.jpg"));
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
-		Image scaledSettingImage = settingImage.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
+		Image scaledContinueImage = continueImage.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
 		
 		//settings button
-		JButton settingButton = new JButton();
-		settingButton.setIcon(new ImageIcon(scaledSettingImage));
-		settingButton.setOpaque(false);
-		settingButton.setBorderPainted(false);
-		settingButton.setContentAreaFilled(false);
-		settingButton.setBackground(Color.BLACK); //changes background of the button
+		JButton continueButton = new JButton();
+		continueButton.setIcon(new ImageIcon(scaledContinueImage));
+		continueButton.setOpaque(false);
+		continueButton.setBorderPainted(false);
+		continueButton.setContentAreaFilled(false);
+		continueButton.addActionListener(e -> mainMenuContinueButtonPress(e));
+		continueButton.setBackground(Color.BLACK); //changes background of the button
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		buttonPanel.add(settingButton, gbc);
+		buttonPanel.add(continueButton, gbc);
 		
 		//loading the custom quit-Button Image
 		BufferedImage quitImage = null;
@@ -158,6 +159,9 @@ public class GUI {
 	}
 	
 	
+	
+
+
 	public static void addPauseMenuGUI(JPanel panel) {
 		panel.setLayout(new GridBagLayout()); // Set GridBagLayout for the panel
 		panel.setOpaque(false);
@@ -233,7 +237,6 @@ public class GUI {
 	    //Panel for "Continue-wave" button
 	    JPanel wavePanel = new JPanel();
 	    wavePanel.setOpaque(false);
-	    wavePanel.setBorder(BorderFactory.createLineBorder(Color.CYAN, 4, true));
 	    
 	    ImageIcon nextWaveIcon = new ImageIcon("res/fonts/next wave.jpg");
 	    Image nextWaveImage = nextWaveIcon.getImage();	
@@ -259,7 +262,6 @@ public class GUI {
 	    //Panel for the different objects ingame
 	    JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 	    userPanel.setOpaque(false);	
-	    userPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE, 4, true));
 	    
 	    Dimension userPanelSize = new Dimension(120, 60);
 	    userPanel.setPreferredSize(userPanelSize);
@@ -306,7 +308,6 @@ public class GUI {
 	    //draw ressources on the right side
 	    JPanel resourcePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 	    resourcePanel.setOpaque(false);	
-	    resourcePanel.setBorder(BorderFactory.createLineBorder(Color.BLUE, 4, true));
 	    
 	    Dimension ressourcesSize = new Dimension(125, 60);
 	    resourcePanel.setPreferredSize(ressourcesSize);
@@ -346,6 +347,9 @@ public class GUI {
 
 
 	private static void startButtonPress(ActionEvent e) {
+		Main.gameLoop.gameObjects.clear();
+		Main.gameLoop.load("res/BaseSave");
+		Main.gameLoop.start();
 		Main.gameWindow.setPanel(PanelType.MainPanel);
 		Main.gameWindow.setPanel(PanelType.InGameGUI);
 		Main.gameWindow.setPanel(PanelType.MainMenu, false);
@@ -353,6 +357,21 @@ public class GUI {
 			resources[i] = Main.gameLoop.resources[i];
 		}
 		Main.gameLoop.setPaused(false);
+	}
+	
+	private static void mainMenuContinueButtonPress(ActionEvent e) {
+		Main.gameLoop.gameObjects.clear();
+		Main.gameLoop.load("SaveData");
+		Main.gameLoop.start();
+		Main.gameWindow.setPanel(PanelType.MainPanel);
+		Main.gameWindow.setPanel(PanelType.InGameGUI);
+		Main.gameWindow.setPanel(PanelType.MainMenu, false);
+		for (int i = 0; i < resources.length; i++) {
+			resources[i] = Main.gameLoop.resources[i];
+		}
+		Main.gameLoop.setPaused(false);
+		
+		
 	}
 	
 	private static void quitButtonPress(ActionEvent e) {
