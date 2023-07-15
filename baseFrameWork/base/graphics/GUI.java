@@ -29,6 +29,7 @@ import base.Gold;
 import base.Resource;
 import base.graphics.GamePanel.PanelType;
 import game.Main;
+import base.gameObjects.*;
 
 
 //TODO Here we will create all the different UI Elements and add them in a static way
@@ -221,7 +222,7 @@ public class GUI {
 	
 //-----------------------------------------------------------------------------	
 	//in game icons n shit -"Matteo Holzer"
-	public static void addInGameGUI(JPanel panel) {
+	public static void addInGameGUI(GamePanel panel) {
 		panel.setLayout(new BorderLayout());
 	    panel.setOpaque(false);
 	    
@@ -279,10 +280,10 @@ public class GUI {
 	    
 	    //ActionListener for each Object
 	    continueWaveButton.addActionListener(e -> continueWaveButtonPress(e));
-	    defenseTowerButton.addActionListener(e -> defenseTowerButtonPress(e));
-	    houseButton.addActionListener(e -> houseButtonPress(e));
-	    templeButton.addActionListener(e -> templeButtonPress(e));
-	    cityHallButton.addActionListener(e -> cityHallButtonPress(e));
+	    defenseTowerButton.addActionListener(e -> defenseTowerButtonPress(e, panel));
+	    houseButton.addActionListener(e -> houseButtonPress(e, panel));
+	    templeButton.addActionListener(e -> templeButtonPress(e, panel));
+	    cityHallButton.addActionListener(e -> cityHallButtonPress(e, panel));
 	    
 	    //adding the object-buttons to the userPanel
 	    userPanel.add(houseButton);
@@ -383,33 +384,44 @@ public class GUI {
 	//TODO obviously need to add code for getting the object from the buttons to the gamefield
 	//so that it can be placed
 	
-	private static Object continueWaveButtonPress(ActionEvent e) {
+	private static void continueWaveButtonPress(ActionEvent e) {
+		if(Main.gameLoop.currentWaveCount == 0) {
+			Main.gameLoop.combatPhase =  true;
+			Main.gameLoop.waves.get(Main.gameLoop.currentWaveCount).begin();
+		}
 		
-		return null;
+		if (!Main.gameLoop.isCombatPhase()) {
+			Main.gameLoop.setCombatPhase(true);;
+		}
 	}
 	
-	private static Object cityHallButtonPress(ActionEvent e) {
-		
-		return null;
+	private static void cityHallButtonPress(ActionEvent e, GamePanel panel) {
+		if (panel.inputManager.selectedStructure != CityHall.class) {
+			panel.inputManager.selectedStructure = CityHall.class;
+		} else {
+			panel.inputManager.selectedStructure = null;
 		}
+	}
 
+	private static void templeButtonPress(ActionEvent e, GamePanel panel) {
 
-		private static Object templeButtonPress(ActionEvent e) {
-		
-		return null;
+	}
+
+	private static void houseButtonPress(ActionEvent e, GamePanel panel) {
+		if (panel.inputManager.selectedStructure != PolisHouse.class) {
+			panel.inputManager.selectedStructure = PolisHouse.class;
+		} else {
+			panel.inputManager.selectedStructure = null;
 		}
+	}
 
-
-		private static Object houseButtonPress(ActionEvent e) {
-		
-		return null;
+	private static void defenseTowerButtonPress(ActionEvent e, GamePanel panel) {
+		if (panel.inputManager.selectedStructure != Watchtower.class) {
+			panel.inputManager.selectedStructure = Watchtower.class;
+		} else {
+			panel.inputManager.selectedStructure = null;
 		}
-
-
-		private static Object defenseTowerButtonPress(ActionEvent e) {
-		
-		return null;
-		}
+	}
 	
 	//this method is for the GridBagLayout and includes the variables for different UI elements
 		//can be deleted later on because we dont really need it
