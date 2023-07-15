@@ -24,15 +24,12 @@ public class GamePanel extends JPanel {
 	// assigned when trying to use CreatePanels() an exception will be thrown
 	// these will be used as keys for the panels HashMap in the GameWindow Class
 	public static enum PanelType {
-<<<<<<< HEAD
 		MainPanel,
 		MainMenu,
 		PauseMenu,
 		InGameGUI,
 		
-=======
-		MainPanel, MainMenu, PauseMenu, InGameGUI
->>>>>>> MapObjectDevelopment
+
 	}
 
 	public ArrayDeque<GameObject> addedObjects = new ArrayDeque<GameObject>();
