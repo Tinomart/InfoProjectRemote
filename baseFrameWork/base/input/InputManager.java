@@ -331,13 +331,6 @@ public class InputManager {
 				selectedTile = null;
 			}
 			break;
-		case KeyEvent.VK_B:
-			if (selectedStructure != CityHall.class) {
-				selectedStructure = CityHall.class;
-			} else {
-				selectedStructure = null;
-			}
-			break;
 		default:
 			break;
 
