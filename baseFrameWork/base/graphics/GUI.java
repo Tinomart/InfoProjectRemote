@@ -20,6 +20,8 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -40,8 +42,14 @@ public class GUI {
 	
 	static Font pythia;
 	
-	public static Resource[] resources = new Resource[] {new Gold(0), new Faith(0)};
-		
+	private static JLabel resourceGold = new JLabel();
+	private static JLabel resourceFaith = new JLabel();
+	
+	private static HashMap<Class<? extends Resource>, JLabel> resources = new HashMap<Class<? extends Resource>, JLabel>();
+	static {
+		resources.put(Gold.class, resourceGold);
+		resources.put(Faith.class, resourceFaith);
+	}
 	
 	
 	//GUI for the MainMenu
@@ -312,9 +320,6 @@ public class GUI {
 	    Dimension ressourcesSize = new Dimension(125, 60);
 	    resourcePanel.setPreferredSize(ressourcesSize);
 	    
-	    JLabel resourceGold = new JLabel("" + resources[0].getAmount());
-	    JLabel resourceFaith = new JLabel("" + resources[1].getAmount());
-	    
 	    ImageIcon goldIcon = new ImageIcon("res/fonts/Gold.png");
 	    Image goldImage = goldIcon.getImage();	
 	    
@@ -347,28 +352,18 @@ public class GUI {
 
 
 	private static void startButtonPress(ActionEvent e) {
-		Main.gameLoop.gameObjects.clear();
 		Main.gameLoop.load("res/BaseSave");
-		Main.gameLoop.start();
 		Main.gameWindow.setPanel(PanelType.MainPanel);
 		Main.gameWindow.setPanel(PanelType.InGameGUI);
 		Main.gameWindow.setPanel(PanelType.MainMenu, false);
-		for (int i = 0; i < resources.length; i++) {
-			resources[i] = Main.gameLoop.resources[i];
-		}
 		Main.gameLoop.setPaused(false);
 	}
 	
 	private static void mainMenuContinueButtonPress(ActionEvent e) {
-		Main.gameLoop.gameObjects.clear();
 		Main.gameLoop.load("SaveData");
-		Main.gameLoop.start();
 		Main.gameWindow.setPanel(PanelType.MainPanel);
 		Main.gameWindow.setPanel(PanelType.InGameGUI);
 		Main.gameWindow.setPanel(PanelType.MainMenu, false);
-		for (int i = 0; i < resources.length; i++) {
-			resources[i] = Main.gameLoop.resources[i];
-		}
 		Main.gameLoop.setPaused(false);
 		
 		
@@ -439,6 +434,18 @@ public class GUI {
 //		} else {
 //			panel.inputManager.selectedStructure = null;
 //		}	
+	}
+
+
+
+
+
+	public static void updateResourceAmount(Resource resource) {
+		for (Entry<Class<? extends Resource>, JLabel> resourcePair : resources.entrySet()) {
+			if(resourcePair.getKey() == resource.getClass()) {
+				resourcePair.getValue().setText("" + resource.getAmount());
+			}
+		}
 	}	
 }
 
