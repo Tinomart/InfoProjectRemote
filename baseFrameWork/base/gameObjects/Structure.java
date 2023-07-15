@@ -37,6 +37,7 @@ public abstract class Structure extends GameObject implements TileBased, Damagea
 	private int healthBarWidth;
 	private RectangleComponent healthBar;
 
+	// implement the mothods for our interface of damageable
 	@Override
 	public RectangleComponent getHealthBar() {
 		return healthBar;
@@ -146,17 +147,25 @@ public abstract class Structure extends GameObject implements TileBased, Damagea
 		}
 	}
 
+	// apply cost in a static context, because it is the same for each Structure,
+	// return true and does the cost application if there is enough resource
+	// available, else it just return false
 	public static boolean applyCost(GameLoop gameLoop, HashMap<Class<? extends Resource>, Integer> cost) {
 		boolean canAfford = true;
+		// check if the amount of the resources available in the GameLoop are enough to
+		// pay for the cost
 		for (Class<? extends Resource> resourceClass : cost.keySet()) {
 			for (Resource resource : gameLoop.resources) {
 				if (resource.getClass() == resourceClass) {
+					// if the amount of the resource asked for in the cost is bigger than the amount
+					// in the resource of the gameLoop, set can Afford to false
 					if (resource.getAmount() < cost.get(resourceClass)) {
 						canAfford = false;
 					}
 				}
 			}
 		}
+		//if we can afford, substract the costs from the resources of the gameLoop
 		if (canAfford) {
 			for (Class<? extends Resource> resourceClass : cost.keySet()) {
 				for (Resource resource : gameLoop.resources) {
@@ -166,7 +175,6 @@ public abstract class Structure extends GameObject implements TileBased, Damagea
 				}
 			}
 		}
-
 		return canAfford;
 
 	}

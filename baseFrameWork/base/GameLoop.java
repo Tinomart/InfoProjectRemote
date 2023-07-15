@@ -49,9 +49,12 @@ public class GameLoop implements Runnable {
 	public int currentWaveCount;
 	public ArrayList<Level> waves = new ArrayList<Level>();
 
+	// this is public even though it has getters and setters, because we wanna
+	// access it without using set once, without having the specific code that
+	// otherwise should happen everytime we set it
 	public boolean combatPhase = false;
 	private boolean paused = true;
-	
+
 	public boolean isPaused() {
 		return paused;
 	}
@@ -64,30 +67,36 @@ public class GameLoop implements Runnable {
 		return combatPhase;
 	}
 
+	// each time the combat phase is set certain things should apply, so this is
+	// longer than usual
 	public void setCombatPhase(boolean combatPhase) {
 		if (combatPhase) {
-			if(currentWaveCount > waves.size()) {
+			// if we can switch to the next wave, because we havent passed the final wave,
+			// simply start the next wave
+			if (currentWaveCount > waves.size()) {
 				waves.get(currentWaveCount).begin();
 			} else {
+				// if we are past the final wave create a new bonus wave and begin it
 				addBonusWave();
 				waves.get(currentWaveCount).begin();
 			}
-			
+
 		} else {
+			// if we are exiting the combat phase we need to gather all resource from our
+			// resource generating gameObjects
 			for (GameObject gameObject : gameObjects) {
 				if (gameObject instanceof ResourceGenerating) {
 					((ResourceGenerating) gameObject).generateResources(resources);
 				}
 			}
+			// end the current wave
 			waves.get(currentWaveCount).end();
 		}
+		// execute normal setter code
 		this.combatPhase = combatPhase;
 	}
 
-
 	public CityHall cityHall;
-
-	public Watchtower watchtower;
 
 	private SpriteLoader spriteLoader = new SpriteLoader();
 
@@ -115,7 +124,6 @@ public class GameLoop implements Runnable {
 		this.window = window;
 		panels = window.getPanels();
 		mainPanel = panels.get(PanelType.MainPanel);
-		
 
 		setClosingFunctionality(window);
 		setMenuResizability(window);
@@ -127,37 +135,44 @@ public class GameLoop implements Runnable {
 		for (int j = 0; j < spawnPoint.y / cameraSpeed; j++) {
 			moveCamera(Direction.down);
 		}
-		
-		
+
 	}
 
+	// this is a check used to determine whether the current active wave is over,
+	// which happens when all of the enemies are defeated
 	public boolean allEnemiesDefeated(ArrayList<Character> level1Enemies) {
 		boolean anyEnemyContained = false;
 		if (combatPhase) {
 			anyEnemyContained = true;
+			// if any enemy is still in gameObjects, then set any enemy contained
 			for (Character character : level1Enemies) {
 				if (gameObjects.contains(character)) {
 					anyEnemyContained = false;
 				}
 			}
 		}
+		// enemy contained determines whether all enemies are defeated so return it
 		return anyEnemyContained;
 	}
-	
+
+	// this creates a new level with more enemies than the last wave and adds it to
+	// waves, all enemies are completely random, so low quality
 	private void addBonusWave() {
 		ArrayList<Character> bonusEnemies = new ArrayList<Character>();
+		// add an enemy for each previous enemy in our previous wave
 		for (int i = 0; i < waves.get(currentWaveCount - 1).getCharacters().size(); i++) {
-			bonusEnemies.add(new Enemy_1(new Point((int)( Math.random()*window.getWidth()),(int)(Math.random()*panels.get(PanelType.MainPanel).getHeight()))));
+			bonusEnemies.add(new Enemy_1(new Point((int) (Math.random() * window.getWidth()),
+					(int) (Math.random() * panels.get(PanelType.MainPanel).getHeight()))));
 		}
-		bonusEnemies.add(new Enemy_1(new Point((int)( Math.random()* window .getWidth()),(int)(Math.random()* window.getHeight()))));
-		
+		//add three random bonus enemies on top of that
+		for (int i = 0; i < 3; i++) {
+			bonusEnemies.add(new Enemy_1(
+					new Point((int) (Math.random() * window.getWidth()), (int) (Math.random() * window.getHeight()))));
+		}
 		Level bonusLevel = new Level(bonusEnemies, new HashMap<Class<? extends Resource>, Integer>(), this);
-		bonusEnemies.add(new Enemy_1(new Point((int)( Math.random()*window.getWidth()),(int)(Math.random()*window.getHeight()))));
-		bonusEnemies.add(new Enemy_1(new Point((int)( Math.random()*window.getWidth()),(int)(Math.random()*window.getHeight()))));
-		bonusEnemies.add(new Enemy_1(new Point((int)( Math.random()*window.getWidth()),(int)(Math.random()*window.getHeight()))));
 		waves.add(bonusLevel);
 	}
-	
+
 	// This had to be its own thing, because for some reason the basic resize
 	// implementation was failing me, so I had to write my own.
 
@@ -223,11 +238,11 @@ public class GameLoop implements Runnable {
 	@Override
 	public void run() {
 		load("res/BaseSave");
-		
+
 		// main thread(happens very frame)
 		while (gameThread != null) {
 			executeEveryFrame(gameThread);
-			
+
 			gameObjectsToRemove.clear();
 
 			// The Main Menu has its inputs read;
@@ -238,17 +253,6 @@ public class GameLoop implements Runnable {
 
 			panels.get(PanelType.InGameGUI).requestFocus();
 			panels.get(PanelType.InGameGUI).inputManager.readInputs();
-
-			// debug code that displays the layer of every Panel that is currently a
-			// component of the Window
-//			Container container = window.getContentPane();
-//			
-//			for (Component component : container.getComponents()) {
-//				if(component instanceof JPanel) {
-//					GamePanel panel = (GamePanel)component;
-//					System.out.println(panel.drawLayer);
-//				}
-//			}
 
 			// save the game every time the time of ausaveintervallinseconds has passed and
 			// reset the fps count, to avoid the number from getting too big. I did this
@@ -263,7 +267,6 @@ public class GameLoop implements Runnable {
 			// communicate with the mainpanel and make it know all different gameObjects
 			// that should be drawn on it by adding them to addedObjects
 			GamePanel panel = panels.get(PanelType.MainPanel);
-
 			Iterator<GameObject> iterator = gameObjects.iterator();
 			while (iterator.hasNext()) {
 				GameObject gameObject = iterator.next();
@@ -273,40 +276,36 @@ public class GameLoop implements Runnable {
 					panel.addedObjects.add(gameObject);
 				}
 			}
-			
+
+			// add all gameObjects that are in added objects, but not in gameObjects
+			// anymore, and add them to the objects that need to be removed later in
+			// gamePanel.drawComponent, again to avoid the ungodly amount of concurrent
+			// modification exceptions
 			iterator = panel.addedObjects.iterator();
 			while (iterator.hasNext()) {
 				GameObject gameObject = iterator.next();
 				if (!Main.gameLoop.gameObjects.contains(gameObject)) {
 					panel.removedObjects.add(gameObject);
-					}
+				}
 			}
-			
-//			iterator = panel.addedObjects.iterator();
-//			while (iterator.hasNext()) {
-//				GameObject gameObject = iterator.next();
-//				if (Main.gameLoop.gameObjects.contains(gameObject)) {
-//					iterator.remove();
-//				}
-//			}
-			if(!paused) {
+
+			// only update the game if the game is not paused
+			if (!paused) {
 				updateGame();
 			}
-			
-			
+
+			// all iterations are dont, so now we actually remove all gameObjects, all to
+			// fix the ungodly amount of concurrent modification exceptions I was dealing
+			// with constantly
 			for (GameObject gameObject : gameObjectsToRemove) {
 				gameObjects.remove(gameObject);
 			}
-			
-
-			
 
 		}
-		
-		
 
 	}
 
+	// update the wave to check if it has been completed and update all gameObjects
 	private void updateGame() {
 		waves.get(currentWaveCount).update();
 		updateGameObjects();
@@ -401,10 +400,6 @@ public class GameLoop implements Runnable {
 	}
 
 	public void save() {
-		// TODO if we update a GameObjects position and such, we need to have something
-		// that saves the previous position that needs to be removed from the file, to
-		// not have duplicates
-
 		// try catch, because it is possible the file does not exist
 		try {
 			// readers and writers to change our file and retrieve information for it, we
@@ -420,12 +415,12 @@ public class GameLoop implements Runnable {
 					writer.write(objectString);
 				}
 			}
-			
-			//Save currentWave
+
+			// Write currentWaveCount to the save call in the next line
 			writer.newLine();
 			writer.write("" + currentWaveCount);
-			
-			//Save the amount of resources
+
+			// Save the amount of resources
 			writer.newLine();
 			for (Resource resource : resources) {
 				writer.write("" + resource.getAmount() + " ");
@@ -438,8 +433,6 @@ public class GameLoop implements Runnable {
 	}
 
 	public void load(String save) {
-//		gameObjects.add(new CityHall(new Point(4,4), Main.tileGrid));
-//		System.out.println(gameObjects);
 		// try catch, because it is possible the file does not exist
 		try {
 			// reader, because we need the information from the file
@@ -466,8 +459,8 @@ public class GameLoop implements Runnable {
 
 			readLine = reader.readLine();
 			currentWaveCount = Integer.valueOf(readLine);
-			
-			//same setup as before this time for
+
+			// same setup as before this time for
 			readLine = reader.readLine();
 			if (readLine != null) {
 				fileString = readLine;
@@ -482,7 +475,7 @@ public class GameLoop implements Runnable {
 				int resourceAmount = Integer.parseInt(resourceString[i]);
 				resources[i].setAmount(resourceAmount);
 			}
-			
+
 			reader.close();
 
 		} catch (IOException e) {
@@ -617,7 +610,7 @@ public class GameLoop implements Runnable {
 						tile.getSprite().setImage(null);
 						createGameObject(PureGrassTile.class, new Object[] { tile.getTilePosition(), tile.tileGrid });
 					}
-				} 
+				}
 //				else {
 //					// if the gameObject is not tile based, simply set its own sprite to null
 //					 gameObject.setSprite(null);
@@ -751,12 +744,14 @@ public class GameLoop implements Runnable {
 					return gameObject;
 				}
 			}
+
+			// removing the objects directly causes massive current modification we mark the
+			// object as removable to have it removed later after all iterations are
+			// finished
 			gameObjects.add(createdGameObject);
 			return createdGameObject;
 		}
 	}
-
-	
 
 	// TODO: Add methods that change the game world on a basic level
 	// e.g Create Map, ChangeTile, AddEnemy, AddBuilding, etc.

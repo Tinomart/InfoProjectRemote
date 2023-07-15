@@ -374,7 +374,6 @@ public class GUI {
 	
 	private static void continueButtonPress(ActionEvent e) {
 		Main.gameWindow.setPanel(PanelType.PauseMenu, false);
-			
 		Main.gameWindow.setPanel(PanelType.PauseMenu, false);
 		Main.gameLoop.setPaused(false);
 	}	
