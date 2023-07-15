@@ -10,6 +10,8 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 //common code for sprites
+//this is common code for sprites, which we got from: https://zetcode.com/javagames/movingsprites/
+
 public class Sprite {
 
 	public Point size;
@@ -39,8 +41,6 @@ public class Sprite {
 		}
 
 	}
-	
-	//getters and setter
 
 	public BufferedImage getImage() {
 		return image;

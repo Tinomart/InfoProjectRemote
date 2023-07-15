@@ -25,6 +25,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 
+import base.Faith;
 import base.Gold;
 import base.Resource;
 import base.graphics.GamePanel.PanelType;
@@ -39,11 +40,11 @@ public class GUI {
 	
 	static Font pythia;
 	
-	public static Resource[] resources = new Resource[] {new Gold(0)};
+	public static Resource[] resources = new Resource[] {new Gold(0), new Faith(0)};
 		
 	
 	
-	//title screen, Quit, Play buttons etc.
+	//GUI for the MainMenu
 	public static void addMainMenuGUI(JPanel panel) {
 		
 		//this is a standard code for implementing custom fonts so that it looks more ancient
@@ -172,7 +173,7 @@ public class GUI {
 		
 		//for resizing the image
 		int imageWidth = 200;
-		int imageHeight = 100;
+		int imageHeight = 70;
 		Image scaledContinueImage = continueImage.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
 		//in game Menu with Quit, etc.
 		
@@ -198,6 +199,7 @@ public class GUI {
 		mainMenuButton.setContentAreaFilled(false);
 		mainMenuButton.setIcon(new ImageIcon(scaledMainMenuImage));
 		mainMenuButton.addActionListener(e -> mainMenuButtonPress(e));
+		
 		JPanel buttonPanel = new JPanel(); // Create a new panel to hold the buttons
 	    buttonPanel.setOpaque(false);
 	    buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS)); // Set vertical BoxLayout for the button panel
@@ -213,7 +215,9 @@ public class GUI {
 	    gbc.weightx = 1.0;
 	    gbc.weighty = 1.0;
 	    gbc.fill = GridBagConstraints.CENTER;
-	    panel.add(buttonPanel, gbc); // Add the button panel using GridBagConstraints
+	    
+	 // Add the button panel using GridBagConstraints
+	    panel.add(buttonPanel, gbc); 
 		
 		
 		
@@ -221,7 +225,7 @@ public class GUI {
 
 	
 //-----------------------------------------------------------------------------	
-	//in game icons n shit -"Matteo Holzer"
+	//this method is for the inGameGui-Panel
 	public static void addInGameGUI(GamePanel panel) {
 		panel.setLayout(new BorderLayout());
 	    panel.setOpaque(false);
@@ -231,9 +235,19 @@ public class GUI {
 	    wavePanel.setOpaque(false);
 	    wavePanel.setBorder(BorderFactory.createLineBorder(Color.CYAN, 4, true));
 	    
+	    ImageIcon nextWaveIcon = new ImageIcon("res/fonts/next wave.jpg");
+	    Image nextWaveImage = nextWaveIcon.getImage();	
+	    
+	    Image resizedNextWaveImage = nextWaveImage.getScaledInstance(130, 60, Image.SCALE_SMOOTH);
+	    //create imageIcon with resized image
+	    ImageIcon resizedNextWaveIcon = new ImageIcon(resizedNextWaveImage);
+	    
 	    //Creating the continue-Wave-Button
-	    JButton continueWaveButton = new JButton("Continue Wave");
-	    continueWaveButton.setPreferredSize(new Dimension(170, 50));
+	    JButton continueWaveButton = new JButton(resizedNextWaveIcon);
+	    continueWaveButton.setPreferredSize(new Dimension(200, 60));
+	    continueWaveButton.setOpaque(false);
+	    continueWaveButton.setBorderPainted(false);
+	    continueWaveButton.setContentAreaFilled(false);
 	    
 	    //adding the continue-Wave Button to the wavePanel
 	    wavePanel.add(continueWaveButton);
@@ -250,22 +264,12 @@ public class GUI {
 	    Dimension userPanelSize = new Dimension(120, 60);
 	    userPanel.setPreferredSize(userPanelSize);
 	    
-	  //loading the image-example for the cityHall-Button
-	    ImageIcon cityHallIcon = new ImageIcon("res/internetHaus.png");
-	    Image cityHallImage = cityHallIcon.getImage();	
-	    
-	    Image resizedCityHallImage = cityHallImage.getScaledInstance(100, 60, Image.SCALE_SMOOTH);
-	    //create imageIcon with resized image
-	    ImageIcon resizedCityHallIcon = new ImageIcon(resizedCityHallImage);
-	    
 	    //different buttons for the userPanel on the left side of the Game
-	    JButton cityHallButton = new JButton(resizedCityHallIcon);
-	    
-	    JButton houseButton = new JButton("Haus");
-
-	    JButton defenseTowerButton = new JButton("defTower");
-
-	    JButton templeButton = new JButton("Kaserne");
+	    JButton cityHallButton = new JButton("Cityhall");	    
+	    JButton houseButton = new JButton("House");
+	    JButton defenseTowerButton = new JButton("Defensetower");
+	    JButton templeButton = new JButton("Temple");
+	    JButton statueButton = new JButton("Statue");
 	    
 	        
 	    //customize the Buttons; later on we can add images to them
@@ -277,6 +281,9 @@ public class GUI {
 	    templeButton.setPreferredSize(new Dimension(100, 60));
 	    cityHallButton.setFont(new Font ("Arial", Font.ITALIC, 10));
 	    cityHallButton.setPreferredSize(new Dimension(100,60));
+	    statueButton.setFont(new Font("Arial", Font.ITALIC, 10));
+	    statueButton.setPreferredSize(new Dimension(100, 60));
+	    
 	    
 	    //ActionListener for each Object
 	    continueWaveButton.addActionListener(e -> continueWaveButtonPress(e));
@@ -284,29 +291,28 @@ public class GUI {
 	    houseButton.addActionListener(e -> houseButtonPress(e, panel));
 	    templeButton.addActionListener(e -> templeButtonPress(e, panel));
 	    cityHallButton.addActionListener(e -> cityHallButtonPress(e, panel));
+	    statueButton.addActionListener(e-> statueButtonPress(e, panel));
 	    
 	    //adding the object-buttons to the userPanel
 	    userPanel.add(houseButton);
 	    userPanel.add(defenseTowerButton);
 	    userPanel.add(templeButton);
 	    userPanel.add(cityHallButton);
+	    userPanel.add(statueButton);
 	    
 	    panel.add(userPanel, BorderLayout.WEST);		
 
 	    
 	    //draw ressources on the right side
-	
-	    JPanel ressources = new JPanel(new FlowLayout(FlowLayout.LEFT));//this "ressources" needs to be with a double "s" because the Resource array will else not work
-	    ressources.setOpaque(false);	
-	    ressources.setBorder(BorderFactory.createLineBorder(Color.BLUE, 4, true));
+	    JPanel resourcePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+	    resourcePanel.setOpaque(false);	
+	    resourcePanel.setBorder(BorderFactory.createLineBorder(Color.BLUE, 4, true));
 	    
 	    Dimension ressourcesSize = new Dimension(125, 60);
-	    ressources.setPreferredSize(ressourcesSize);
+	    resourcePanel.setPreferredSize(ressourcesSize);
 	    
-	    //TODO replace the name of "ressources1,2,3" to the ressources we want to implement
 	    JLabel resourceGold = new JLabel("" + resources[0].getAmount());
-	    JLabel resourceFaith = new JLabel("Faith");
-	    JLabel resources3 = new JLabel("ressources3");
+	    JLabel resourceFaith = new JLabel("" + resources[1].getAmount());
 	    
 	    ImageIcon goldIcon = new ImageIcon("res/fonts/Gold.png");
 	    Image goldImage = goldIcon.getImage();	
@@ -319,7 +325,7 @@ public class GUI {
 	    resourceGold.setForeground(Color.RED);
 	    resourceGold.setPreferredSize(new Dimension(100, 60));
 	    
-	  //loading the faith-Image
+	    //loading the faith-Image
 	    ImageIcon faithIcon = new ImageIcon("res/fonts/Faith.jpg");
 	    Image faithImage = faithIcon.getImage();	
 	    
@@ -331,30 +337,21 @@ public class GUI {
 	    resourceFaith.setIcon(resizedFaithIcon);
 	    resourceFaith.setPreferredSize(new Dimension(100, 60));
 	    
-	    resources3.setFont(new Font("Arial", Font.BOLD, 15));
-	    resources3.setForeground(Color.RED);
-	    resources3.setPreferredSize(new Dimension(100, 60));
-	    
-	    ressources.add(resourceGold);
-	    ressources.add(resourceFaith);
-	    ressources.add(resources3);
+	    resourcePanel.add(resourceGold);
+	    resourcePanel.add(resourceFaith);
 	
 	    //ressource-Panel added to the east side of the main-Panel
-	    panel.add(ressources, BorderLayout.EAST);		
+	    panel.add(resourcePanel, BorderLayout.EAST);		
 	}
-	
-
-	
-
-
-	
 
 
 	private static void startButtonPress(ActionEvent e) {
 		Main.gameWindow.setPanel(PanelType.MainPanel);
 		Main.gameWindow.setPanel(PanelType.InGameGUI);
 		Main.gameWindow.setPanel(PanelType.MainMenu, false);
-		resources = Main.gameLoop.resources;
+		for (int i = 0; i < resources.length; i++) {
+			resources[i] = Main.gameLoop.resources[i];
+		}
 		Main.gameLoop.setPaused(false);
 	}
 	
@@ -377,9 +374,6 @@ public class GUI {
 		Main.gameWindow.setPanel(PanelType.PauseMenu, false);
 		Main.gameLoop.setPaused(false);
 	}	
-	
-	//TODO obviously need to add code for getting the object from the buttons to the gamefield
-	//so that it can be placed
 	
 	private static void continueWaveButtonPress(ActionEvent e) {
 		if(Main.gameLoop.currentWaveCount == 0) {
@@ -418,20 +412,14 @@ public class GUI {
 		} else {
 			panel.inputManager.selectedStructure = null;
 		}
-	}
+	}	
 	
-	//this method is for the GridBagLayout and includes the variables for different UI elements
-		//can be deleted later on because we dont really need it
-//		private GridBagConstraints makegbc(int x, int y, int width, int height) {
-//			
-//			GridBagConstraints gbc = new GridBagConstraints();
-//			gbc.gridx = x;
-//			gbc.gridy = y;
-//			gbc.gridwidth = width;
-//			gbc.gridheight = height;
-//			gbc.insets = new Insets(1, 1, 1, 1);
-//			return gbc;
-//		}
-		
+	private static void statueButtonPress(ActionEvent e, GamePanel panel) {
+//		if(panel.inputManager.selectedStructure != Statue.class) {
+//			panel.inputManager.selectedStructure = Statue.class;
+//		} else {
+//			panel.inputManager.selectedStructure = null;
+//		}	
+	}	
 }
 

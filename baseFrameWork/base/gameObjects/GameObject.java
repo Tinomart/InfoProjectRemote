@@ -52,7 +52,7 @@ public class GameObject extends GameEntity implements Drawable {
 		super(position);
 		this.sprite = sprite;
 		panelToDrawOn = GamePanel.PanelType.MainPanel;
-		spriteType = SpriteType.CircleSprite;
+		spriteType = SpriteType.PureGrassTileSprite;
 	
 	}
 
