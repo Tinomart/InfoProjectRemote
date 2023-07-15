@@ -361,6 +361,13 @@ public class InputManager {
 				selectedStructure = null;
 			}
 			break;
+		case KeyEvent.VK_C:
+			if (selectedStructure != Watchtower.class) {
+				selectedStructure = Watchtower.class;
+			} else {
+				selectedStructure = null;
+			}
+			break;
 		case KeyEvent.VK_ENTER:
 			if(Main.gameLoop.currentWaveCount == 0) {
 				Main.gameLoop.combatPhase =  true;

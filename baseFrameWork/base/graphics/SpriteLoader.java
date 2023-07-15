@@ -17,7 +17,9 @@ public class SpriteLoader {
 		BeachTile_BottomSprite, BeachTile_RightBottomSprite, BeachTile_TopSprite, BeachTile_LeftTopSprite,
 		BeachTile_RightTopSprite, BeachTile_LeftSprite, BeachTile_RightSprite, WaterTileSprite, WaterTile_DucksSprite,
 		House_0_0_TileSprite,House_0_1_TileSprite, House_1_0_TileSprite, House_1_1_TileSprite, Enemy_1TileSprite,
-		WatchtowerTopSprite, WatchtowerBottomSprite,
+		WatchtowerTopSprite, WatchtowerBottomSprite,CityHallTopRightSprite,CityHallTopMidSprite,CityHallTopLeftSprite,
+		CityHallMidRightSprite,CityHallMidMidSprite,CityHallMidLeftSprite,CityHallBottomLeftSprite,CityHallBottomMidSprite,
+		CityHallBottomRightSprite,
 
 	}
 
@@ -129,5 +131,44 @@ public class SpriteLoader {
 		Sprite WatchtowerBottomSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
 		WatchtowerBottomSprite.loadImage("res/WatchtowerBottom.png");
 		sprites.put(SpriteType.WatchtowerBottomSprite, WatchtowerBottomSprite);
+		
+		Sprite CityHallTopLeftSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		CityHallTopLeftSprite.loadImage("res/CityHallTopLeft.png");
+		sprites.put(SpriteType.CityHallTopLeftSprite, CityHallTopLeftSprite);
+		
+		Sprite CityHallTopMidSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		CityHallTopMidSprite.loadImage("res/CityHallTopMid.png");
+		sprites.put(SpriteType.CityHallTopMidSprite, CityHallTopMidSprite);
+
+		Sprite CityHallMidLeftSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		CityHallMidLeftSprite.loadImage("res/CityHallMidLeft.png");
+		sprites.put(SpriteType.CityHallMidLeftSprite, CityHallMidLeftSprite);
+		
+		Sprite CityHallTopRightSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		CityHallTopRightSprite.loadImage("res/CityHallTopRight.png");
+		sprites.put(SpriteType.CityHallTopRightSprite, CityHallTopRightSprite);
+		
+		Sprite CityHallMidMidSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		CityHallMidMidSprite.loadImage("res/CityHallMidMid.png");
+		sprites.put(SpriteType.CityHallMidMidSprite, CityHallMidMidSprite);
+		
+		Sprite CityHallMidRightSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		CityHallMidRightSprite.loadImage("res/CityHallMidRight.png");
+		sprites.put(SpriteType.CityHallMidRightSprite, CityHallMidRightSprite);
+		
+		Sprite CityHallBottomLeftSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		CityHallBottomLeftSprite.loadImage("res/CityHallBottomLeft.png");
+		sprites.put(SpriteType.CityHallBottomLeftSprite, CityHallBottomLeftSprite);
+		
+		Sprite CityHallBottomMidSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		CityHallBottomMidSprite.loadImage("res/CityHallBottomMid.png");
+		sprites.put(SpriteType.CityHallBottomMidSprite, CityHallBottomMidSprite);
+		
+		Sprite CityHallBottomRightSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		CityHallBottomRightSprite.loadImage("res/CityHallBottomRight.png");
+		sprites.put(SpriteType.CityHallBottomRightSprite, CityHallBottomRightSprite);
+		
+		
+		
 	}
 }
