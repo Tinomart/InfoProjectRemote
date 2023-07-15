@@ -4,9 +4,12 @@ import java.awt.event.KeyEvent;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.swing.JPanel;
 
+import base.Resource;
 import base.GameLoop.Direction;
 import base.gameObjects.*;
 
@@ -31,6 +34,7 @@ public class InputManager {
 //	private double zoomFactor = .0;
 	public int maxTileSize = 40;
 	public int minTileSize = 8;
+	private boolean debugMode = false;
 
 	public InputManager(JPanel panel) {
 		this.panel = panel;
@@ -58,9 +62,12 @@ public class InputManager {
 			} else if (input.currentInput.contains(InputType.rightpress)) {
 				executeRightPress();
 			} else if (input.currentInput.contains(InputType.keypress) && input.pressedKeys != null) {
-				for (int key : input.pressedKeys) {
+				Iterator<Integer> iterator = input.pressedKeys.iterator();
+				while(iterator.hasNext()) {
+					int key = iterator.next();
 					executeKeyPress(key);
 				}
+				
 			}
 
 		}
@@ -210,8 +217,10 @@ public class InputManager {
 			if (!Main.gameWindow.activePanels.contains(PanelType.MainMenu)) {
 				if (!Main.gameWindow.activePanels.contains(PanelType.PauseMenu)) {
 					Main.gameWindow.setPanel(PanelType.PauseMenu);
+					Main.gameLoop.setPaused(true);
 				} else {
 					Main.gameWindow.setPanel(PanelType.PauseMenu, false);
+					Main.gameLoop.setPaused(false);
 				}
 			}
 			break;
@@ -352,6 +361,24 @@ public class InputManager {
 				selectedStructure = null;
 			}
 			break;
+		case KeyEvent.VK_ENTER:
+			if(Main.gameLoop.currentWaveCount == 0) {
+				Main.gameLoop.combatPhase =  true;
+				Main.gameLoop.waves.get(Main.gameLoop.currentWaveCount).begin();
+			}
+			
+			if (!Main.gameLoop.isCombatPhase()) {
+				Main.gameLoop.setCombatPhase(true);;
+			}
+			break;
+		case KeyEvent.VK_F2:
+			if (!debugMode) {
+				debugMode = true;
+			} else {
+				debugMode = false;
+				System.out.println(debugMode);
+			}
+			break;
 		default:
 			break;
 
@@ -359,39 +386,50 @@ public class InputManager {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void executeRightClick() {
 		// if we are holding shift and are hovering a structure, destroy it
-		if (input.pressedKeys.contains(KeyEvent.VK_SHIFT)) {
-			for (Tile tile : currentHoveredTiles) {
-				if (tile.structure != null) {
-					Main.gameLoop.destroyGameObject(tile.structure);
-				}
-			}
-		} else if (selectedStructure != null) {
-			// if we have a structure selected and only pressing right click, place the
-			// structure.
-			boolean placeable = true;
-			// if we are hovering a structure, then we cannot place it, so set he placable
-			// boolean to false
-			for (Tile tile : currentHoveredTiles) {
-				if (tile.structure != null) {
-					placeable = false;
-				}
-			}
-			// if our structure is placable, create it, where our current mouse cursor is
-			if (placeable) {
-				Main.gameLoop.createGameObject(selectedStructure,
-						new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
-			}
-			// TODO This a placeholder to show off the health and healthbar functionality.
-			// This should be removed once actual combat exists within the game
-			else {
+		if(!Main.gameLoop.isCombatPhase()){
+			if (input.pressedKeys.contains(KeyEvent.VK_SHIFT)) {
 				for (Tile tile : currentHoveredTiles) {
 					if (tile.structure != null) {
-						tile.structure.reduceHealth(1);
-
+						Main.gameLoop.destroyGameObject(tile.structure);
 					}
 				}
+			} else if (selectedStructure != null) {
+				// if we have a structure selected and only pressing right click, place the
+				// structure.
+				boolean placeable = true;
+				// if we are hovering a structure, then we cannot place it, so set he placable
+				// boolean to false
+				for (Tile tile : currentHoveredTiles) {
+					if (tile.structure != null) {
+						placeable = false;
+					}
+				}
+				
+				HashMap<Class<? extends Resource>, Integer> cost = null;
+				try {
+					
+					// if we have a structure selected, set the cursor shape to its shape
+					cost = (HashMap<Class<? extends Resource>, Integer>) selectedStructure.getDeclaredField("cost").get(null);
+					
+				} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				if(cost != null && placeable) {
+					if(Structure.applyCost(Main.gameLoop, cost)) {
+						// if our structure is placable, create it, where our current mouse cursor is
+						Main.gameLoop.createGameObject(selectedStructure,
+						new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
+					}
+					System.out.println("remaining gold= " + Main.gameLoop.resources[0].getAmount());
+				}
+				
+				
+				
 			}
 		}
 
@@ -400,9 +438,11 @@ public class InputManager {
 	private void executeLeftClick() {
 		// if we have a tile selected, create that tile and place it where our cursor
 		// currently is
-		if (selectedTile != null) {
-			Main.gameLoop.createGameObject(selectedTile,
-					new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
+		if(debugMode) {
+			if (selectedTile != null) {
+				Main.gameLoop.createGameObject(selectedTile,
+						new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
+			}
 		}
 	}
 

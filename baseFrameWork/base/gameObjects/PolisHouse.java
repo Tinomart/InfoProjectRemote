@@ -1,6 +1,7 @@
 package base.gameObjects;
 
 import java.awt.Point;
+import java.util.HashMap;
 
 import base.Gold;
 import base.Resource;
@@ -10,6 +11,13 @@ import base.graphics.*;
 public class PolisHouse extends Structure implements ResourceGenerating {
 	
 	public static Point[] shape = new Point[] {new Point(1,0), new Point(1,1), new Point(0,1)};
+	
+	public static HashMap<Class<? extends Resource>, Integer> cost = new HashMap<>();
+
+	static {
+	    cost.put(Gold.class, 10);
+	    // Add more key-value pairs as needed
+	}
 	
 	private int goldGenerationAmount = 15;
 	

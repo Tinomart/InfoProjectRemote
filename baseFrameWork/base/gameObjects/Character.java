@@ -29,6 +29,9 @@ public abstract class Character extends GameObject implements Damageable{
 	protected Tile currentTileBottomRight;
 	protected Structure currentTarget;
 	
+	protected double moveDistance = 0;
+	protected boolean avoidingTile = false;
+	
 	protected ArrayList<Tile> standingTiles = new ArrayList<Tile>();
 	
 	
@@ -79,14 +82,13 @@ public abstract class Character extends GameObject implements Damageable{
 	
 	public Character(Point position, Sprite sprite) {
 		super(position, sprite);
+		healthBarWidth = 32;
+
 		health = maxHealth;
-		
-		healthBarWidth = position.y - 7;
-		//assign the healthbar a Rectangle Component in the middle
-		this.healthBar = new RectangleComponent(position.x - sprite.size.x/2,
-				healthBarWidth, 32, 5,
-				healthBarColor);
-		health = maxHealth;
+		// initiailze health bar to be the size of the amount of tiles and be positioned
+		// at the middle of the mainTile horizontal and slightly above it vertically
+		this.healthBar = new RectangleComponent(position.x - 16,
+				position.y - 7, healthBarWidth, 5, healthBarColor);
 	}
 	
 	
@@ -94,15 +96,13 @@ public abstract class Character extends GameObject implements Damageable{
 		move(moveSpeed);
 		attack(attackDamage);
 		
-		// as soon as a strucutre dies aka their health goes to 0 or below that the
-		// strucutre will be destroyed automatically
-		if (health <= 0) {
-			Main.gameLoop.destroyGameObject(this);
-		}
 		//display healthbar as soon as the structure has taken damage
 		if(health != maxHealth) {
 			Main. gameLoop.panels.get(PanelType.MainPanel).add(healthBar);
 		}
+		
+		healthBar.setLocation(new Point(position.x - 16,
+				position.y - 7));
 		
 		if(gameLoop != null) {
 			currentTileTopLeft = gameLoop.tileGrid.tileMap.get(new Point(getPosition().x/gameLoop.tileGrid.tileSize, getPosition().y/gameLoop.tileGrid.tileSize));
@@ -123,6 +123,13 @@ public abstract class Character extends GameObject implements Damageable{
 			}
 		}
 		
+		// as soon as a strucutre dies aka their health goes to 0 or below that the
+		// strucutre will be destroyed automatically
+		
+		if (health <= 0) {
+			Main.gameLoop.destroyGameObject(this);
+		}
+		
 	}
 	
 	public Tile getMovableTile() {
@@ -135,18 +142,18 @@ public abstract class Character extends GameObject implements Damageable{
 					}
 				}
 				if(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x - 1, tile.getTilePosition().y)) != null) {
-					if(!gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x + 1, tile.getTilePosition().y)).solid) {
-						nonSolidTiles.add(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x + 1, tile.getTilePosition().y)));
+					if(!gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x - 1, tile.getTilePosition().y)).solid) {
+						nonSolidTiles.add(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x - 1, tile.getTilePosition().y)));
 					}
 				}
 				if(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x, tile.getTilePosition().y + 1)) != null) {
-					if(!gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x + 1, tile.getTilePosition().y)).solid) {
-						nonSolidTiles.add(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x + 1, tile.getTilePosition().y)));
+					if(!gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x, tile.getTilePosition().y + 1)).solid) {
+						nonSolidTiles.add(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x, tile.getTilePosition().y  + 1)));
 					}
 				}
 				if(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x, tile.getTilePosition().y - 1)) != null) {
-					if(!gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x + 1, tile.getTilePosition().y)).solid) {
-						nonSolidTiles.add(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x + 1, tile.getTilePosition().y)));
+					if(!gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x, tile.getTilePosition().y- 1)).solid) {
+						nonSolidTiles.add(gameLoop.tileGrid.tileMap.get(new Point(tile.getTilePosition().x  , tile.getTilePosition().y - 1)));
 					}
 				}
 			}
