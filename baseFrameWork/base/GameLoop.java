@@ -50,7 +50,7 @@ public class GameLoop implements Runnable {
 	public ArrayList<Level> waves = new ArrayList<Level>();
 
 	public boolean combatPhase = false;
-	private boolean paused;
+	private boolean paused = true;
 	
 	public boolean isPaused() {
 		return paused;
@@ -104,7 +104,7 @@ public class GameLoop implements Runnable {
 	public Point cameraPosition = new Point(0, 0);
 
 	// resources
-	public Resource[] resources = new Resource[] { new Gold(20) };
+	public Resource[] resources = new Resource[] { new Gold(20), new Faith(0) };
 	public Watchtower Watchtower;
 
 	public enum Direction {
@@ -116,13 +116,6 @@ public class GameLoop implements Runnable {
 		panels = window.getPanels();
 		mainPanel = panels.get(PanelType.MainPanel);
 
-//		Sprite testSprite = new Sprite(new Point(50, 50));
-//		testSprite.imagePath = "res/Kreis.png";
-//		testSprite.loadImage(testSprite.imagePath);
-
-//		gameObjects.add(new GameObject(new Point(12, 17), testSprite));
-//		gameObjects.add(createGameObject(GameObject.class, (new Object[]{new Point(12, 17), new Sprite(new Point(50, 50))})));
-
 		setClosingFunctionality(window);
 		setMenuResizability(window);
 
@@ -133,24 +126,8 @@ public class GameLoop implements Runnable {
 		for (int j = 0; j < spawnPoint.y / cameraSpeed; j++) {
 			moveCamera(Direction.down);
 		}
-
-		ArrayList<Character> level1Enemies = new ArrayList<Character>();
-		level1Enemies.add(new Enemy_1(new Point(50, 50)));
-		level1Enemies.add(new Enemy_1(new Point(50, 400)));
-		level1Enemies.add(new Enemy_1(new Point(400, 250)));
-		level1Enemies.add(new Enemy_1(new Point(100, 600)));
-
-		ArrayList<Character> level2Enemies = new ArrayList<Character>();
-		level2Enemies.add(new Enemy_1(new Point(50, 60)));
-		level2Enemies.add(new Enemy_1(new Point(50, 410)));
-		level2Enemies.add(new Enemy_1(new Point(400, 260)));
-		level2Enemies.add(new Enemy_1(new Point(100, 610)));
-
-		Level level1 = new Level(level1Enemies, new HashMap<Class<? extends Resource>, Integer>(), this);
-		Level level2 = new Level(level2Enemies, new HashMap<Class<? extends Resource>, Integer>(), this);
-
-		waves.add(level1);
-		waves.add(level2);
+		
+		
 	}
 
 	public boolean allEnemiesDefeated(ArrayList<Character> level1Enemies) {
@@ -244,7 +221,8 @@ public class GameLoop implements Runnable {
 
 	@Override
 	public void run() {
-		load();
+		load("res/BaseSave");
+		
 		// main thread(happens very frame)
 		while (gameThread != null) {
 			executeEveryFrame(gameThread);
@@ -310,8 +288,10 @@ public class GameLoop implements Runnable {
 //					iterator.remove();
 //				}
 //			}
+			if(!paused) {
+				updateGame();
+			}
 			
-			updateGame();
 			
 			for (GameObject gameObject : gameObjectsToRemove) {
 				gameObjects.remove(gameObject);
@@ -439,8 +419,16 @@ public class GameLoop implements Runnable {
 					writer.write(objectString);
 				}
 			}
-//			writer.newLine();
-//			writer.write("" + currentWaveCount);
+			
+			//Save currentWave
+			writer.newLine();
+			writer.write("" + currentWaveCount);
+			
+			//Save the amount of resources
+			writer.newLine();
+			for (Resource resource : resources) {
+				writer.write("" + resource.getAmount() + " ");
+			}
 			writer.close();
 
 		} catch (IOException e) {
@@ -448,13 +436,13 @@ public class GameLoop implements Runnable {
 		}
 	}
 
-	public void load() {
+	public void load(String save) {
 //		gameObjects.add(new CityHall(new Point(4,4), Main.tileGrid));
 //		System.out.println(gameObjects);
 		// try catch, because it is possible the file does not exist
 		try {
 			// reader, because we need the information from the file
-			BufferedReader reader = new BufferedReader(new FileReader("SaveData"));
+			BufferedReader reader = new BufferedReader(new FileReader(save));
 			String fileString = "";
 			String readLine = reader.readLine();
 
@@ -471,12 +459,29 @@ public class GameLoop implements Runnable {
 			String[] gameObjectsStrings = fileString.split(" ");
 			// create the GameObject, which adds it to our gameObjects
 			for (String gameObjectString : gameObjectsStrings) {
-				GameObject createdObject = createGameObject(gameObjectString);
+				createGameObject(gameObjectString);
 
 			}
 
 			readLine = reader.readLine();
-//			currentWaveCount = Integer.valueOf(readLine);
+			currentWaveCount = Integer.valueOf(readLine);
+			
+			//same setup as before this time for
+			readLine = reader.readLine();
+			if (readLine != null) {
+				fileString = readLine;
+			} else {
+				reader.close();
+				return;
+			}
+			// all objects are seperated with spaces so we split the string of the entire
+			// line to get an array of all object strings
+			String[] resourceString = fileString.split(" ");
+			for (int i = 0; i < resourceString.length; i++) {
+				int resourceAmount = Integer.parseInt(resourceString[i]);
+				resources[i].setAmount(resourceAmount);
+			}
+			
 			reader.close();
 
 		} catch (IOException e) {

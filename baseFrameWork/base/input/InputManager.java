@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayDeque;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.swing.JPanel;
 
@@ -33,6 +34,7 @@ public class InputManager {
 //	private double zoomFactor = .0;
 	public int maxTileSize = 40;
 	public int minTileSize = 8;
+	private boolean debugMode = false;
 
 	public InputManager(JPanel panel) {
 		this.panel = panel;
@@ -60,9 +62,12 @@ public class InputManager {
 			} else if (input.currentInput.contains(InputType.rightpress)) {
 				executeRightPress();
 			} else if (input.currentInput.contains(InputType.keypress) && input.pressedKeys != null) {
-				for (int key : input.pressedKeys) {
+				Iterator<Integer> iterator = input.pressedKeys.iterator();
+				while(iterator.hasNext()) {
+					int key = iterator.next();
 					executeKeyPress(key);
 				}
+				
 			}
 
 		}
@@ -212,8 +217,10 @@ public class InputManager {
 			if (!Main.gameWindow.activePanels.contains(PanelType.MainMenu)) {
 				if (!Main.gameWindow.activePanels.contains(PanelType.PauseMenu)) {
 					Main.gameWindow.setPanel(PanelType.PauseMenu);
+					Main.gameLoop.setPaused(true);
 				} else {
 					Main.gameWindow.setPanel(PanelType.PauseMenu, false);
+					Main.gameLoop.setPaused(false);
 				}
 			}
 			break;
@@ -364,6 +371,14 @@ public class InputManager {
 				Main.gameLoop.setCombatPhase(true);;
 			}
 			break;
+		case KeyEvent.VK_F2:
+			if (!debugMode) {
+				debugMode = true;
+			} else {
+				debugMode = false;
+				System.out.println(debugMode);
+			}
+			break;
 		default:
 			break;
 
@@ -404,17 +419,16 @@ public class InputManager {
 					e.printStackTrace();
 				}
 				
-				if(cost != null) {
+				if(cost != null && placeable) {
 					if(Structure.applyCost(Main.gameLoop, cost)) {
-						if (placeable) {
-							Main.gameLoop.createGameObject(selectedStructure,
-							new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
-						}
+						// if our structure is placable, create it, where our current mouse cursor is
+						Main.gameLoop.createGameObject(selectedStructure,
+						new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
 					}
 					System.out.println("remaining gold= " + Main.gameLoop.resources[0].getAmount());
 				}
 				
-				// if our structure is placable, create it, where our current mouse cursor is
+				
 				
 			}
 		}
@@ -424,9 +438,11 @@ public class InputManager {
 	private void executeLeftClick() {
 		// if we have a tile selected, create that tile and place it where our cursor
 		// currently is
-		if (selectedTile != null) {
-			Main.gameLoop.createGameObject(selectedTile,
-					new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
+		if(debugMode) {
+			if (selectedTile != null) {
+				Main.gameLoop.createGameObject(selectedTile,
+						new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
+			}
 		}
 	}
 

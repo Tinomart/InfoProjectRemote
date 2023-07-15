@@ -19,11 +19,12 @@ public abstract class Structure extends GameObject implements TileBased, Damagea
 	public Tile[] tiles;
 	private GameLoop gameLoop;
 	public TileGrid tileGrid;
-	public static HashMap<Class<? extends Resource>, Integer> cost = new HashMap<>();
 
+	// initialize ResourceCost. This is done statically, as we need to be able to
+	// access them in a static context
+	public static HashMap<Class<? extends Resource>, Integer> cost = new HashMap<>();
 	static {
-	    cost.put(Gold.class, 10);
-	    // Add more key-value pairs as needed
+		cost.put(Gold.class, 10);
 	}
 
 	// Structures can be attack Attacked and destroyed, which means they need health
@@ -32,7 +33,7 @@ public abstract class Structure extends GameObject implements TileBased, Damagea
 	private int health;
 
 	// we need a healthbar to display that health
-	private Color healthBarColor = new Color(25,190, 25, 255);
+	private Color healthBarColor = new Color(25, 190, 25, 255);
 	private int healthBarWidth;
 	private RectangleComponent healthBar;
 
@@ -50,16 +51,18 @@ public abstract class Structure extends GameObject implements TileBased, Damagea
 	// health bar
 	@Override
 	public void setHealth(int health) {
-		//save how much percent of the health is already missing
+		// save how much percent of the health is already missing
 		double healthPercent = (double) health / (double) maxHealth;
 		this.health = health;
-		//set the healthbar's width to be the original width times the remaing healthPercent
-		healthBar.setBounds(healthBar.getX(), healthBar.getY(), (int) (healthBarWidth * healthPercent), healthBar.getHeight());
+		// set the healthbar's width to be the original width times the remaing
+		// healthPercent
+		healthBar.setBounds(healthBar.getX(), healthBar.getY(), (int) (healthBarWidth * healthPercent),
+				healthBar.getHeight());
 	}
 
 	@Override
 	public void reduceHealth(int health) {
-		//use setHealth, so that the healthbarchanges are immediately visible
+		// use setHealth, so that the healthbarchanges are immediately visible
 		setHealth(this.health - health);
 	}
 
@@ -104,12 +107,12 @@ public abstract class Structure extends GameObject implements TileBased, Damagea
 
 	@Override
 	public void update() {
-		
-		//display healthbar as soon as the structure has taken damage
-		if(health != maxHealth) {
+
+		// display healthbar as soon as the structure has taken damage
+		if (health != maxHealth) {
 			gameLoop.panels.get(PanelType.MainPanel).add(healthBar);
 		}
-		
+
 		// as soon as a strucutre dies aka their health goes to 0 or below that the
 		// strucutre will be destroyed automatically
 		if (health <= 0) {
@@ -142,30 +145,30 @@ public abstract class Structure extends GameObject implements TileBased, Damagea
 			}
 		}
 	}
-	
+
 	public static boolean applyCost(GameLoop gameLoop, HashMap<Class<? extends Resource>, Integer> cost) {
 		boolean canAfford = true;
-		for (Class<? extends Resource > resourceClass : cost.keySet()) {
+		for (Class<? extends Resource> resourceClass : cost.keySet()) {
 			for (Resource resource : gameLoop.resources) {
-				if(resource.getClass() == resourceClass) {
-					if(resource.getAmount() < cost.get(resourceClass)) {
+				if (resource.getClass() == resourceClass) {
+					if (resource.getAmount() < cost.get(resourceClass)) {
 						canAfford = false;
 					}
 				}
 			}
 		}
-		if(canAfford) {
-			for (Class<? extends Resource > resourceClass : cost.keySet()) {
+		if (canAfford) {
+			for (Class<? extends Resource> resourceClass : cost.keySet()) {
 				for (Resource resource : gameLoop.resources) {
-					if(resource.getClass() == resourceClass) {
+					if (resource.getClass() == resourceClass) {
 						resource.changeAmount(-cost.get(resourceClass));
 					}
 				}
 			}
 		}
-		
+
 		return canAfford;
-		
+
 	}
 
 	// specific toString used for storing structures in the save file, containing

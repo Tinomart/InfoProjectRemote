@@ -70,7 +70,7 @@ public class Watchtower extends Structure {
 	public void draw(Graphics g) {
 		super.draw(g);
 		if(target != null) {
-			g.setColor(new Color(255, 0, 0, 255));
+			g.setColor(new Color(25, 220, 25, 255));
 			g.drawLine(position.x + getSprite().size.x/2, position.y + getSprite().size.y/2, target.position.x + target.getSprite().size.x/2, target.position.y + target.getSprite().size.x/2);
 		}
 	}

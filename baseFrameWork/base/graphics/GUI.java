@@ -38,6 +38,7 @@ public class GUI {
 		Main.gameWindow.setPanel(PanelType.MainPanel);
 		Main.gameWindow.setPanel(PanelType.InGameGUI);
 		Main.gameWindow.setPanel(PanelType.MainMenu, false);
+		Main.gameLoop.setPaused(false);
 	}
 	
 	private static void mainMenuButtonPress(ActionEvent e) {
