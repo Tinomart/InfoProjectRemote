@@ -171,7 +171,7 @@ public class GUI {
 		
 		//for resizing the image
 		int imageWidth = 200;
-		int imageHeight = 100;
+		int imageHeight = 70;
 		Image scaledContinueImage = continueImage.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
 		//in game Menu with Quit, etc.
 		
@@ -197,6 +197,7 @@ public class GUI {
 		mainMenuButton.setContentAreaFilled(false);
 		mainMenuButton.setIcon(new ImageIcon(scaledMainMenuImage));
 		mainMenuButton.addActionListener(e -> mainMenuButtonPress(e));
+		
 		JPanel buttonPanel = new JPanel(); // Create a new panel to hold the buttons
 	    buttonPanel.setOpaque(false);
 	    buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS)); // Set vertical BoxLayout for the button panel
@@ -212,7 +213,9 @@ public class GUI {
 	    gbc.weightx = 1.0;
 	    gbc.weighty = 1.0;
 	    gbc.fill = GridBagConstraints.CENTER;
-	    panel.add(buttonPanel, gbc); // Add the button panel using GridBagConstraints
+	    
+	 // Add the button panel using GridBagConstraints
+	    panel.add(buttonPanel, gbc); 
 		
 		
 		
@@ -230,9 +233,19 @@ public class GUI {
 	    wavePanel.setOpaque(false);
 	    wavePanel.setBorder(BorderFactory.createLineBorder(Color.CYAN, 4, true));
 	    
+	    ImageIcon nextWaveIcon = new ImageIcon("res/fonts/next wave.jpg");
+	    Image nextWaveImage = nextWaveIcon.getImage();	
+	    
+	    Image resizedNextWaveImage = nextWaveImage.getScaledInstance(130, 60, Image.SCALE_SMOOTH);
+	    //create imageIcon with resized image
+	    ImageIcon resizedNextWaveIcon = new ImageIcon(resizedNextWaveImage);
+	    
 	    //Creating the continue-Wave-Button
-	    JButton continueWaveButton = new JButton("Continue Wave");
-	    continueWaveButton.setPreferredSize(new Dimension(170, 50));
+	    JButton continueWaveButton = new JButton(resizedNextWaveIcon);
+	    continueWaveButton.setPreferredSize(new Dimension(200, 60));
+	    continueWaveButton.setOpaque(false);
+	    continueWaveButton.setBorderPainted(false);
+	    continueWaveButton.setContentAreaFilled(false);
 	    
 	    //adding the continue-Wave Button to the wavePanel
 	    wavePanel.add(continueWaveButton);
