@@ -277,7 +277,7 @@ public class GUI {
 	    //different buttons for the userPanel on the left side of the Game
 	    JButton cityHallButton = new JButton("Cityhall");	    
 	    JButton houseButton = new JButton("House");
-	    JButton defenseTowerButton = new JButton("Defensetower");
+	    JButton watchTowerButton = new JButton("Watchtower");
 	    JButton templeButton = new JButton("Temple");
 	    JButton statueButton = new JButton("Statue");
 	    
@@ -285,8 +285,8 @@ public class GUI {
 	    //customize the Buttons; later on we can add images to them
 	    houseButton.setFont(new Font("Arial", Font.ITALIC, 10));
 	    houseButton.setPreferredSize(new Dimension(100, 60));
-	    defenseTowerButton.setFont(new Font("Arial", Font.ITALIC, 10));
-	    defenseTowerButton.setPreferredSize(new Dimension(100, 60));
+	    watchTowerButton.setFont(new Font("Arial", Font.ITALIC, 10));
+	    watchTowerButton.setPreferredSize(new Dimension(100, 60));
 	    templeButton.setFont(new Font("Arial", Font.ITALIC, 10));
 	    templeButton.setPreferredSize(new Dimension(100, 60));
 	    cityHallButton.setFont(new Font ("Arial", Font.ITALIC, 10));
@@ -297,7 +297,7 @@ public class GUI {
 	    
 	    //ActionListener for each Object
 	    continueWaveButton.addActionListener(e -> continueWaveButtonPress(e));
-	    defenseTowerButton.addActionListener(e -> defenseTowerButtonPress(e, panel));
+	    watchTowerButton.addActionListener(e -> defenseTowerButtonPress(e, panel));
 	    houseButton.addActionListener(e -> houseButtonPress(e, panel));
 	    templeButton.addActionListener(e -> templeButtonPress(e, panel));
 	    cityHallButton.addActionListener(e -> cityHallButtonPress(e, panel));
@@ -305,7 +305,7 @@ public class GUI {
 	    
 	    //adding the object-buttons to the userPanel
 	    userPanel.add(houseButton);
-	    userPanel.add(defenseTowerButton);
+	    userPanel.add(watchTowerButton);
 	    userPanel.add(templeButton);
 	    userPanel.add(cityHallButton);
 	    userPanel.add(statueButton);

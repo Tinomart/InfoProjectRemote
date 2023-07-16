@@ -193,7 +193,9 @@ public abstract class Character extends GameObject implements Damageable {
 		// tiles
 		if (nonSolidTiles.size() != 0) {
 			int chosenTileIndex = (int) Math.ceil(defaultMoveDirection * nonSolidTiles.size());
-			return nonSolidTiles.get(chosenTileIndex);
+			if(chosenTileIndex > nonSolidTiles.size()) {
+				return nonSolidTiles.get(chosenTileIndex);
+			}
 		}
 
 		// else just return null

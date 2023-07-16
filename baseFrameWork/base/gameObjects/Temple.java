@@ -1,14 +1,22 @@
 package base.gameObjects;
 
 import java.awt.Point;
+import java.util.HashMap;
 
+import base.Gold;
+import base.Resource;
 import base.graphics.*;
 
 public class Temple extends Structure {
 	
 	public static Point[] shape = new Point[] {new Point(1,0),new Point(0,1),new Point(1,1),};
 	
+	public static HashMap<Class<? extends Resource>, Integer> cost = new HashMap<>();
 
+	static {
+	    cost.put(Gold.class, 10);
+	    // Add more key-value pairs as needed
+	}
 	
 	public Temple(Point position, TileGrid tileGrid) {
 		super(initializeTiles(position, tileGrid), initializeMainTile(position, tileGrid), tileGrid);

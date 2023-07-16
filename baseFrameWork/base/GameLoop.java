@@ -256,29 +256,31 @@ public class GameLoop implements Runnable {
 			panels.get(PanelType.InGameGUI).requestFocus();
 			panels.get(PanelType.InGameGUI).inputManager.readInputs();
 			
-			if(gameHasLoaded ) {
-				// add all gameObjects that are in added objects, but not in gameObjects
-				// anymore, and add them to the objects that need to be removed later in
-				// gamePanel.drawComponent, again to avoid the ungodly amount of concurrent
-				// modification exceptions
-				GamePanel panel = panels.get(PanelType.MainPanel);
-				Iterator<GameObject> iterator = panel.addedObjects.iterator();
-				while (iterator.hasNext()) {
-					GameObject gameObject = iterator.next();
-					if (!Main.gameLoop.gameObjects.contains(gameObject)) {
-						panel.removedObjects.add(gameObject);
-					}
-				}
+			if(gameHasLoaded) {
 				
+				GamePanel panel = panels.get(PanelType.MainPanel);
 				// communicate with the mainpanel and make it know all different gameObjects
 				// that should be drawn on it by adding them to addedObjects
-				iterator = gameObjects.iterator();
+				Iterator<GameObject> iterator = gameObjects.iterator();
 				while (iterator.hasNext()) {
 					GameObject gameObject = iterator.next();
 					if (gameObject.getPanelToDrawOn() == PanelType.MainPanel
 							&& !(panel.addedObjects.contains(gameObject))) {
 		
 						panel.addedObjects.add(gameObject);
+					}
+				}
+				
+				// add all gameObjects that are in added objects, but not in gameObjects
+				// anymore, and add them to the objects that need to be removed later in
+				// gamePanel.drawComponent, again to avoid the ungodly amount of concurrent
+				// modification exceptions
+				
+				iterator = panel.addedObjects.iterator();
+				while (iterator.hasNext()) {
+					GameObject gameObject = iterator.next();
+					if (!Main.gameLoop.gameObjects.contains(gameObject)) {
+						panel.removedObjects.add(gameObject);
 					}
 				}
 		
