@@ -56,15 +56,6 @@ public class GameObject extends GameEntity implements Drawable {
 	
 	}
 
-
-
-
-
-
-	
-	
-	
-	
 	@Override
 	public void update() {
 		
@@ -101,6 +92,17 @@ public class GameObject extends GameEntity implements Drawable {
 			default:
 				return position;
 		}
+	}
+	
+	public boolean collisionWith(GameObject gameObject) {
+		boolean isColliding = false;
+		for (Corner corner : Corner.values()) {
+			if(gameObject.getPosition().x < getPosition(corner).x && gameObject.getPosition(Corner.bottomright).x > getPosition(corner).x && gameObject.getPosition().y < getPosition(corner).y && gameObject.getPosition(Corner.bottomright).y > getPosition(corner).y) {
+				isColliding = true;
+			}
+		}
+		
+		return isColliding;
 	}
 	
 

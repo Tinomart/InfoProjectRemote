@@ -182,7 +182,7 @@ public class SpriteLoader {
 		TempleBottomRightSprite.loadImage("res/TempleBottomRight.png");
 		sprites.put(SpriteType.TempleBottomRightSprite, TempleBottomRightSprite);
 		
-		Sprite LightningSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		Sprite LightningSprite = new Sprite(new Point(100, 100));
 		LightningSprite.loadImage("res/Lightning.png");
 		sprites.put(SpriteType.LightningSprite, LightningSprite);
 		

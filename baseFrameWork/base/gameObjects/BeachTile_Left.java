@@ -13,7 +13,6 @@ public class BeachTile_Left extends Tile {
 
 		super(tilePosition, tileGrid, new Sprite(new Point(0, 0)));
 		spriteType = SpriteType.BeachTile_LeftSprite;
-		this.solid = true;
 	}
 
 	public String toString() {

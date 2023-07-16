@@ -30,7 +30,7 @@ public abstract class Structure extends GameObject implements TileBased, Damagea
 	// Structures can be attack Attacked and destroyed, which means they need health
 	// and MaxHealth
 	private int maxHealth = 100;
-	private int health;
+	protected int health;
 
 	// we need a healthbar to display that health
 	private Color healthBarColor = new Color(25, 190, 25, 255);
@@ -81,7 +81,7 @@ public abstract class Structure extends GameObject implements TileBased, Damagea
 		health = maxHealth;
 		// initiailze health bar to be the size of the amount of tiles and be positioned
 		// at the middle of the mainTile horizontal and slightly above it vertically
-		this.healthBar = new RectangleComponent(mainTile.position.x - mainTile.tileGrid.tileSize / 2,
+		this.healthBar = new RectangleComponent(mainTile.position.x + mainTile.tileGrid.tileSize/2 - healthBarWidth/2,
 				mainTile.position.y - 7, healthBarWidth, 5, healthBarColor);
 		// set all of the tiles to have this as their structure, this is used as a check
 		// to see if tiles are part of a structure and potential to interact with it

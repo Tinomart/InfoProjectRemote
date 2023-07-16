@@ -1,6 +1,7 @@
 package base.input;
 
 import java.awt.event.KeyEvent;
+
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayDeque;
@@ -12,8 +13,10 @@ import javax.swing.JPanel;
 import base.Resource;
 import base.GameLoop.Direction;
 import base.gameObjects.*;
-
+import base.graphics.GUI;
 import base.graphics.GamePanel.PanelType;
+import base.graphics.SpriteLoader.SpriteType;
+import base.graphics.Sprite;
 import base.input.Input.InputType;
 import game.Main;
 
@@ -30,11 +33,12 @@ public class InputManager {
 	public Class<? extends Tile> selectedTile;
 	public Class<? extends Structure> selectedStructure;
 
-//	public double zoomSpeed = 0.025;
-//	private double zoomFactor = .0;
 	public int maxTileSize = 40;
 	public int minTileSize = 8;
 	private boolean debugMode = false;
+
+	private Point mouseMapPosition;
+	private Point mouseTilePosition;
 
 	public InputManager(JPanel panel) {
 		this.panel = panel;
@@ -63,11 +67,11 @@ public class InputManager {
 				executeRightPress();
 			} else if (input.currentInput.contains(InputType.keypress) && input.pressedKeys != null) {
 				Iterator<Integer> iterator = input.pressedKeys.iterator();
-				while(iterator.hasNext()) {
+				while (iterator.hasNext()) {
 					int key = iterator.next();
 					executeKeyPress(key);
 				}
-				
+
 			}
 
 		}
@@ -79,100 +83,12 @@ public class InputManager {
 		}
 
 		addHoveredTiles();
-//		if (input.scrollAmount != 0) {
-//			zoom(zoomSpeed);
-//		}
+
 		Main.gameWindow.repaint();
 	}
 
-//	private void zoom(double zoomSpeed2) {
-//		boolean zoomAmountIsLargeEnough = true;
-//		boolean zoomMaxReached = false;
-//		boolean zoomMinReached = false;
-//		int positionDeltaX = 0;
-//		int positionDeltaY = 0;
-//		int sizeDeltaX = 0;
-//		int sizeDeltaY = 0;
-//		int tileSizeDelta = 0;
-//		
-//		for (GameObject gameObject : Main.gameLoop.gameObjects) {
-//			positionDeltaX = (int)(zoomFactor*gameObject.getPosition().x);
-//			positionDeltaY = (int)(zoomFactor*gameObject.getPosition().y);
-//			sizeDeltaX = (int)(zoomFactor*gameObject.getSprite().size.x);
-//			sizeDeltaY = (int)(zoomFactor*gameObject.getSprite().size.y);
-//			tileSizeDelta = (int)(zoomFactor*Main.tileGrid.tileSize);
-//			if(!(sizeDeltaX > 0 && sizeDeltaY > 0 && tileSizeDelta > 0)) {
-//				zoomAmountIsLargeEnough = false;
-//				zoomFactor += zoomSpeed2;
-//			} 
-//		}
-//		if(Main.tileGrid.tileSize + tileSizeDelta >= maxTileSize) {
-//			zoomMaxReached = true;
-//		} else {
-//			zoomMaxReached = false;
-//		}
-//		
-//		if(Main.tileGrid.tileSize - tileSizeDelta <= minTileSize) {
-//			zoomMinReached = true;
-//		} else {
-//			zoomMinReached = false;
-//		}
-//		
-//		if(zoomAmountIsLargeEnough) {
-//			for (GameObject gameObject : Main.gameLoop.gameObjects) {
-//				positionDeltaX = (int)(zoomFactor*gameObject.getPosition().x);
-//				positionDeltaY = (int)(zoomFactor*gameObject.getPosition().y);
-//				sizeDeltaX = (int)(zoomFactor*gameObject.getSprite().size.x);
-//				sizeDeltaY = (int)(zoomFactor*gameObject.getSprite().size.y);
-//				tileSizeDelta = (int)(zoomFactor*Main.tileGrid.tileSize);
-//				
-//				if(input.scrollAmount < 0) {
-//					if(!zoomMaxReached) {
-//			 			Main.tileGrid.tileSize += tileSizeDelta;
-//					}
-//				} 	else {
-//					if(!zoomMinReached) {
-//						Main.tileGrid.tileSize -= tileSizeDelta;
-//					}	
-//				}
-//				
-//				if(input.scrollAmount < 0) {
-//					if(!zoomMaxReached) {
-//						gameObject.getPosition().x += positionDeltaX;
-//						gameObject.getPosition().y += positionDeltaY;
-//						gameObject.getSprite().size.x += sizeDeltaX;
-//						gameObject.getSprite().size.y += sizeDeltaY;
-//					}
-//					
-//				} else {
-//					if(!zoomMinReached) {
-//						gameObject.getPosition().x -= positionDeltaX;
-//						gameObject.getPosition().y -= positionDeltaY;
-//						gameObject.getSprite().size.x -= sizeDeltaX;
-//						gameObject.getSprite().size.y-= sizeDeltaY;
-//					}
-//					
-//				}
-//				if(gameObject instanceof Tile) {
-//					((Tile) gameObject).highlightSquare.setBounds(gameObject.getPosition().x, gameObject.getPosition().y, Main.tileGrid.tileSize, Main.tileGrid.tileSize);
-//				}
-//				zoomFactor = zoomSpeed2;
-//			}
-//			panel.revalidate();
-//			Main.gameWindow.revalidate();
-//			Main.gameWindow.repaint();
-//		} else {
-//	    	zoomFactor += zoomSpeed2;
-//		}
-//		
-//		zoomAmountIsLargeEnough = true;
-//		input.scrollAmount = 0;
-//		
-//		
-//	}
-
 	private void executeKeyPress(int key) {
-		// TODO: Tell the game what to do once a certain key is pressed
+		// Tell the game what to do once a certain key is pressed
 		// what is after KeyEvent.VK_ is the key being pressed
 
 		switch (key) {
@@ -197,7 +113,7 @@ public class InputManager {
 	}
 
 	private void executeClicks(int releasedInput) {
-		// TODO: Tell the game what to do once a certain key is clicked
+		// Tell the game what to do once a certain key is clicked
 		// what is after KeyEvent.VK_ is the key being clicked
 		switch (releasedInput) {
 
@@ -225,8 +141,9 @@ public class InputManager {
 			}
 			break;
 
-		// all of these set keybinds is selecting different tiles fo map building, if we
-		// dont have it selected already, if we do simply unselect it
+		// all of these set key binds is selecting different tiles for map building, if
+		// we dont have it selected already, if we do simply unselect it, they will only
+		// be relevant if we are in debug mode
 
 		case KeyEvent.VK_1:
 			if (selectedTile != GrassTile.class) {
@@ -340,58 +257,8 @@ public class InputManager {
 				selectedTile = null;
 			}
 			break;
-		case KeyEvent.VK_B:
-			if (selectedStructure != CityHall.class) {
-				selectedStructure = CityHall.class;
-			} else {
-				selectedStructure = null;
-			}
-			break;
-		case KeyEvent.VK_Y:
-			if (selectedStructure != PolisHouse.class) {
-				selectedStructure = PolisHouse.class;
-			} else {
-				selectedStructure = null;
-			}
-			break;
-		case KeyEvent.VK_X:
-			if (selectedStructure != Watchtower.class) {
-				selectedStructure = Watchtower.class;
-			} else {
-				selectedStructure = null;
-			}
-			break;
-		case KeyEvent.VK_C:
-			if (selectedStructure != Watchtower.class) {
-				selectedStructure = Watchtower.class;
-			} else {
-				selectedStructure = null;
-			}
-			break;
-		case KeyEvent.VK_V:
-			if (selectedStructure != Statue.class) {
-				selectedStructure = Statue.class;
-			} else {
-				selectedStructure = null;
-			}
-			break;
-		case KeyEvent.VK_N:
-			if (selectedStructure != Temple.class) {
-				selectedStructure = Temple.class;
-			} else {
-				selectedStructure = null;
-			}
-			break;
-		case KeyEvent.VK_ENTER:
-			if(Main.gameLoop.currentWaveCount == 0) {
-				Main.gameLoop.combatPhase =  true;
-				Main.gameLoop.waves.get(Main.gameLoop.currentWaveCount).begin();
-			}
-			
-			if (!Main.gameLoop.isCombatPhase()) {
-				Main.gameLoop.setCombatPhase(true);;
-			}
-			break;
+
+//		F2 enables debug mode, letting you edit the map with non structures and disabling all resource consumption
 		case KeyEvent.VK_F2:
 			if (!debugMode) {
 				debugMode = true;
@@ -408,70 +275,126 @@ public class InputManager {
 
 	@SuppressWarnings("unchecked")
 	private void executeRightClick() {
+		// if we have a structure selected and only pressing right click, place the
+		// structure.
+		boolean placeable = true;
+		// if we are hovering a structure, then we cannot place it, so set he placable
+		// boolean to false
+		for (Tile tile : currentHoveredTiles) {
+			if (tile.structure != null) {
+				placeable = false;
+			}
+		}
+
 		// if we are holding shift and are hovering a structure, destroy it
-		if(!Main.gameLoop.isCombatPhase()){
+		if (!Main.gameLoop.isCombatPhase()) {
 			if (input.pressedKeys.contains(KeyEvent.VK_SHIFT)) {
 				for (Tile tile : currentHoveredTiles) {
 					if (tile.structure != null) {
 						Main.gameLoop.destroyGameObject(tile.structure);
 					}
 				}
-			} else if (selectedStructure != null) {
-				// if we have a structure selected and only pressing right click, place the
-				// structure.
-				boolean placeable = true;
-				// if we are hovering a structure, then we cannot place it, so set he placable
-				// boolean to false
-				for (Tile tile : currentHoveredTiles) {
-					if (tile.structure != null) {
-						placeable = false;
+			} else if (selectedStructure == CityHall.class) {
+				// Before placing other tiles there needs to be a city hall we can also only
+				// place a city hall if one does not already exist
+				if (Main.gameLoop.cityHall == null) {
+					if (placeable) {
+						// apply costs if we are not in debug mod
+						if (!debugMode) {
+							if (Structure.applyCost(Main.gameLoop, CityHall.cost)) {
+								// if our CityHall is placable, create it, where our current mouse cursor is
+								Main.gameLoop.createGameObject(CityHall.class, new Object[] {
+										currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
+							}
+						} else {
+							// ignore cost in debug mode
+							Main.gameLoop.createGameObject(CityHall.class,
+									new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
+						}
 					}
 				}
-				
+			} else if (selectedStructure != null) {
+
 				HashMap<Class<? extends Resource>, Integer> cost = null;
 				try {
-					
+
 					// if we have a structure selected, set the cursor shape to its shape
-					cost = (HashMap<Class<? extends Resource>, Integer>) selectedStructure.getDeclaredField("cost").get(null);
-					
-				} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+					cost = (HashMap<Class<? extends Resource>, Integer>) selectedStructure.getDeclaredField("cost")
+							.get(null);
+
+				} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException
+						| SecurityException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-				if(cost != null && placeable) {
-					if(Structure.applyCost(Main.gameLoop, cost)) {
-						// if our structure is placable, create it, where our current mouse cursor is
+
+				if (cost != null && placeable) {
+					if (!debugMode) {
+						if (Structure.applyCost(Main.gameLoop, cost)) {
+							// if our structure is placable, create it, where our current mouse cursor is
+							Main.gameLoop.createGameObject(selectedStructure,
+									new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
+							//immediately give the player some faith, so he can cast spells immediately
+							if(selectedStructure == Temple.class) {
+								Main.gameLoop.resources[1].changeAmount(5);
+							}
+						}
+					} else {
+						// ignore cost if we are in debug mode
 						Main.gameLoop.createGameObject(selectedStructure,
-						new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
+								new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
 					}
+		
 				}
-				
-				
-				
+
 			}
 		}
 
 	}
 
 	private void executeLeftClick() {
-		// if we have a tile selected, create that tile and place it where our cursor
-		// currently is
-		if(debugMode) {
-			if (selectedTile != null) {
-				Main.gameLoop.createGameObject(selectedTile,
-						new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
+		if (!Main.gameLoop.getGameOver()) {
+			// if we have a tile selected, create that tile and place it where our cursor
+			// currently is
+			if (debugMode) {
+				if (selectedTile != null) {
+					Main.gameLoop.createGameObject(selectedTile,
+							new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
+				}
+			} else {
+				if (Main.gameLoop.doesTempleExist() && Main.gameLoop.isSpellSelected()) {
+					if (Structure.applyCost(Main.gameLoop, Lightning.cost)) {
+						// if we have enough faith create a lightning spell, where our current mouse
+						// cursor is
+						Sprite lightningSprite = Main.gameLoop.getSpriteLoader().sprites
+								.get(SpriteType.LightningSprite);
+						Point positionToPlace = new Point(mouseMapPosition.x - lightningSprite.size.x / 2,
+								mouseMapPosition.y - lightningSprite.size.y / 2);
+						Main.gameLoop.createGameObject(Lightning.class,
+								new Object[] { positionToPlace, Main.gameLoop });
+					}
+				}
 			}
+		} else {
+			// if the game is over, once the player clicks the left mouse button, send him
+			// back to the main menu
+			Main.gameWindow.setPanel(PanelType.MainMenu);
+			for (PanelType panelType : PanelType.values()) {
+				if (panelType != PanelType.MainMenu) {
+					Main.gameWindow.setPanel(panelType, false);
+				}
+			}
+			Main.gameWindow.setPanel(PanelType.MainMenu);
 		}
 	}
 
 	private void executeRightPress() {
-		// TODO: Tell the game what to do if the right mouse button is pressed
+		// Tell the game what to do if the right mouse button is pressed
 
 	}
 
 	private void executeLeftPress() {
-		// TODO: Tell the game what to do if the left mouse button is pressed
+		// Tell the game what to do if the left mouse button is pressed
 
 	}
 
@@ -488,8 +411,11 @@ public class InputManager {
 		// the window right now
 		int xPositionOnPanel = input.mousePositionInWindow.x + Main.gameLoop.cameraPosition.x;
 		int yPositionOnPanel = input.mousePositionInWindow.y + Main.gameLoop.cameraPosition.y;
+
+		mouseMapPosition = new Point(xPositionOnPanel, yPositionOnPanel);
+
 		// calculate its tile Position
-		Point mouseTilePosition = new Point(xPositionOnPanel / Main.tileGrid.tileSize,
+		mouseTilePosition = new Point(xPositionOnPanel / Main.tileGrid.tileSize,
 				yPositionOnPanel / Main.tileGrid.tileSize);
 
 		// stores the shape of the currently hovering cursor

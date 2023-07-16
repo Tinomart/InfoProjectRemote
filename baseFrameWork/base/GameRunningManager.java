@@ -2,6 +2,7 @@ package base;
 
 import base.graphics.*;
 import base.graphics.GamePanel.PanelType;
+import game.Main;
 
 public class GameRunningManager {
 	

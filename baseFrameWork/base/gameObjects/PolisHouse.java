@@ -15,8 +15,8 @@ public class PolisHouse extends Structure implements ResourceGenerating {
 	public static HashMap<Class<? extends Resource>, Integer> cost = new HashMap<>();
 
 	static {
+		//initilaizing resource cost
 	    cost.put(Gold.class, 10);
-	    // Add more key-value pairs as needed
 	}
 	
 	private int goldGenerationAmount = 15;
@@ -26,6 +26,8 @@ public class PolisHouse extends Structure implements ResourceGenerating {
 		
 	}
 
+	//common code needed to make sure all tiles are correctly assigned in the constructor,
+	//this has to be done because we want all tiles to be saved within the Structure definition itself
 	private static Tile initializeMainTile(Point position, TileGrid tileGrid) {
 		return tileGrid.tileMap.get(position);
 	}

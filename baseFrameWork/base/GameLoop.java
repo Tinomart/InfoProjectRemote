@@ -12,9 +12,14 @@ import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.*;
+
+import base.graphics.GUI;
 import base.graphics.GamePanel;
 import base.gameObjects.GameObject;
 import base.gameObjects.PureGrassTile;
+import base.gameObjects.Spell;
+import base.gameObjects.Temple;
 import base.gameObjects.Tile;
 import base.gameObjects.Watchtower;
 import base.gameObjects.Enemy_1;
@@ -43,6 +48,7 @@ public class GameLoop implements Runnable {
 
 	public HashMap<PanelType, GamePanel> panels;
 	private GamePanel mainPanel;
+	private JPanel gameOverPanel = new JPanel(new BorderLayout());
 
 	public ArrayDeque<GameObject> gameObjects = new ArrayDeque<GameObject>();
 	public ArrayDeque<GameObject> gameObjectsToRemove = new ArrayDeque<GameObject>();
@@ -54,11 +60,56 @@ public class GameLoop implements Runnable {
 	// otherwise should happen everytime we set it
 	public boolean combatPhase = false;
 	private boolean paused = true;
+	private boolean gameOver = false;
+
+	public boolean getGameOver() {
+		return gameOver;
+	}
+
+	// method for displaying Game Over
+	public void setGameOver(boolean gameOver) {
+		GamePanel panel = panels.get(PanelType.InGameGUI);
+		if (gameOver = true) {
+
+			gameOverPanel.setOpaque(false);
+
+			// creating the Game-Over-Label with custom font
+			JLabel gameOverLabel = new JLabel("Game Over");
+			gameOverLabel.setFont(GUI.pythia);
+			gameOverLabel.setForeground(Color.RED);
+
+			// creating the Panel where the Label will be placed
+			JPanel centerGameOverPanel = new JPanel();
+			centerGameOverPanel.setOpaque(false);
+			centerGameOverPanel.add(gameOverLabel, BorderLayout.CENTER);
+
+			// adding the centerGameOverPanel to the gameOverPanel and putting it to the
+			// center
+			gameOverPanel.add(centerGameOverPanel, BorderLayout.CENTER);
+
+			// adding the gameOverPanel to the normal panel
+			panel.add(gameOverPanel, BorderLayout.CENTER);
+
+			// revalidating and repainting to reflect changes
+			panel.revalidate();
+			window.revalidate();
+			window.repaint();
+		} else {
+			// remove the panel again, so that if we plan to continue the game, we dont
+			// accidentally have the game over text still visible
+			panel.remove(gameOverPanel);
+		}
+		this.gameOver = gameOver;
+	}
 
 	private boolean gameHasLoaded = false;
 
 	public boolean hasGameLoaded() {
 		return gameHasLoaded;
+	}
+
+	public void setGameLoaded(boolean gameHasLoaded) {
+		this.gameHasLoaded = gameHasLoaded;
 	}
 
 	public boolean isPaused() {
@@ -107,18 +158,38 @@ public class GameLoop implements Runnable {
 
 	private SpriteLoader spriteLoader = new SpriteLoader();
 
-	// if we need to ever add anything based on a specific frame
-	public int fpsCount;
-	
+	public SpriteLoader getSpriteLoader() {
+		return spriteLoader;
+	}
 
-	public int cameraSpeed = 7;
+	private int cameraSpeed = 7;
 
 	private Point spawnPoint = new Point(0, 0);
 	public Point cameraPosition = new Point(0, 0);
 
-	// resources
 	public Resource[] resources = new Resource[] { new Gold(20), new Faith(0) };
-	public Watchtower Watchtower;
+
+	// relevant for spellcasting we can only cast spells, if this is true, we may
+	// cast spells
+	private boolean templeExist = false;
+
+	public boolean doesTempleExist() {
+		return templeExist;
+	}
+
+	public void setTempleExist(boolean templeExist) {
+		this.templeExist = templeExist;
+	}
+
+	private boolean spellSelected = false;
+
+	public boolean isSpellSelected() {
+		return spellSelected;
+	}
+
+	public void setSpellSelected(boolean spellSelected) {
+		this.spellSelected = spellSelected;
+	}
 
 	public enum Direction {
 		up, left, down, right
@@ -168,7 +239,7 @@ public class GameLoop implements Runnable {
 			bonusEnemies.add(new Enemy_1(new Point((int) (Math.random() * window.getWidth()),
 					(int) (Math.random() * panels.get(PanelType.MainPanel).getHeight()))));
 		}
-		//add three random bonus enemies on top of that
+		// add three random bonus enemies on top of that
 		for (int i = 0; i < 3; i++) {
 			bonusEnemies.add(new Enemy_1(
 					new Point((int) (Math.random() * window.getWidth()), (int) (Math.random() * window.getHeight()))));
@@ -255,41 +326,40 @@ public class GameLoop implements Runnable {
 
 			panels.get(PanelType.InGameGUI).requestFocus();
 			panels.get(PanelType.InGameGUI).inputManager.readInputs();
-			
-			if(gameHasLoaded) {
-				
+
+			if (gameHasLoaded) {
+
 				GamePanel panel = panels.get(PanelType.MainPanel);
-				// communicate with the mainpanel and make it know all different gameObjects
-				// that should be drawn on it by adding them to addedObjects
-				Iterator<GameObject> iterator = gameObjects.iterator();
-				while (iterator.hasNext()) {
-					GameObject gameObject = iterator.next();
-					if (gameObject.getPanelToDrawOn() == PanelType.MainPanel
-							&& !(panel.addedObjects.contains(gameObject))) {
-		
-						panel.addedObjects.add(gameObject);
-					}
-				}
-				
 				// add all gameObjects that are in added objects, but not in gameObjects
 				// anymore, and add them to the objects that need to be removed later in
 				// gamePanel.drawComponent, again to avoid the ungodly amount of concurrent
 				// modification exceptions
-				
-				iterator = panel.addedObjects.iterator();
+				Iterator<GameObject> iterator = panel.addedObjects.iterator();
 				while (iterator.hasNext()) {
 					GameObject gameObject = iterator.next();
 					if (!Main.gameLoop.gameObjects.contains(gameObject)) {
 						panel.removedObjects.add(gameObject);
 					}
 				}
-		
+
+				// communicate with the mainpanel and make it know all different gameObjects
+				// that should be drawn on it by adding them to addedObjects
+				iterator = gameObjects.iterator();
+				while (iterator.hasNext()) {
+					GameObject gameObject = iterator.next();
+					if (gameObject.getPanelToDrawOn() == PanelType.MainPanel
+							&& !(panel.addedObjects.contains(gameObject))) {
+
+						panel.addedObjects.add(gameObject);
+					}
+				}
+
 				// only update the game if the game is not paused
 				if (!paused) {
 					updateGame();
 				}
 			}
-			// all iterations are dont, so now we actually remove all gameObjects, all to
+			// all iterations are done, so now we actually remove all gameObjects, all to
 			// fix the ungodly amount of concurrent modification exceptions I was dealing
 			// with constantly
 			for (GameObject gameObject : gameObjectsToRemove) {
@@ -405,7 +475,7 @@ public class GameLoop implements Runnable {
 			// if the file does not yet contain the gameObject we are trying to save, write
 			// the gameObjects toString into the file
 			for (GameObject gameObject : gameObjects) {
-				if (!waves.get(currentWaveCount).getCharacters().contains(gameObject)) {
+				if (!(waves.get(currentWaveCount).getCharacters().contains(gameObject) || gameObject instanceof Spell)) {
 					String objectString = gameObject.toString();
 					writer.write(objectString);
 				}
@@ -603,16 +673,14 @@ public class GameLoop implements Runnable {
 				// we didnt do that
 				if (gameObject instanceof TileBased) {
 					for (Tile tile : ((TileBased) gameObject).getTiles()) {
-						tile.getSprite().setImage(null);
 						createGameObject(PureGrassTile.class, new Object[] { tile.getTilePosition(), tile.tileGrid });
 					}
 				}
-//				else {
-//					// if the gameObject is not tile based, simply set its own sprite to null
-//					 gameObject.setSprite(null);
-//				}
 				if (gameObject instanceof Damageable) {
 					panels.get(PanelType.MainPanel).remove(((Damageable) gameObject).getHealthBar());
+				}
+				if (gameObject instanceof Temple) {
+					templeExist = false;
 				}
 				// remove the gameObject out of gameObjects, essentially making it non existant
 				// for the scope of our game
@@ -621,6 +689,8 @@ public class GameLoop implements Runnable {
 
 		}
 
+		// set the cityHall to null, this is an important step for checks concerning if
+		// the game is over or not
 		if (gameObjectToDestroy == cityHall) {
 			cityHall = null;
 		}
@@ -749,6 +819,4 @@ public class GameLoop implements Runnable {
 		}
 	}
 
-	// TODO: Add methods that change the game world on a basic level
-	// e.g Create Map, ChangeTile, AddEnemy, AddBuilding, etc.
 }
