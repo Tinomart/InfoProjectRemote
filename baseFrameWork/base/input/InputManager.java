@@ -368,6 +368,20 @@ public class InputManager {
 				selectedStructure = null;
 			}
 			break;
+		case KeyEvent.VK_V:
+			if (selectedStructure != Statue.class) {
+				selectedStructure = Statue.class;
+			} else {
+				selectedStructure = null;
+			}
+			break;
+		case KeyEvent.VK_N:
+			if (selectedStructure != Temple.class) {
+				selectedStructure = Temple.class;
+			} else {
+				selectedStructure = null;
+			}
+			break;
 		case KeyEvent.VK_ENTER:
 			if(Main.gameLoop.currentWaveCount == 0) {
 				Main.gameLoop.combatPhase =  true;

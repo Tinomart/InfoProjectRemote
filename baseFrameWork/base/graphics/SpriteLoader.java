@@ -19,7 +19,8 @@ public class SpriteLoader {
 		House_0_0_TileSprite,House_0_1_TileSprite, House_1_0_TileSprite, House_1_1_TileSprite, Enemy_1TileSprite,
 		WatchtowerTopSprite, WatchtowerBottomSprite,CityHallTopRightSprite,CityHallTopMidSprite,CityHallTopLeftSprite,
 		CityHallMidRightSprite,CityHallMidMidSprite,CityHallMidLeftSprite,CityHallBottomLeftSprite,CityHallBottomMidSprite,
-		CityHallBottomRightSprite,
+		CityHallBottomRightSprite,StatueSprite, TempleTopLeftSprite, TempleTopRightSprite, TempleBottomLeftSprite, 
+		TempleBottomRightSprite,
 
 	}
 
@@ -161,7 +162,25 @@ public class SpriteLoader {
 		CityHallBottomRightSprite.loadImage("res/CityHallBottomRight.png");
 		sprites.put(SpriteType.CityHallBottomRightSprite, CityHallBottomRightSprite);
 		
+		Sprite StatueSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		StatueSprite.loadImage("res/Statue.png");
+		sprites.put(SpriteType.StatueSprite, StatueSprite);
+
+		Sprite TempleTopLeftSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		TempleTopLeftSprite.loadImage("res/TempleTopLeft.png");
+		sprites.put(SpriteType.TempleTopLeftSprite, TempleTopLeftSprite);
 		
+		Sprite TempleTopRightSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		TempleTopRightSprite.loadImage("res/TempleTopRight.png");
+		sprites.put(SpriteType.TempleTopRightSprite, TempleTopRightSprite);
+		
+		Sprite TempleBottomLeftSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		TempleBottomLeftSprite.loadImage("res/TempleBottomLeft.png");
+		sprites.put(SpriteType.TempleBottomLeftSprite, TempleBottomLeftSprite);
+		
+		Sprite TempleBottomRightSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		TempleBottomRightSprite.loadImage("res/TempleBottomRight.png");
+		sprites.put(SpriteType.TempleBottomRightSprite, TempleBottomRightSprite);
 		
 	}
 }
