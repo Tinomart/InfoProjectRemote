@@ -397,7 +397,6 @@ public class InputManager {
 				debugMode = true;
 			} else {
 				debugMode = false;
-				System.out.println(debugMode);
 			}
 			break;
 		default:
@@ -446,7 +445,6 @@ public class InputManager {
 						Main.gameLoop.createGameObject(selectedStructure,
 						new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
 					}
-					System.out.println("remaining gold= " + Main.gameLoop.resources[0].getAmount());
 				}
 				
 				

@@ -45,7 +45,7 @@ public class GameLoop implements Runnable {
 	private GamePanel mainPanel;
 
 	public ArrayDeque<GameObject> gameObjects = new ArrayDeque<GameObject>();
-	private ArrayDeque<GameObject> gameObjectsToRemove = new ArrayDeque<GameObject>();
+	public ArrayDeque<GameObject> gameObjectsToRemove = new ArrayDeque<GameObject>();
 	public int currentWaveCount;
 	public ArrayList<Level> waves = new ArrayList<Level>();
 
@@ -54,6 +54,12 @@ public class GameLoop implements Runnable {
 	// otherwise should happen everytime we set it
 	public boolean combatPhase = false;
 	private boolean paused = true;
+
+	private boolean gameHasLoaded = false;
+
+	public boolean hasGameLoaded() {
+		return gameHasLoaded;
+	}
 
 	public boolean isPaused() {
 		return paused;
@@ -70,6 +76,7 @@ public class GameLoop implements Runnable {
 	// each time the combat phase is set certain things should apply, so this is
 	// longer than usual
 	public void setCombatPhase(boolean combatPhase) {
+		save();
 		if (combatPhase) {
 			// if we can switch to the next wave, because we havent passed the final wave,
 			// simply start the next wave
@@ -102,10 +109,7 @@ public class GameLoop implements Runnable {
 
 	// if we need to ever add anything based on a specific frame
 	public int fpsCount;
-	// the game will save every time this many seconds have passed
-	// file reading and writing operations are quite resource intensive, so
-	// I would suggest keeping this at the very lowest at 60 seconds;
-	private final int AUTO_SAVE_INTERVALL_IN_SECONDS = 100;
+	
 
 	public int cameraSpeed = 7;
 
@@ -251,47 +255,38 @@ public class GameLoop implements Runnable {
 
 			panels.get(PanelType.InGameGUI).requestFocus();
 			panels.get(PanelType.InGameGUI).inputManager.readInputs();
-
-			// save the game every time the time of ausaveintervallinseconds has passed and
-			// reset the fps count, to avoid the number from getting too big. I did this
-			// because I watched a video, about the game celeste, where a speedrun category
-			// where a glitch was used after waiting for 118 hours and completely break the
-			// game as information would get lost
-			if (fpsCount >= AUTO_SAVE_INTERVALL_IN_SECONDS * 60) {
-				save();
-				fpsCount = 0;
-			}
-
-			// communicate with the mainpanel and make it know all different gameObjects
-			// that should be drawn on it by adding them to addedObjects
-			GamePanel panel = panels.get(PanelType.MainPanel);
-			Iterator<GameObject> iterator = gameObjects.iterator();
-			while (iterator.hasNext()) {
-				GameObject gameObject = iterator.next();
-				if (gameObject.getPanelToDrawOn() == PanelType.MainPanel
-						&& !(panel.addedObjects.contains(gameObject))) {
-
-					panel.addedObjects.add(gameObject);
+			
+			if(gameHasLoaded ) {
+				// add all gameObjects that are in added objects, but not in gameObjects
+				// anymore, and add them to the objects that need to be removed later in
+				// gamePanel.drawComponent, again to avoid the ungodly amount of concurrent
+				// modification exceptions
+				GamePanel panel = panels.get(PanelType.MainPanel);
+				Iterator<GameObject> iterator = panel.addedObjects.iterator();
+				while (iterator.hasNext()) {
+					GameObject gameObject = iterator.next();
+					if (!Main.gameLoop.gameObjects.contains(gameObject)) {
+						panel.removedObjects.add(gameObject);
+					}
+				}
+				
+				// communicate with the mainpanel and make it know all different gameObjects
+				// that should be drawn on it by adding them to addedObjects
+				iterator = gameObjects.iterator();
+				while (iterator.hasNext()) {
+					GameObject gameObject = iterator.next();
+					if (gameObject.getPanelToDrawOn() == PanelType.MainPanel
+							&& !(panel.addedObjects.contains(gameObject))) {
+		
+						panel.addedObjects.add(gameObject);
+					}
+				}
+		
+				// only update the game if the game is not paused
+				if (!paused) {
+					updateGame();
 				}
 			}
-
-			// add all gameObjects that are in added objects, but not in gameObjects
-			// anymore, and add them to the objects that need to be removed later in
-			// gamePanel.drawComponent, again to avoid the ungodly amount of concurrent
-			// modification exceptions
-			iterator = panel.addedObjects.iterator();
-			while (iterator.hasNext()) {
-				GameObject gameObject = iterator.next();
-				if (!Main.gameLoop.gameObjects.contains(gameObject)) {
-					panel.removedObjects.add(gameObject);
-				}
-			}
-
-			// only update the game if the game is not paused
-			if (!paused) {
-				updateGame();
-			}
-
 			// all iterations are dont, so now we actually remove all gameObjects, all to
 			// fix the ungodly amount of concurrent modification exceptions I was dealing
 			// with constantly
@@ -479,6 +474,7 @@ public class GameLoop implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		gameHasLoaded = true;
 
 	}
 
