@@ -20,7 +20,7 @@ public class SpriteLoader {
 		WatchtowerTopSprite, WatchtowerBottomSprite,CityHallTopRightSprite,CityHallTopMidSprite,CityHallTopLeftSprite,
 		CityHallMidRightSprite,CityHallMidMidSprite,CityHallMidLeftSprite,CityHallBottomLeftSprite,CityHallBottomMidSprite,
 		CityHallBottomRightSprite,StatueSprite, TempleTopLeftSprite, TempleTopRightSprite, TempleBottomLeftSprite, 
-		TempleBottomRightSprite,
+		TempleBottomRightSprite,LightningSprite,
 
 	}
 
@@ -181,6 +181,10 @@ public class SpriteLoader {
 		Sprite TempleBottomRightSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
 		TempleBottomRightSprite.loadImage("res/TempleBottomRight.png");
 		sprites.put(SpriteType.TempleBottomRightSprite, TempleBottomRightSprite);
+		
+		Sprite LightningSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		LightningSprite.loadImage("res/Lightning.png");
+		sprites.put(SpriteType.LightningSprite, LightningSprite);
 		
 	}
 }
