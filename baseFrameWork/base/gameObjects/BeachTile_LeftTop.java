@@ -6,11 +6,11 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
-public class BeachTile_LeftTop extends Tile {
+public class BeachTile_LeftTop extends UnevenTile {
 
 	public BeachTile_LeftTop(Point tilePosition, TileGrid tileGrid) {
 
-		super(tilePosition, tileGrid, new Sprite(new Point(0, 0)));
+		super(tilePosition, tileGrid);
 		spriteType = SpriteType.BeachTile_LeftTopSprite;
 	}
 

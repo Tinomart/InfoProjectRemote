@@ -1,19 +1,18 @@
 package base.gameObjects;
 
+import java.awt.Color;
 import java.awt.Point;
 
 import base.graphics.Sprite;
-import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
-public class BeachTile_Right extends UnevenTile {
+public class UnevenTile extends Tile {
 
-	public BeachTile_Right(Point tilePosition, TileGrid tileGrid) {
-
-		super(tilePosition, tileGrid);
-		spriteType = SpriteType.BeachTile_RightSprite;
+	public UnevenTile(Point tilePosition, TileGrid tileGrid) {
+		super(tilePosition, tileGrid, new Sprite(new Point(0,0)));
+		highlightSquare.color = new Color(255, 0, 0, 125);
 	}
-
+	
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder("");
 		stringBuilder.append("base.gameObjects.").append(getClass().getSimpleName()).append(",")

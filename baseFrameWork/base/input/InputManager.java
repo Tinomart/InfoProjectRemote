@@ -281,7 +281,7 @@ public class InputManager {
 		// if we are hovering a structure, then we cannot place it, so set he placable
 		// boolean to false
 		for (Tile tile : currentHoveredTiles) {
-			if (tile.structure != null) {
+			if (tile.structure != null || tile instanceof UnevenTile) {
 				placeable = false;
 			}
 		}

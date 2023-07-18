@@ -6,11 +6,11 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
-public class WaterTile_Fish extends Tile {
+public class WaterTile_Fish extends UnevenTile {
 
 	public WaterTile_Fish(Point tilePosition, TileGrid tileGrid) {
 
-		super(tilePosition, tileGrid, new Sprite(new Point(0, 0)));
+		super(tilePosition, tileGrid);
 		spriteType = SpriteType.WaterTile_FishSprite;
 	}
 
