@@ -6,6 +6,8 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
+//Class for a Temple Tile used in the Temple structure
+
 public class TempleTopLeftTile extends StructureTile {
 
 	public TempleTopLeftTile(Point tilePosition, TileGrid tileGrid) {

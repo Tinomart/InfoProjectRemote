@@ -6,6 +6,8 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
+//Class for a CityHall Tile used in the CityHall structure
+
 public class CityHallBottomLeftTile extends StructureTile {
 
 	public CityHallBottomLeftTile(Point tilePosition, TileGrid tileGrid) {

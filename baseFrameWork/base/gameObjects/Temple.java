@@ -9,6 +9,10 @@ import base.Resource;
 import base.ResourceGenerating;
 import base.graphics.*;
 
+//The Temple is a Gameobject that gives you faith at the end of each wave and allows you to use spells. 
+//This Gameobject consists out of 4 Tiles Called "Temple+row+column" there is Top-Bottom row
+//and Left-Right column.
+
 public class Temple extends Structure implements ResourceGenerating {
 
 	public static Point[] shape = new Point[] { new Point(1, 0), new Point(0, 1), new Point(1, 1), };

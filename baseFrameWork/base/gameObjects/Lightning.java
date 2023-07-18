@@ -9,6 +9,9 @@ import base.Resource;
 import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 
+
+//Lightning spell that simply deals damage to enemies 
+
 public class Lightning extends Spell {
 	private int spellDamage = 75;
 	private int frameCount = 0;

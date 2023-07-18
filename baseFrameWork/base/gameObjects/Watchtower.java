@@ -9,6 +9,9 @@ import base.Gold;
 import base.Resource;
 import base.graphics.*;
 
+//The Watchtower is a Gameobject that attacks enemies in its range and is your primary defense structure 
+//This Gameobject consists out of 2 Tiles Called "Temple+Top/Bottom" 
+
 public class Watchtower extends Structure {
 	private int range = 300;
 	private int damage = 2;

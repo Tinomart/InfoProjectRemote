@@ -6,12 +6,15 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
+
+//Class for a background grass Tile with pebbles  
+
 public class GrassTile extends Tile {
 
 	public GrassTile(Point tilePosition, TileGrid tileGrid) {
 
 		super(tilePosition, tileGrid, new Sprite(new Point(0, 0)));
-		spriteType = SpriteType.GrassTileSprite;
+		spriteType = SpriteType.GrassTile_1Sprite;
 	}
 
 	public String toString() {

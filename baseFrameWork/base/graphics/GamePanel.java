@@ -128,44 +128,42 @@ public class GamePanel extends JPanel {
 
 	private void drawGameObjects(ArrayDeque<GameObject> gameObjects, Graphics graphics) {
 
-		// first draw lowest layer, call draw method of each gameObject that is not a
-		// character or structure and has not been deleted
-		Iterator<GameObject> iterator = gameObjects.iterator();
-		while (iterator.hasNext()) {
-			GameObject gameObject = iterator.next();
-			if (!(gameObject instanceof Structure
-					|| gameObject instanceof Character && !removedObjects.contains(gameObject))) {
-				gameObject.draw(graphics);
+		try {
+			// first draw lowest layer, call draw method of each gameObject that is not a
+			// character or structure and has not been deleted
+			Iterator<GameObject> iterator = gameObjects.iterator();
+			while (iterator.hasNext()) {
+				GameObject gameObject = iterator.next();
+				if (!(gameObject instanceof Structure
+						|| gameObject instanceof Character && !removedObjects.contains(gameObject))) {
+					gameObject.draw(graphics);
+				}
 			}
+
+			// draw the next layer, do the same as above for all characters and has not been
+			// deleted
+			iterator = gameObjects.iterator();
+			while (iterator.hasNext()) {
+				GameObject gameObject = iterator.next();
+				if (gameObject instanceof Character && !removedObjects.contains(gameObject)) {
+					gameObject.draw(graphics);
+				}
+			}
+
+			// draw the last layer, do the same as above for all structures and has not been
+			// deleted
+			iterator = gameObjects.iterator();
+			while (iterator.hasNext()) {
+				GameObject gameObject = iterator.next();
+				if (gameObject instanceof Structure && !removedObjects.contains(gameObject)) {
+					gameObject.draw(graphics);
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 
-		// draw the next layer, do the same as above for all characters and has not been
-		// deleted
-		iterator = gameObjects.iterator();
-		while (iterator.hasNext()) {
-			GameObject gameObject = iterator.next();
-			if (gameObject instanceof Character && !removedObjects.contains(gameObject)) {
-				gameObject.draw(graphics);
-			}
-		}
-
-		// draw the last layer, do the same as above for all structures and has not been
-		// deleted
-		iterator = gameObjects.iterator();
-		while (iterator.hasNext()) {
-			GameObject gameObject = iterator.next();
-			if (gameObject instanceof Structure && !removedObjects.contains(gameObject)) {
-				gameObject.draw(graphics);
-			}
-		}
-
-		// remove all object that have been removed, so that we dont cause any
-		// ConcurrentModification exception
-		iterator = removedObjects.iterator();
-		while (iterator.hasNext()) {
-			GameObject gameObject = iterator.next();
-			addedObjects.remove(gameObject);
-		}
+		
 
 	}
 

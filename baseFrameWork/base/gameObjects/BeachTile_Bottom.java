@@ -6,8 +6,8 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
+//Class for the a beach background Tile with downwards orientation
 public class BeachTile_Bottom extends UnevenTile {
-
 	public BeachTile_Bottom(Point tilePosition, TileGrid tileGrid) {
 
 		super(tilePosition, tileGrid);

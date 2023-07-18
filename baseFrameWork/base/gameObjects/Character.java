@@ -11,10 +11,12 @@ import base.graphics.GamePanel.PanelType;
 import base.physics.Damageable;
 import game.Main;
 
+//  This class is meant for living, moving beings so soldiers and the like
+// it really depends on what we want to do with them and they still need
+// sprites working and such before we can resonably implement them
+
 public abstract class Character extends GameObject implements Damageable {
-	// TODO This class is meant for living, moving beings so soldiers and the like
-	// it really depends on what we want to do with them and they still need
-	// sprites working and such before we can resonably implement them
+
 
 	protected GameLoop gameLoop;
 

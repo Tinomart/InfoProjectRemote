@@ -9,6 +9,8 @@ import base.graphics.TileGrid;
 
 public class BeachTile_Left extends UnevenTile {
 
+//Class for a beach background Tile with sand on the left of the frame	
+	
 	public BeachTile_Left(Point tilePosition, TileGrid tileGrid) {
 
 		super(tilePosition, tileGrid);

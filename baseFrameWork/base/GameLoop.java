@@ -355,6 +355,14 @@ public class GameLoop implements Runnable {
 						panel.removedObjects.add(gameObject);
 					}
 				}
+				
+				// remove all object that have been removed, so that we dont cause any
+				// ConcurrentModification exception
+				iterator = panel.removedObjects.iterator();
+				while (iterator.hasNext()) {
+					GameObject gameObject = iterator.next();
+					panel.addedObjects.remove(gameObject);
+				}
 
 				// only update the game if the game is not paused
 				if (!paused) {

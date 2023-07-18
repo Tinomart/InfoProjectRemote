@@ -6,6 +6,8 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
+//Class for a Watchtower Tile used in the Watchtower structure
+
 public class WatchtowerBottomTile extends StructureTile {
 
 	public WatchtowerBottomTile(Point tilePosition, TileGrid tileGrid) {

@@ -23,6 +23,9 @@ import java.io.FileInputStream;
 
 import game.Main;
 
+
+//Basic class to define all Objects we want to display in a certain position in our game 
+
 public class GameObject extends GameEntity implements Drawable {
 	
 	private GamePanel.PanelType panelToDrawOn;
