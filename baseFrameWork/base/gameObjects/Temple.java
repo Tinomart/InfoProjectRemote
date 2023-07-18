@@ -29,14 +29,18 @@ public class Temple extends Structure implements ResourceGenerating {
 
 	public Temple(Point position, TileGrid tileGrid) {
 		super(initializeTiles(position, tileGrid), initializeMainTile(position, tileGrid), tileGrid);
-		tileGrid.gameLoop.setTempleExist(true);
-		
-		// update the spellbutton, to check if we have a temple yet and thus can cast a
-		// spell
-		GUI.updateSpellButtonColor();
-
 	}
 
+	@Override 
+	public void update() {
+		//if the game thinks there is no temple, let it know that there is
+		if(!tileGrid.gameLoop.doesTempleExist()) {
+			tileGrid.gameLoop.setTempleExist(true);
+			// update the spellbutton, to check if we have a temple yet and thus can cast a
+			// spell
+			GUI.updateSpellButtonColor();
+		}
+	}
 	// common code needed to make sure all tiles are correctly assigned in the
 	// constructor,
 	// this has to be done because we want all tiles to be saved within the

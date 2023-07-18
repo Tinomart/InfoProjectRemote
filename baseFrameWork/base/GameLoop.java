@@ -21,7 +21,6 @@ import base.gameObjects.PureGrassTile;
 import base.gameObjects.Spell;
 import base.gameObjects.Temple;
 import base.gameObjects.Tile;
-import base.gameObjects.Watchtower;
 import base.gameObjects.Enemy_1;
 import base.gameObjects.Character;
 import base.gameObjects.CityHall;
@@ -127,11 +126,14 @@ public class GameLoop implements Runnable {
 	// each time the combat phase is set certain things should apply, so this is
 	// longer than usual
 	public void setCombatPhase(boolean combatPhase) {
-		save();
+		// saves if the current Wave is valid
+		if (currentWaveCount < waves.size()) {
+			save();
+		}
 		if (combatPhase) {
 			// if we can switch to the next wave, because we havent passed the final wave,
 			// simply start the next wave
-			if (currentWaveCount > waves.size()) {
+			if (currentWaveCount < waves.size()) {
 				waves.get(currentWaveCount).begin();
 			} else {
 				// if we are past the final wave create a new bonus wave and begin it
@@ -150,6 +152,7 @@ public class GameLoop implements Runnable {
 			// end the current wave
 			waves.get(currentWaveCount).end();
 		}
+
 		// execute normal setter code
 		this.combatPhase = combatPhase;
 	}
@@ -234,8 +237,16 @@ public class GameLoop implements Runnable {
 	// waves, all enemies are completely random, so low quality
 	private void addBonusWave() {
 		ArrayList<Character> bonusEnemies = new ArrayList<Character>();
+
+		// Generate more if the previous wave still does not exist, mosly used on
+		// startup
+		if (currentWaveCount >= waves.size()) {
+			currentWaveCount -= 1;
+			addBonusWave();
+		}
+
 		// add an enemy for each previous enemy in our previous wave
-		for (int i = 0; i < waves.get(currentWaveCount - 1).getCharacters().size(); i++) {
+		for (int i = 0; i < waves.get(currentWaveCount - 1).getCharacters().size() * 1.5; i++) {
 			bonusEnemies.add(new Enemy_1(new Point((int) (Math.random() * window.getWidth()),
 					(int) (Math.random() * panels.get(PanelType.MainPanel).getHeight()))));
 		}
@@ -246,6 +257,7 @@ public class GameLoop implements Runnable {
 		}
 		Level bonusLevel = new Level(bonusEnemies, new HashMap<Class<? extends Resource>, Integer>(), this);
 		waves.add(bonusLevel);
+		currentWaveCount += 1;
 	}
 
 	// This had to be its own thing, because for some reason the basic resize
@@ -306,7 +318,10 @@ public class GameLoop implements Runnable {
 
 	public void stop() {
 		// stop the thread, thus stopping the main loop
-		save();
+		if (gameHasLoaded) {
+			save();
+		}
+
 		gameThread = null;
 	}
 
@@ -330,7 +345,6 @@ public class GameLoop implements Runnable {
 			if (gameHasLoaded) {
 
 				GamePanel panel = panels.get(PanelType.MainPanel);
-				
 
 				// communicate with the mainpanel and make it know all different gameObjects
 				// that should be drawn on it by adding them to addedObjects
@@ -343,7 +357,7 @@ public class GameLoop implements Runnable {
 						panel.addedObjects.add(gameObject);
 					}
 				}
-				
+
 				// add all gameObjects that are in added objects, but not in gameObjects
 				// anymore, and add them to the objects that need to be removed later in
 				// gamePanel.drawComponent, again to avoid the ungodly amount of concurrent
@@ -355,7 +369,7 @@ public class GameLoop implements Runnable {
 						panel.removedObjects.add(gameObject);
 					}
 				}
-				
+
 				// remove all object that have been removed, so that we dont cause any
 				// ConcurrentModification exception
 				iterator = panel.removedObjects.iterator();
@@ -374,6 +388,12 @@ public class GameLoop implements Runnable {
 			// with constantly
 			for (GameObject gameObject : gameObjectsToRemove) {
 				gameObjects.remove(gameObject);
+				
+				//if we are removing a temple, make sure the game knows there is no longer a temple
+				if(gameObject instanceof Temple) {
+					templeExist = false;
+					GUI.updateSpellButtonColor();
+				}
 			}
 
 		}
@@ -382,7 +402,9 @@ public class GameLoop implements Runnable {
 
 	// update the wave to check if it has been completed and update all gameObjects
 	private void updateGame() {
-		waves.get(currentWaveCount).update();
+		if (currentWaveCount < waves.size()) {
+			waves.get(currentWaveCount).update();
+		}
 		updateGameObjects();
 	}
 
@@ -423,7 +445,6 @@ public class GameLoop implements Runnable {
 
 			timeTillNextLoop = timeTillNextLoop + loopSleepInterval;
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -483,9 +504,12 @@ public class GameLoop implements Runnable {
 			BufferedWriter writer = new BufferedWriter(new FileWriter("SaveData"));
 
 			// if the file does not yet contain the gameObject we are trying to save, write
-			// the gameObjects toString into the file
-			for (GameObject gameObject : gameObjects) {
-				if (!(waves.get(currentWaveCount).getCharacters().contains(gameObject) || gameObject instanceof Spell)) {
+			// the gameObjects toString into the file. Dont save Characters and spells as
+			// they are supposed to be temporary
+			Iterator<GameObject> iterator = gameObjects.iterator();
+			while (iterator.hasNext()) {
+				GameObject gameObject = iterator.next();
+				if (!(gameObject instanceof Character || gameObject instanceof Spell)) {
 					String objectString = gameObject.toString();
 					writer.write(objectString);
 				}
@@ -529,11 +553,16 @@ public class GameLoop implements Runnable {
 			// create the GameObject, which adds it to our gameObjects
 			for (String gameObjectString : gameObjectsStrings) {
 				createGameObject(gameObjectString);
-
 			}
 
+			// on load if the line we are trying to set is out of the amount of waves we
+			// manually added, just randomly create the waves that are missing
 			readLine = reader.readLine();
 			currentWaveCount = Integer.valueOf(readLine);
+			if (currentWaveCount >= waves.size()) {
+				addBonusWave();
+				currentWaveCount -= 1;
+			}
 
 			// same setup as before this time for
 			readLine = reader.readLine();
@@ -686,11 +715,11 @@ public class GameLoop implements Runnable {
 						createGameObject(PureGrassTile.class, new Object[] { tile.getTilePosition(), tile.tileGrid });
 					}
 				}
+
+				// remove healthbars of Damageable objects, so that they are not displayed after
+				// the structure no longer exists
 				if (gameObject instanceof Damageable) {
 					panels.get(PanelType.MainPanel).remove(((Damageable) gameObject).getHealthBar());
-				}
-				if (gameObject instanceof Temple) {
-					templeExist = false;
 				}
 				// remove the gameObject out of gameObjects, essentially making it non existant
 				// for the scope of our game
@@ -698,6 +727,12 @@ public class GameLoop implements Runnable {
 			}
 
 		}
+		
+		//mage sure changes in the GUI are reflected
+		for (Resource resource : resources) {
+			GUI.updateResourceAmount(resource);
+		}
+		GUI.updateSpellButtonColor();
 
 		// set the cityHall to null, this is an important step for checks concerning if
 		// the game is over or not
@@ -725,10 +760,10 @@ public class GameLoop implements Runnable {
 					gameObject.setSprite(duplicateSprite(sprite));
 				} else {
 					// if it is part of a structure aka the structure variable is not null, create a
-//					// duplicate sprite and assign, it. This because these tiles should be able to
-//					// get destroyed and altered, which requires them to have their own sprite, as to not affect
-//					// other gameObject that would have the same object reference assigned to their
-//					// sprite variable
+					// duplicate sprite and assign, it. This because these tiles should be able to
+					// get destroyed and altered, which requires them to have their own sprite, as to not affect
+					// other gameObject that would have the same object reference assigned to their
+					// sprite variable
 					gameObject.setSprite(sprite);
 				}
 			} else {

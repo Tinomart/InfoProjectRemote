@@ -24,7 +24,7 @@ public class PolisHouse extends Structure implements ResourceGenerating {
 	    cost.put(Gold.class, 10);
 	}
 	
-	private int goldGenerationAmount = 15;
+	private int goldGenerationAmount = 10;
 	
 	public PolisHouse(Point position, TileGrid tileGrid) {
 		super(initializeTiles(position, tileGrid), initializeMainTile(position, tileGrid), tileGrid);
@@ -36,7 +36,6 @@ public class PolisHouse extends Structure implements ResourceGenerating {
 	private static Tile initializeMainTile(Point position, TileGrid tileGrid) {
 		return tileGrid.tileMap.get(position);
 	}
-
 	private static Tile[] initializeTiles(Point position, TileGrid tileGrid) {
 		Tile mainTile = new House_0_0_Tile(position, tileGrid);
 	    Tile[] tiles = new Tile[]{mainTile, new House_1_0_Tile(new Point(position.x + 1, position.y), tileGrid), new House_1_1_Tile(new Point(position.x + 1, position.y + 1), tileGrid), new House_0_1_Tile(new Point(position.x, position.y + 1), tileGrid)};

@@ -17,7 +17,6 @@ import game.Main;
 
 public abstract class Character extends GameObject implements Damageable {
 
-
 	protected GameLoop gameLoop;
 
 	public void setGameLoop(GameLoop gameLoop) {
@@ -81,6 +80,12 @@ public abstract class Character extends GameObject implements Damageable {
 	protected int attackDamage;
 	protected int moveSpeed;
 
+	// we want characters to not move the same all the time, we need to also have a
+	// check if it has already been applied, since it we want to concurrently update
+	// it and not want to apply every single frame
+	private int movePenalty;
+	private boolean movementPenaltyApplied = false;
+
 	public Character(Point position, Sprite sprite) {
 		super(position, sprite);
 		healthBarWidth = 32;
@@ -92,6 +97,7 @@ public abstract class Character extends GameObject implements Damageable {
 	}
 
 	public void update() {
+
 		move(moveSpeed);
 		attack(attackDamage);
 
@@ -99,45 +105,66 @@ public abstract class Character extends GameObject implements Damageable {
 		if (health != maxHealth) {
 			Main.gameLoop.panels.get(PanelType.MainPanel).add(healthBar);
 		}
-		//update the healthBar position
+		// update the healthBar position
 		healthBar.setLocation(new Point(position.x - 16, position.y - 7));
-		//check if gameLoop is null
+		// check if gameLoop is null
 		if (gameLoop != null) {
-			//set the Tile to the top left tile to the tile at the postion of the top left corner
+			// set the Tile to the top left tile to the tile at the postion of the top left
+			// corner
 			currentTileTopLeft = gameLoop.tileGrid.tileMap.get(new Point(getPosition().x / gameLoop.tileGrid.tileSize,
 					getPosition().y / gameLoop.tileGrid.tileSize));
-			//set the Tile to the top left tile to the tile at the postion of the bottom left corner
+			// set the Tile to the top left tile to the tile at the postion of the bottom
+			// left corner
 			currentTileBottomLeft = gameLoop.tileGrid.tileMap
 					.get(new Point(getPosition(Corner.bottomleft).x / gameLoop.tileGrid.tileSize,
 							getPosition(Corner.bottomleft).y / gameLoop.tileGrid.tileSize));
-			//set the Tile to the top left tile to the tile at the postion of the top right corner
+			// set the Tile to the top left tile to the tile at the postion of the top right
+			// corner
 			currentTileTopRight = gameLoop.tileGrid.tileMap
 					.get(new Point(getPosition(Corner.topright).x / gameLoop.tileGrid.tileSize,
 							getPosition(Corner.topright).y / gameLoop.tileGrid.tileSize));
-			//set the Tile to the top left tile to the tile at the postion of the bottom right corner
+			// set the Tile to the top left tile to the tile at the postion of the bottom
+			// right corner
 			currentTileBottomRight = gameLoop.tileGrid.tileMap
 					.get(new Point(getPosition(Corner.bottomright).x / gameLoop.tileGrid.tileSize,
 							getPosition(Corner.bottomright).y / gameLoop.tileGrid.tileSize));
-			
-			//add all those tiles to standing tiles
-			if (!standingTiles.contains(currentTileBottomLeft)) {
-				standingTiles.add(currentTileBottomLeft);
+			standingTiles.clear();
+
+			// add all those tiles to standing tiles
+			standingTiles.add(currentTileBottomLeft);
+			standingTiles.add(currentTileBottomRight);
+			standingTiles.add(currentTileTopLeft);
+			standingTiles.add(currentTileTopRight);
+
+			// check if we are standing on an uneven Tile and set our movePenalty to the
+			// movePenalty is has
+			boolean standingOnUnevenTile = false;
+			for (Tile tile : standingTiles) {
+				if (tile instanceof UnevenTile) {
+					standingOnUnevenTile = true;
+					movePenalty = ((UnevenTile) tile).tileMovePenalty;
+				}
 			}
-			if (!standingTiles.contains(currentTileBottomRight)) {
-				standingTiles.add(currentTileBottomRight);
+
+			// if we are standing on one, make our character slower by the amount of the
+			// movePenalty
+			if (standingOnUnevenTile && !movementPenaltyApplied) {
+				moveSpeed -= movePenalty;
+				movementPenaltyApplied = true;
 			}
-			if (!standingTiles.contains(currentTileTopLeft)) {
-				standingTiles.add(currentTileTopLeft);
-			}
-			if (!standingTiles.contains(currentTileTopRight)) {
-				standingTiles.add(currentTileTopRight);
+
+			// if we are no longer on an uneven Tile add the move penalty we previously
+			// removed
+			if (!standingOnUnevenTile && movementPenaltyApplied) {
+				moveSpeed += movePenalty;
+				movementPenaltyApplied = false;
 			}
 		}
 
 		// as soon as a strucutre dies aka their health goes to 0 or below that the
 		// strucutre will be destroyed automatically
-		
-		//destroy the character if its health reaches zero
+
+		// destroy the character if its health reaches zero
 		if (health <= 0) {
 			Main.gameLoop.destroyGameObject(this);
 		}
@@ -195,7 +222,7 @@ public abstract class Character extends GameObject implements Damageable {
 		// tiles
 		if (nonSolidTiles.size() != 0) {
 			int chosenTileIndex = (int) Math.ceil(defaultMoveDirection * nonSolidTiles.size());
-			if(chosenTileIndex > nonSolidTiles.size()) {
+			if (chosenTileIndex > nonSolidTiles.size()) {
 				return nonSolidTiles.get(chosenTileIndex);
 			}
 		}
@@ -220,17 +247,19 @@ public abstract class Character extends GameObject implements Damageable {
 		} else if (movementVector.x >= 0 && movementVector.y >= 0) {
 			tileInMovementDirection = currentTileTopRight;
 		}
-		
-		//norm the movementvector and make it ten times the size to avoid int division rounding errors 
+
+		// norm the movementvector and make it ten times the size to avoid int division
+		// rounding errors
 		movementVector.x /= 0.1 * Math.sqrt(Math.pow(movementVector.x, 2) + Math.pow(movementVector.y, 2));
 		movementVector.y /= 0.1 * Math.sqrt(Math.pow(movementVector.x, 2) + Math.pow(movementVector.y, 2));
 
-		//add the normed and divided movementVector that is still 10 times the size times the moveSpeed and divide it by 10 again
+		// add the normed and divided movementVector that is still 10 times the size
+		// times the moveSpeed and divide it by 10 again
 		position.x += movementVector.x * moveSpeed / 10;
 		position.y += movementVector.y * moveSpeed / 10;
 	}
 
-	//every character should define an attack and move method
+	// every character should define an attack and move method
 	protected abstract void attack(int attackDamage);
 
 	protected abstract void move(int moveSpeed);
