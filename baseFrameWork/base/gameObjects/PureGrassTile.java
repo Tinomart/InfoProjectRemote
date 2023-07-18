@@ -6,6 +6,8 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
+//Class for a very basic grass background Tile
+
 public class PureGrassTile extends Tile {
 
 	public PureGrassTile(Point tilePosition, TileGrid tileGrid) {

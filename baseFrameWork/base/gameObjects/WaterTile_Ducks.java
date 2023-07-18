@@ -6,6 +6,8 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
+//Class for a background water Tile with Ducks, the Ducks are the true champions of this game and should be protected at all cost... because Ducks. 
+
 public class WaterTile_Ducks extends Tile {
 
 	public WaterTile_Ducks(Point tilePosition, TileGrid tileGrid) {

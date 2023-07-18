@@ -9,6 +9,11 @@ import base.Resource;
 import base.ResourceGenerating;
 import base.graphics.*;
 
+
+//this Class is used to aggravate the enemy and functions as a attracting wall
+//as a bonus the Owl Statue gives you a small amount of faith at the end of each wave
+//the Owl statue is composed out of one Tile
+
 public class Statue extends Structure implements ResourceGenerating{
 	
 	public static Point[] shape = new Point[] {};

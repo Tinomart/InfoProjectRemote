@@ -6,6 +6,9 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
+
+//Class for a background grass Tile with a tree trunk 
+
 public class GrassTreeTrunkTile extends Tile {
 
 	public GrassTreeTrunkTile(Point tilePosition, TileGrid tileGrid) {

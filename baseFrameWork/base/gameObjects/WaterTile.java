@@ -6,6 +6,8 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
+//Class for a background water Tile
+
 public class WaterTile extends Tile {
 
 	public WaterTile(Point tilePosition, TileGrid tileGrid) {

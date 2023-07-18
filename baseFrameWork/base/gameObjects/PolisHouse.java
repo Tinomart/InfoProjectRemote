@@ -8,6 +8,11 @@ import base.Resource;
 import base.ResourceGenerating;
 import base.graphics.*;
 
+
+//PolisHouse is a Gameobject that gives you money at the end of each wave.
+//This Gameobject consists out of 4 Tiles Called "PolisHouse_column_row" there is 0 and 1 row
+//and 0 and 1 column. 
+
 public class PolisHouse extends Structure implements ResourceGenerating {
 	
 	public static Point[] shape = new Point[] {new Point(1,0), new Point(1,1), new Point(0,1)};

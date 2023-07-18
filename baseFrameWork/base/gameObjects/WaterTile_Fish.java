@@ -6,6 +6,8 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
+//Class for a background water Tile with fish... not as impressive as Ducks imo 
+
 public class WaterTile_Fish extends Tile {
 
 	public WaterTile_Fish(Point tilePosition, TileGrid tileGrid) {

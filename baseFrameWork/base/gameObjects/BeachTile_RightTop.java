@@ -6,6 +6,9 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
+
+//Class for a beach background Tile with sand on the top and on the right of the frame
+
 public class BeachTile_RightTop extends Tile {
 
 	public BeachTile_RightTop(Point tilePosition, TileGrid tileGrid) {

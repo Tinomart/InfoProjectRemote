@@ -12,7 +12,7 @@ import game.Main;
 public class SpriteLoader {
 	// the names of all different sprites we have
 	public enum SpriteType {
-		GrassTileSprite, GrassFlowerTile_1Sprite, GrassTreeTrunkTileSprite,
+		GrassTile_1Sprite, GrassFlowerTile_1Sprite, GrassTreeTrunkTileSprite,
 		PureGrassTileSprite, GrassFlower_2TileSprite, WaterTile_FishSprite, BeachTile_LeftBottomSprite,
 		BeachTile_BottomSprite, BeachTile_RightBottomSprite, BeachTile_TopSprite, BeachTile_LeftTopSprite,
 		BeachTile_RightTopSprite, BeachTile_LeftSprite, BeachTile_RightSprite, WaterTileSprite, WaterTile_DucksSprite,
@@ -34,9 +34,9 @@ public class SpriteLoader {
 	// it into the sprites Hashmap. this has to be done manually for all sprites
 	private void loadSprites() {
 
-		Sprite grassTileSprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
-		grassTileSprite.loadImage("res/GrassTile_1.png");
-		sprites.put(SpriteType.GrassTileSprite, grassTileSprite);
+		Sprite grassTile_1Sprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
+		grassTile_1Sprite.loadImage("res/GrassTile_1.png");
+		sprites.put(SpriteType.GrassTile_1Sprite, grassTile_1Sprite);
 
 		Sprite grassFlowerTile_1Sprite = new Sprite(new Point(Main.TILE_SIZE, Main.TILE_SIZE));
 		grassFlowerTile_1Sprite.loadImage("res/GrassTile_2.png");

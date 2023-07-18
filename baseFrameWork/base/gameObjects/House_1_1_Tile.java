@@ -6,6 +6,9 @@ import base.graphics.Sprite;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.TileGrid;
 
+
+//Class for a House Tile used in the PolisHouse structure 
+
 public class House_1_1_Tile extends StructureTile {
 
 	public House_1_1_Tile(Point tilePosition, TileGrid tileGrid) {

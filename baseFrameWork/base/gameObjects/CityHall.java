@@ -9,6 +9,11 @@ import base.graphics.*;
 import game.Main;
 import base.gameObjects.*;
 
+
+//CityHall is a Gameobject and the most important structure of the game, like the king in chess. 
+//This Gameobject consists out of 9 Tiles Called "CityHall+row+column" there is Top-Mid-Bottom row
+//and Left-Mid-Right column.  
+
 public class CityHall extends Structure {
 	
 	public static Point[] shape = new Point[] {new Point(-1,0),new Point(1,0),new Point(-1,1),new Point(0,1),new Point(1,1),new Point(-1,2),new Point(0,2),new Point(1,2),};
