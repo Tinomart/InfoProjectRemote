@@ -14,6 +14,7 @@ import base.Resource;
 import base.GameLoop.Direction;
 import base.gameObjects.*;
 import base.graphics.GUI;
+import base.graphics.GamePanel;
 import base.graphics.GamePanel.PanelType;
 import base.graphics.SpriteLoader.SpriteType;
 import base.graphics.Sprite;

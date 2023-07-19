@@ -7,6 +7,7 @@ import java.util.HashMap;
 import base.GameLoop;
 import base.graphics.*;
 import base.GameRunningManager;
+import base.Gold;
 import base.Level;
 import base.Resource;
 import base.gameObjects.Character;
@@ -44,22 +45,64 @@ public class Main {
 	
 	public static void main(String[] args) {
 		ArrayList<Character> level1Enemies = new ArrayList<Character>();
-		level1Enemies.add(new Enemy_1(new Point(50, 50)));
 		level1Enemies.add(new Enemy_1(new Point(50, 400)));
 		level1Enemies.add(new Enemy_1(new Point(400, 250)));
 		level1Enemies.add(new Enemy_1(new Point(100, 600)));
+		HashMap<Class<? extends Resource>, Integer> level1Reward = new HashMap<Class<? extends Resource>, Integer>();
+		level1Reward.put(Gold.class, 10);
+		Level level1 = new Level(level1Enemies, level1Reward, gameLoop);
 
 		ArrayList<Character> level2Enemies = new ArrayList<Character>();
-		level2Enemies.add(new Enemy_1(new Point(50, 60)));
-		level2Enemies.add(new Enemy_1(new Point(50, 410)));
-		level2Enemies.add(new Enemy_1(new Point(400, 260)));
-		level2Enemies.add(new Enemy_1(new Point(100, 610)));
+		level2Enemies.add(new Enemy_1(new Point(50, 50)));
+		level2Enemies.add(new Enemy_1(new Point(50, 100)));
+		level2Enemies.add(new Enemy_1(new Point(100, 50)));
+		level2Enemies.add(new Enemy_1(new Point(100, 100)));
+		HashMap<Class<? extends Resource>, Integer> level2Reward = new HashMap<Class<? extends Resource>, Integer>();
+		level2Reward.put(Gold.class, 10);
+		Level level2 = new Level(level2Enemies, level2Reward, gameLoop);
+		
+		ArrayList<Character> level3Enemies = new ArrayList<Character>();
+		level3Enemies.add(new Enemy_1(new Point(50, 50)));
+		level3Enemies.add(new Enemy_1(new Point(50, 100)));
+		level3Enemies.add(new Enemy_1(new Point(100, 50)));
+		level3Enemies.add(new Enemy_1(new Point(100, 100)));
+		HashMap<Class<? extends Resource>, Integer> level3Reward = new HashMap<Class<? extends Resource>, Integer>();
+		level2Reward.put(Gold.class, 10);
+		Level level3 = new Level(level3Enemies, level3Reward, gameLoop);
+		
+		ArrayList<Character> level4Enemies = new ArrayList<Character>();
+		level4Enemies.add(new Enemy_1(new Point(50, 50)));
+		level4Enemies.add(new Enemy_1(new Point(50, 100)));
+		level4Enemies.add(new Enemy_1(new Point(100, 50)));
+		level4Enemies.add(new Enemy_1(new Point(100, 100)));
+		HashMap<Class<? extends Resource>, Integer> level4Reward = new HashMap<Class<? extends Resource>, Integer>();
+		level2Reward.put(Gold.class, 10);
+		Level level4 = new Level(level4Enemies, level4Reward, gameLoop);
+		
+		ArrayList<Character> level5Enemies = new ArrayList<Character>();
+		level5Enemies.add(new Enemy_1(new Point(50, 50)));
+		level5Enemies.add(new Enemy_1(new Point(50, 100)));
+		level5Enemies.add(new Enemy_1(new Point(100, 50)));
+		level5Enemies.add(new Enemy_1(new Point(100, 100)));
+		HashMap<Class<? extends Resource>, Integer> level5Reward = new HashMap<Class<? extends Resource>, Integer>();
+		level2Reward.put(Gold.class, 10);
+		Level level5 = new Level(level5Enemies, level5Reward, gameLoop);
 
-		Level level1 = new Level(level1Enemies, new HashMap<Class<? extends Resource>, Integer>(), gameLoop);
-		Level level2 = new Level(level2Enemies, new HashMap<Class<? extends Resource>, Integer>(), gameLoop);
-
+		ArrayList<Character> level6Enemies = new ArrayList<Character>();
+		level6Enemies.add(new Enemy_1(new Point(50, 50)));
+		level6Enemies.add(new Enemy_1(new Point(50, 100)));
+		level6Enemies.add(new Enemy_1(new Point(100, 50)));
+		level6Enemies.add(new Enemy_1(new Point(100, 100)));
+		HashMap<Class<? extends Resource>, Integer> level6Reward = new HashMap<Class<? extends Resource>, Integer>();
+		level2Reward.put(Gold.class, 10);
+		Level level6 = new Level(level6Enemies, level6Reward, gameLoop);
+		
 		gameLoop.waves.add(level1);
 		gameLoop.waves.add(level2);
+		gameLoop.waves.add(level3);
+		gameLoop.waves.add(level4);
+		gameLoop.waves.add(level5);
+		gameLoop.waves.add(level6);
 		gameRunningManager.startGame();
 	}
 }

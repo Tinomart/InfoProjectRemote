@@ -54,7 +54,7 @@ public class GameLoop implements Runnable {
 
 	public int currentWaveCount;
 	public ArrayList<Level> waves = new ArrayList<Level>();
-	private double waveGrowth = 1.5;
+	private double waveGrowth = 1.9;
 
 	// this is public even though it has getters and setters, because we wanna
 	// access it without using set once, without having the specific code that
@@ -365,7 +365,7 @@ public class GameLoop implements Runnable {
 				iterator = panel.addedObjects.iterator();
 				while (iterator.hasNext()) {
 					GameObject gameObject = iterator.next();
-					if (!Main.gameLoop.gameObjects.contains(gameObject)) {
+					if (!gameObjects.contains(gameObject)) {
 						panel.removedObjects.add(gameObject);
 					}
 				}
