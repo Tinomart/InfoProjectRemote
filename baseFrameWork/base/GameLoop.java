@@ -51,8 +51,10 @@ public class GameLoop implements Runnable {
 
 	public ArrayDeque<GameObject> gameObjects = new ArrayDeque<GameObject>();
 	public ArrayDeque<GameObject> gameObjectsToRemove = new ArrayDeque<GameObject>();
+
 	public int currentWaveCount;
 	public ArrayList<Level> waves = new ArrayList<Level>();
+	private double waveGrowth = 1.5;
 
 	// this is public even though it has getters and setters, because we wanna
 	// access it without using set once, without having the specific code that
@@ -238,23 +240,21 @@ public class GameLoop implements Runnable {
 	private void addBonusWave() {
 		ArrayList<Character> bonusEnemies = new ArrayList<Character>();
 
-		// Generate more if the previous wave still does not exist, mosly used on
+		// Generate more if the previous wave still does not exist, mostly used on
 		// startup
 		if (currentWaveCount >= waves.size()) {
 			currentWaveCount -= 1;
 			addBonusWave();
 		}
 
-		// add an enemy for each previous enemy in our previous wave
-		for (int i = 0; i < waves.get(currentWaveCount - 1).getCharacters().size() * 1.5; i++) {
-			bonusEnemies.add(new Enemy_1(new Point((int) (Math.random() * window.getWidth()),
-					(int) (Math.random() * panels.get(PanelType.MainPanel).getHeight()))));
-		}
-		// add three random bonus enemies on top of that
-		for (int i = 0; i < 3; i++) {
+		// add an enemy for each previous enemy in our previous wave time 1.3 to make
+		// exponential growth
+		for (int i = 0; i < waves.get(currentWaveCount - 1).getCharacters().size() * waveGrowth; i++) {
 			bonusEnemies.add(new Enemy_1(
-					new Point((int) (Math.random() * window.getWidth()), (int) (Math.random() * window.getHeight()))));
+					new Point((int) (Math.random() * mainPanel.getWidth() * 0.7 + mainPanel.getWidth() * 0.15),
+							(int) (Math.random() * mainPanel.getHeight() * 0.7 + mainPanel.getHeight() * 0.15))));
 		}
+
 		Level bonusLevel = new Level(bonusEnemies, new HashMap<Class<? extends Resource>, Integer>(), this);
 		waves.add(bonusLevel);
 		currentWaveCount += 1;
@@ -388,9 +388,10 @@ public class GameLoop implements Runnable {
 			// with constantly
 			for (GameObject gameObject : gameObjectsToRemove) {
 				gameObjects.remove(gameObject);
-				
-				//if we are removing a temple, make sure the game knows there is no longer a temple
-				if(gameObject instanceof Temple) {
+
+				// if we are removing a temple, make sure the game knows there is no longer a
+				// temple
+				if (gameObject instanceof Temple) {
 					templeExist = false;
 					GUI.updateSpellButtonColor();
 				}
@@ -515,7 +516,7 @@ public class GameLoop implements Runnable {
 				}
 			}
 
-			// Write currentWaveCount to the save call in the next line
+			// Write currentWaveCount to the save currentWaveCount in the next line
 			writer.newLine();
 			writer.write("" + currentWaveCount);
 
@@ -575,9 +576,20 @@ public class GameLoop implements Runnable {
 			// all objects are seperated with spaces so we split the string of the entire
 			// line to get an array of all object strings
 			String[] resourceString = fileString.split(" ");
+
+			// now we read the information about the resources and set it to the right
+			// amount
 			for (int i = 0; i < resourceString.length; i++) {
 				int resourceAmount = Integer.parseInt(resourceString[i]);
 				resources[i].setAmount(resourceAmount);
+			}
+
+			// when loading if a city hall already existed, then set the position of the
+			// player camera to the city hall at startup
+			if (cityHall != null) {
+				cameraPosition = new Point(cityHall.getPosition().x - window.getWidth() / 2 - cameraSpeed,
+						cityHall.getPosition().y - window.getHeight() / 2);
+				moveCamera(Direction.right);
 			}
 
 			reader.close();
@@ -727,8 +739,8 @@ public class GameLoop implements Runnable {
 			}
 
 		}
-		
-		//mage sure changes in the GUI are reflected
+
+		// mage sure changes in the GUI are reflected
 		for (Resource resource : resources) {
 			GUI.updateResourceAmount(resource);
 		}
@@ -761,7 +773,8 @@ public class GameLoop implements Runnable {
 				} else {
 					// if it is part of a structure aka the structure variable is not null, create a
 					// duplicate sprite and assign, it. This because these tiles should be able to
-					// get destroyed and altered, which requires them to have their own sprite, as to not affect
+					// get destroyed and altered, which requires them to have their own sprite, as
+					// to not affect
 					// other gameObject that would have the same object reference assigned to their
 					// sprite variable
 					gameObject.setSprite(sprite);
