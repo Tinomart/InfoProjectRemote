@@ -24,11 +24,7 @@ public class GamePanel extends JPanel {
 	// assigned when trying to use CreatePanels() an exception will be thrown
 	// these will be used as keys for the panels HashMap in the GameWindow Class
 	public static enum PanelType {
-		MainPanel,
-		MainMenu,
-		PauseMenu,
-		InGameGUI,
-		
+		MainPanel, MainMenu, PauseMenu, InGameGUI,
 
 	}
 
@@ -41,11 +37,6 @@ public class GamePanel extends JPanel {
 
 	public int drawLayer;
 
-//	private BufferedImage image;
-
-//	GameObject gameObj = new GameObject(new Point(0, 0), new Sprite(new Point ( 0, 0)));
-//	Tile tile = new Tile(new Point(0, 0), Main.tileGrid, new Sprite(new Point ( 0, 0)));
-
 	// suggested by eclipse to do to avoid warning
 	private static final long serialVersionUID = 1L;
 
@@ -55,12 +46,6 @@ public class GamePanel extends JPanel {
 		this.drawLayer = drawLayer;
 		initializePanel();
 		inputManager.addInputForPanel();
-
-//		try {
-//            image = ImageIO.read(new File("C:\\Users\\Daniel\\Desktop\\Kraken\\InfoProjectRemote\\PNG\\Test.png"));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 	}
 
 	private void initializePanel() {
@@ -128,6 +113,8 @@ public class GamePanel extends JPanel {
 
 	private void drawGameObjects(ArrayDeque<GameObject> gameObjects, Graphics graphics) {
 
+		// try catch to supress concurrent modification exceptions, that dont have any
+		// impact on our game
 		try {
 			// first draw lowest layer, call draw method of each gameObject that is not a
 			// character or structure and has not been deleted
@@ -160,10 +147,8 @@ public class GamePanel extends JPanel {
 				}
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
 
-		
+		}
 
 	}
 

@@ -4,8 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.BorderLayout;
 
-//import java.awt.BorderLayout;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -34,8 +32,6 @@ import base.graphics.GamePanel.PanelType;
 import game.Main;
 import base.gameObjects.*;
 
-//TODO Here we will create all the different UI Elements and add them in a static way
-//to our GamePanels later if needed
 
 public class GUI {
 
@@ -49,7 +45,7 @@ public class GUI {
 
 	private static HashMap<Class<? extends Resource>, JLabel> resources = new HashMap<Class<? extends Resource>, JLabel>();
 	static {
-		// ad the two resources we have, feel free to add more with more resources
+		// add the two resources we have
 		resources.put(Gold.class, resourceGold);
 		resources.put(Faith.class, resourceFaith);
 	}
@@ -113,8 +109,6 @@ public class GUI {
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.gridwidth = GridBagConstraints.REMAINDER; // this will end the column and jump to the next
 		buttonPanel.add(startButton, gbc);
-
-		// this should change when you hover the startButton
 
 		// this is for loading the custom setting-Button
 		BufferedImage continueImage = null;
@@ -182,7 +176,7 @@ public class GUI {
 		int imageHeight = 70;
 		Image scaledMainMenuImage = mainMenuImage.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
 
-		JButton mainMenuButton = new JButton(); //adding the pause menu button with action listner
+		JButton mainMenuButton = new JButton(); //adding the pause menu button with action listener
 		mainMenuButton.setOpaque(false);
 		mainMenuButton.setBorderPainted(false);
 		mainMenuButton.setContentAreaFilled(false);
@@ -200,7 +194,7 @@ public class GUI {
 	    int imageHeight1 = 70;
 	    Image scaledContinueImage = continueImage.getScaledInstance(imageWidth1, imageHeight1, Image.SCALE_SMOOTH);
 
-	    BufferedImage translucentImage = null;  //adding a green coloured translucent PNG to differentiate the background
+	    BufferedImage translucentImage = null;  //adding a gray coloured translucent PNG to differentiate the background
 	    try {
 	        translucentImage = ImageIO.read(new File("res/fonts/transparent.png"));
 	    } catch (IOException e) {
@@ -211,7 +205,7 @@ public class GUI {
 	    int imageHeight11 = 1000;
 	    Image scaledTranslucentImage = translucentImage.getScaledInstance(imageWidth11, imageHeight11, Image.SCALE_SMOOTH);
 
-	    JButton continueButton = new JButton();  //adding the pause menu button with action listner
+	    JButton continueButton = new JButton();  //adding the pause menu button with action listener
 	    continueButton.setOpaque(false);
 	    continueButton.setBorderPainted(false);
 	    continueButton.setContentAreaFilled(false);
@@ -389,7 +383,7 @@ public class GUI {
 
 	}
 
-	// stopoo the gameLoop exit the windows and shut everything down
+	// stop the gameLoop exit the windows and shut everything down
 	private static void quitButtonPress(ActionEvent e) {
 		Main.gameLoop.stop();
 		System.exit(0);
