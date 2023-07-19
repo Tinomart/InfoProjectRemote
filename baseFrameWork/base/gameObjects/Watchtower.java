@@ -14,8 +14,15 @@ import base.graphics.*;
 
 public class Watchtower extends Structure {
 	private int range = 300;
-	private int damage = 2;
+	private int damage = 1;
 	private Character target;
+	
+	public static HashMap<Class<? extends Resource>, Integer> cost = new HashMap<>();
+
+	static {
+		// initilaizing resource cost
+		cost.put(Gold.class, 15);
+	}
 
 	public static Point[] shape = new Point[] { new Point(0, 1) };
 
@@ -23,12 +30,7 @@ public class Watchtower extends Structure {
 		super(initializeTiles(position, tileGrid), initializeMainTile(position, tileGrid), tileGrid);
 	}
 
-	public static HashMap<Class<? extends Resource>, Integer> cost = new HashMap<>();
-
-	static {
-		// initilaizing resource cost
-		cost.put(Gold.class, 10);
-	}
+	
 
 	@Override
 	public void update() {

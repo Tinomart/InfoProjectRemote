@@ -41,7 +41,7 @@ public abstract class Character extends GameObject implements Damageable {
 
 	// just like structures, characters should also have health and healthbars that
 	// dynamically change
-	private int maxHealth = 100;
+	protected int maxHealth = 100;
 	public int health;
 
 	private Color healthBarColor = new Color(190, 25, 25, 255);

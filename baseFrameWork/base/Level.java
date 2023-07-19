@@ -3,6 +3,8 @@ package base;
 import java.util.HashMap;
 
 import base.gameObjects.Character;
+import base.graphics.GamePanel.PanelType;
+
 import java.util.*;
 
 //each level is a class with an array of characters the player needs to fight, 
@@ -55,6 +57,7 @@ public class Level {
 		// destroy all enemies, then it destroys all still existing enemies
 		for (Character character : characters) {
 			gameLoop.destroyGameObject(character);
+			gameLoop.panels.get(PanelType.MainPanel).remove(character.getHealthBar());
 		}
 
 		// for each resource check if the rewards contains that resource and if it does

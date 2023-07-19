@@ -172,8 +172,6 @@ public class GameWindow extends JFrame {
 			}
 		}
 
-		// repaint to reflect changes
-		this.repaint();
 
 	}
 

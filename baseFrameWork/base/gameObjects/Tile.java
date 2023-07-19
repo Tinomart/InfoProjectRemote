@@ -52,10 +52,6 @@ public class Tile extends GameObject implements TileBased {
 	//when hovered display the highlight square on the main panel and repaint to show changes
 	public void onHover() {
 		mainPanel.add(highlightSquare);
-//		mainPanel.revalidate();
-//		tileGrid.gameLoop.window.revalidate();
-//		tileGrid.gameLoop.window.repaint();
-		
 	}
 	
 	public Point getTilePosition() {

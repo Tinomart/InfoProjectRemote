@@ -13,7 +13,7 @@ import base.graphics.SpriteLoader.SpriteType;
 //Lightning spell that simply deals damage to enemies 
 
 public class Lightning extends Spell {
-	private int spellDamage = 75;
+	private int spellDamage = 85;
 	private int frameCount = 0;
 
 	public static HashMap<Class<? extends Resource>, Integer> cost = new HashMap<>();

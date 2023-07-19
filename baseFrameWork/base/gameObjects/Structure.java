@@ -29,7 +29,7 @@ public abstract class Structure extends GameObject implements TileBased, Damagea
 
 	// Structures can be attack Attacked and destroyed, which means they need health
 	// and MaxHealth
-	private int maxHealth = 100;
+	protected int maxHealth = 100;
 	protected int health;
 
 	// we need a healthbar to display that health

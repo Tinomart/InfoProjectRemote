@@ -21,14 +21,15 @@ public class PolisHouse extends Structure implements ResourceGenerating {
 
 	static {
 		//initilaizing resource cost
-	    cost.put(Gold.class, 10);
+	    cost.put(Gold.class, 20);
 	}
 	
 	private int goldGenerationAmount = 10;
 	
 	public PolisHouse(Point position, TileGrid tileGrid) {
 		super(initializeTiles(position, tileGrid), initializeMainTile(position, tileGrid), tileGrid);
-		
+		maxHealth = 50;
+		health = maxHealth;
 	}
 
 	//common code needed to make sure all tiles are correctly assigned in the constructor,

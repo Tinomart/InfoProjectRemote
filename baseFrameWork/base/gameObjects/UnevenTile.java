@@ -9,7 +9,7 @@ import base.graphics.TileGrid;
 //this is a class to hinder characters from moving and make placing structures on it impossible
 public class UnevenTile extends Tile {
 
-	public int tileMovePenalty = 3;
+	public int tileMovePenalty = 2;
 
 	public UnevenTile(Point tilePosition, TileGrid tileGrid) {
 		super(tilePosition, tileGrid, new Sprite(new Point(0, 0)));

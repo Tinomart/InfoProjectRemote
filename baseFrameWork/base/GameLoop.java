@@ -144,6 +144,8 @@ public class GameLoop implements Runnable {
 			}
 
 		} else {
+			// end the current wave
+			waves.get(currentWaveCount - 1).end();
 			// if we are exiting the combat phase we need to gather all resource from our
 			// resource generating gameObjects
 			for (GameObject gameObject : gameObjects) {
@@ -151,8 +153,7 @@ public class GameLoop implements Runnable {
 					((ResourceGenerating) gameObject).generateResources(resources);
 				}
 			}
-			// end the current wave
-			waves.get(currentWaveCount).end();
+			
 		}
 
 		// execute normal setter code
@@ -587,9 +588,15 @@ public class GameLoop implements Runnable {
 			// when loading if a city hall already existed, then set the position of the
 			// player camera to the city hall at startup
 			if (cityHall != null) {
-				cameraPosition = new Point(cityHall.getPosition().x - window.getWidth() / 2 - cameraSpeed,
+				spawnPoint = new Point(cityHall.getPosition().x - window.getWidth() / 2 - cameraSpeed,
 						cityHall.getPosition().y - window.getHeight() / 2);
-				moveCamera(Direction.right);
+				// Move our Camera to the Spawnpoint
+				for (int i = 0; i < spawnPoint.x / cameraSpeed; i++) {
+					moveCamera(Direction.right);
+				}
+				for (int j = 0; j < spawnPoint.y / cameraSpeed; j++) {
+					moveCamera(Direction.down);
+				}
 			}
 
 			reader.close();
