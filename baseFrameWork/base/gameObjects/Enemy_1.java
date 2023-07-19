@@ -18,7 +18,7 @@ public class Enemy_1 extends Character {
 		super(position, new Sprite(new Point(0, 0)));
 		spriteType = SpriteType.Enemy_1TileSprite;
 		moveSpeed = 5;
-		attackDamage = 3;
+		attackDamage = 2;
 	}
 
 	// override to give Enemy_1 its own attack
@@ -50,6 +50,7 @@ public class Enemy_1 extends Character {
 				currentTileBottomRight.structure.reduceHealth(attackDamage);
 			}
 		}
+		
 	}
 
 	@Override

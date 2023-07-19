@@ -337,7 +337,7 @@ public class InputManager {
 									new Object[] { currentHoveredTiles.getFirst().getTilePosition(), Main.tileGrid });
 							//immediately give the player some faith, so he can cast spells immediately
 							if(selectedStructure == Temple.class) {
-								Main.gameLoop.resources[1].changeAmount(5);
+								Main.gameLoop.resources[1].changeAmount(10);
 							}
 						}
 					} else {

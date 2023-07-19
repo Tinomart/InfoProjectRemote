@@ -54,7 +54,7 @@ public class GameLoop implements Runnable {
 
 	public int currentWaveCount;
 	public ArrayList<Level> waves = new ArrayList<Level>();
-	private double waveGrowth = 1.9;
+	private double waveGrowth = 1.4;
 
 	// this is public even though it has getters and setters, because we wanna
 	// access it without using set once, without having the specific code that
@@ -144,8 +144,6 @@ public class GameLoop implements Runnable {
 			}
 
 		} else {
-			// end the current wave
-			waves.get(currentWaveCount - 1).end();
 			// if we are exiting the combat phase we need to gather all resource from our
 			// resource generating gameObjects
 			for (GameObject gameObject : gameObjects) {
@@ -153,6 +151,9 @@ public class GameLoop implements Runnable {
 					((ResourceGenerating) gameObject).generateResources(resources);
 				}
 			}
+			
+			// end the current wave
+			waves.get(currentWaveCount).end();
 			
 		}
 
@@ -255,8 +256,9 @@ public class GameLoop implements Runnable {
 					new Point((int) (Math.random() * mainPanel.getWidth() * 0.7 + mainPanel.getWidth() * 0.15),
 							(int) (Math.random() * mainPanel.getHeight() * 0.7 + mainPanel.getHeight() * 0.15))));
 		}
-
-		Level bonusLevel = new Level(bonusEnemies, new HashMap<Class<? extends Resource>, Integer>(), this);
+		HashMap<Class<? extends Resource>, Integer> bonusLevelReward = new HashMap<Class<? extends Resource>, Integer>();
+		bonusLevelReward.put(Gold.class, 100);
+		Level bonusLevel = new Level(bonusEnemies, bonusLevelReward , this);
 		waves.add(bonusLevel);
 		currentWaveCount += 1;
 	}

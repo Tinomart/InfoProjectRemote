@@ -14,7 +14,7 @@ import base.graphics.*;
 
 public class Watchtower extends Structure {
 	private int range = 300;
-	private int damage = 1;
+	private int damage = 2;
 	private Character target;
 	
 	public static HashMap<Class<? extends Resource>, Integer> cost = new HashMap<>();

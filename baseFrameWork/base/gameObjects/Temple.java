@@ -33,6 +33,7 @@ public class Temple extends Structure implements ResourceGenerating {
 
 	@Override 
 	public void update() {
+		super.update();
 		//if the game thinks there is no temple, let it know that there is
 		if(!tileGrid.gameLoop.doesTempleExist()) {
 			tileGrid.gameLoop.setTempleExist(true);
